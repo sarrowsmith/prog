@@ -1,0 +1,89 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Main.gd" type="Script" id=2]
+[ext_resource path="res://addons/midi/MidiPlayer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://RandomPlayer.gd" type="Script" id=4]
+
+[node name="Main" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="Control"]
+show_behind_parent = true
+margin_right = 372.0
+margin_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false,
+"_editor_description_": ""
+}
+
+[node name="Menu" type="VBoxContainer" parent="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 372.0
+margin_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Modes" type="OptionButton" parent="Control/Menu"]
+margin_right = 372.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Mode"
+
+[node name="Styles" type="OptionButton" parent="Control/Menu"]
+margin_top = 24.0
+margin_right = 372.0
+margin_bottom = 44.0
+size_flags_horizontal = 3
+
+[node name="Tracks" type="SpinBox" parent="Control/Menu"]
+margin_top = 48.0
+margin_right = 372.0
+margin_bottom = 72.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 16.0
+value = 1.0
+suffix = "tracks"
+
+[node name="Length" type="SpinBox" parent="Control/Menu"]
+margin_top = 76.0
+margin_right = 372.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 65536.0
+value = 1.0
+suffix = "bars"
+
+[node name="Seed" type="LineEdit" parent="Control/Menu"]
+margin_top = 104.0
+margin_right = 372.0
+margin_bottom = 128.0
+size_flags_horizontal = 3
+placeholder_text = "seed"
+
+[node name="Play" type="Button" parent="Control/Menu"]
+margin_top = 132.0
+margin_right = 372.0
+margin_bottom = 152.0
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Play!"
+
+[node name="RandomPlayer" type="Node" parent="."]
+script = ExtResource( 4 )
+soundfont = "res://resources/TimGM6mb.sf2"
+
+[node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
+[connection signal="toggled" from="Control/Menu/Play" to="." method="_on_Play_toggled"]
