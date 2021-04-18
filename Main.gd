@@ -37,6 +37,6 @@ func get_value(name: String) -> int:
 
 func _on_Play_toggled(button_pressed):
 	if button_pressed:
-		$RandomPlayer.play($Control.find_node("Seed").text.hash(), modes.selected, styles.get_item_text(styles.selected), get_value("Tracks"), get_value("Length"))
+		$RandomPlayer.play($Control.find_node("Seed").text.hash(), modes.selected, styles.get_item_text(styles.selected), get_value("Tracks"), get_value("Length"), get_value("Density"))
 	else:
 		$RandomPlayer.stop()

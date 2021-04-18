@@ -53,13 +53,20 @@ margin_bottom = 72.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 16.0
-value = 1.0
+value = 16.0
 suffix = "tracks"
 
-[node name="Length" type="SpinBox" parent="Control/Menu"]
+[node name="Density" type="HSlider" parent="Control/Menu"]
 margin_top = 76.0
 margin_right = 372.0
-margin_bottom = 100.0
+margin_bottom = 92.0
+min_value = 1.0
+value = 50.0
+
+[node name="Length" type="SpinBox" parent="Control/Menu"]
+margin_top = 96.0
+margin_right = 372.0
+margin_bottom = 120.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 65536.0
@@ -67,23 +74,24 @@ value = 1.0
 suffix = "bars"
 
 [node name="Seed" type="LineEdit" parent="Control/Menu"]
-margin_top = 104.0
+margin_top = 124.0
 margin_right = 372.0
-margin_bottom = 128.0
+margin_bottom = 148.0
 size_flags_horizontal = 3
 placeholder_text = "seed"
 
 [node name="Play" type="Button" parent="Control/Menu"]
-margin_top = 132.0
+margin_top = 152.0
 margin_right = 372.0
-margin_bottom = 152.0
+margin_bottom = 172.0
 size_flags_horizontal = 3
 toggle_mode = true
 text = "Play!"
 
 [node name="RandomPlayer" type="Node" parent="."]
 script = ExtResource( 4 )
-soundfont = "res://resources/TimGM6mb.sf2"
+soundfont = "res://resources/MuseScore_General_Full.sf2"
+timebase = 8
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 [connection signal="toggled" from="Control/Menu/Play" to="." method="_on_Play_toggled"]

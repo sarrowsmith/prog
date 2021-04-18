@@ -34,7 +34,7 @@ const Intervals = {
 const Modes = ["Lydian", "Major", "Mixolydian", "Dorian", "Minor", "Phrygian", "Locrian"]
 const C = 0
 const REST = 0
-const DEFAULT = 128
+const DEFAULT = 96
 var Scales = {} # const, but it's calculated on ready
 
 onready var rng = RandomNumberGenerator.new()
@@ -87,21 +87,29 @@ func create_bar(track: int, chunk: Dictionary, iteration: int, root: int, time: 
 	# each entry is a [event_time, note] pair, where a 0-duration note is a note off event
 	var notes = create_drums(chunk, iteration) if track == Structure.DRUMS else []
 	var down_beat = true
-	for beat in signature:
+	var note_length = 1.0 if chunk.repeats else signature
+	var volume = DEFAULT
+	for beat in signature if chunk.repeats else 1:
 		match track:
 			Structure.CHORDS:
 				if down_beat or rng.randf() <= chunk.density:
 					for note in chord:
 # warning-ignore:integer_division
-						notes.append([beat, create_note(note, 1.0, DEFAULT / 4)])
+						notes.append([beat, create_note(note, note_length, DEFAULT / 4)])
 			Structure.DRONE:
 				if down_beat:
 					notes.append([beat, create_note(root % 8, signature, DEFAULT)])
 			Structure.DRUMS:
 				pass
+			Structure.COUNTER_HARMONY, Structure.DESCANT:
+				volume = 48
+				continue
+			Structure.RHYTHM:
+				volume = 192
+				continue
 			_:
-				if track < Structure.DRUMS or rng.randf() <= chunk.density:
-					notes.append([beat, create_note(Structure.choose(chord, rng), 1.0, DEFAULT)])
+				if rng.randf() <= chunk.density:
+					notes.append([beat, create_note(Structure.choose(chord, rng), note_length, volume)])
 		down_beat = false
 	for note in notes:
 		note[0] = time + note[0] * timebase
@@ -112,9 +120,10 @@ func order_events(a, b):
 	return a.time < b.time
 
 
-func create_loop(track: int, chunk: Dictionary, time: int, iteration: int) -> Array:
+func create_loop(track: int, chunk: Dictionary, iteration: int) -> Array:
 	var notes = []
 	var bar_length = timebase * signature
+	var time = len(chunk.chords) * bar_length * iteration
 	for chord in chunk.chords:
 		for note in create_bar(track, chunk, iteration, chord, time):
 			notes.append(note)
@@ -124,17 +133,21 @@ func create_loop(track: int, chunk: Dictionary, time: int, iteration: int) -> Ar
 
 func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
-	var time = chunk.bar
-	var chunk_length = len(chunk.chords) * timebase * signature
+	var bar_length = timebase * signature
+	var time = chunk.bar * bar_length
+	var chunk_length = len(chunk.chords) * bar_length
 	if track != Structure.DRUMS:
 		var program = chunk.program[min(track, Structure.OTHER)]
+		if not program:
+			return events
 		events.append(SMF.MIDIEventChunk.new(time - 1, track, SMF.MIDIEventProgramChange.new(program)))
 	var notes = []
-	for i in chunk.repeats:
-		for note in create_loop(track, chunk, time, i):
+	var reseed = rng.randi()
+	for i in max(chunk.repeats, 1):
+		rng.seed = reseed
+		for note in create_loop(track, chunk, i):
 			notes.append(note)
-		time += chunk_length
-	if track > Structure.DRONE and track != Structure.DRUMS:
+	if chunk.repeats and track > Structure.DRONE and track != Structure.DRUMS:
 		var iterations = int(clamp(chunk.density * track, 0, 4))
 		for i in iterations:
 			for n in len(notes):
@@ -142,6 +155,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 					pass #insert
 	var octave = Structure.get_octave(track)
 	var scale = Scales[Modes[mode]]
+	time = chunk.bar * bar_length
 	for event in notes:
 		var note = event[1]
 		var note_number = get_note_number(scale, octave, note[PITCH])
@@ -162,27 +176,27 @@ func create_track(track: int, structure: Array) -> Array:
 			event.time -= offset
 			events.append(event)
 	if events:
-		endtime = events.back().time + timebase
+		endtime = events.back().time + signature * timebase
 		var eot = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.end_of_track})
 		events.append(SMF.MIDIEventChunk.new(endtime, track, eot))
 	return events
 
 
-func create_smf(style: String, length: int) -> Dictionary:
+func create_smf(style: String, length: int, density: float) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
-	var structure = Structure.create_structure(style, length, 0.5, rng)
+	var structure = Structure.create_structure(style, length, density, rng)
 	while track < ntracks:
 		tracks.append(SMF.MIDITrack.new(track, create_track(track, structure)))
 		track += 1
 	return SMF.SMFData.new(0, ntracks, timebase, tracks)
 
 
-func play(rng_seed: int, valence: int, style: String, tracks: int, length: int):
+func play(rng_seed: int, valence: int, style: String, tracks: int, length: int, percentage: int):
 	rng.seed = rng_seed
 	mode = valence
 	ntracks = tracks
-	$MidiPlayer.smf_data = create_smf(style, length)
+	$MidiPlayer.smf_data = create_smf(style, length, percentage * 0.01)
 	$MidiPlayer.play()
 
 

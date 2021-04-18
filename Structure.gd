@@ -70,10 +70,27 @@ static func create_structure(style: String, length: int, base_density: float, rn
 	if Banks.has(style):
 		for track in Banks[style]:
 			programs.append(choose(track, rng))
+		while len(programs) < 16:
+			var track = choose(Banks[style], rng)
+			programs.append(choose(track, rng))
 	else:
-		for octave in Octaves:
-			var section = 32 * min(octave - 3, 3)
-			programs.append(rng.randi_range(section+1, section+32))
-	return [
-		{program = programs, repeats = 1, bar = 1, density = 0.5, chords = [1]},
-	]
+		for track in 16:
+			programs.append(rng.randi_range(track * 8 + 1, track * 8 + 8))
+	var chunks = []
+	var bars = 1
+	while bars < length:
+		var repeats = 2 * rng.randi_range(1, 4)
+		var chords = [1, 3, 5, 4]
+		var program = programs.duplicate()
+		var chunk = len(chunks)
+		var top = chunk / 2 + COUNTER_HARMONY
+		if top == DRUMS and rng.randf() <= base_density:
+			top = rng.randi_range(COUNTER_HARMONY, DRUMS)
+		for p in range(top, DRUMS):
+			program[p] = 0
+		chunks.append({program = program, repeats = repeats, bar = bars, density = base_density, chords = chords})
+		bars += repeats * len(chords)
+	for p in range(COUNTER_HARMONY, DRUMS):
+		programs[p] = 0
+	chunks.append({program = programs, repeats = 0, bar = bars, density = base_density, chords = [1]})
+	return chunks
