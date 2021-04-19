@@ -75,7 +75,6 @@ margin_left = 59.0
 margin_right = 372.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
-min_value = 1.0
 value = 50.0
 rounded = true
 tick_count = 9

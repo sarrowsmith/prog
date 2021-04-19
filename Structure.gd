@@ -60,6 +60,14 @@ const Banks = {
 }
 const Overrides = {BASS: 4, COUNTER_HARMONY: 5, DESCANT: 6}
 
+const Loops = [
+	[1, 3, 5, 4],
+	[1, 5, 4, 6],
+	[1, 3, 7, 2],
+	[1, 1, 5, 4],
+	[1, 4, 5, 1],
+]
+
 
 static func choose(from: Array, rng: RandomNumberGenerator):
 	return from[rng.randi_range(0, len(from) - 1)]
@@ -92,19 +100,21 @@ static func create_structure(style: String, length: int, base_density: float, ba
 			programs.append(rng.randi_range(track * 8 + 1, track * 8 + 8))
 	var chunks = []
 	var bars = 1
+	var top = HARMONY
 	while bars < length:
 		var repeats = 1 + rng.randi_range(1, 5)
-		var chords = [1, 3, 5, 4]
+		var chords = choose(Loops, rng)
 		var program = programs.duplicate()
 		var chunk = len(chunks)
-		var top = max(0, (chunk - 1)) + HARMONY
+		top = max(0, (chunk - 1)) + HARMONY
 		if top > DRUMS and bars + repeats < length and rng.randf() <= base_density:
 			top = rng.randi_range(DESCANT, 15)
 		for p in range(top, 16):
 			program[p] = 0
-		chunks.append({program = program, repeats = repeats, bar = bars, density = base_density, intricacy = base_intricacy, chords = chords})
+		var density = base_density + (1 - base_density) / (2 + chunk)
+		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars += repeats * len(chords)
-	for p in range(PERCUSSION, OTHER):
+	for p in range(top, OTHER):
 		programs[p] = 0
 	chunks.append({program = programs, repeats = 0, bar = bars, density = base_density, chords = [1]})
 	return chunks

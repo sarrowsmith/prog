@@ -61,7 +61,7 @@ func get_note_number(scale: Array, octave: int, note: int) -> int:
 	return key + 12 * (octave + octave_offset) + scale[idx]
 
 
-func create_note(pitch: int, duration: float, volume: int) -> Array:
+func make_note(pitch: int, duration: float, volume: int) -> Array:
 	return [pitch, int(float(timebase) * duration), volume]
 
 
@@ -83,34 +83,48 @@ func create_drums(chunk: Dictionary, iteration: int) -> Array:
 	return []
 
 
+func create_note(track: int, down_beat: bool, chord: Array, root: int, note_length: int, chunk: Dictionary) -> Array:
+	var notes = []
+	var volume = DEFAULT
+	match track:
+		Structure.CHORDS:
+			if down_beat or rng.randf() <= 0.5 * chunk.density:
+				for note in chord:
+# warning-ignore:integer_division
+					notes.append(make_note(note, note_length, volume / 2))
+		Structure.DRONE:
+			if down_beat:
+				notes.append(make_note(root % 8, signature, volume))
+		Structure.DRUMS:
+			pass
+		Structure.COUNTER_HARMONY, Structure.DESCANT:
+			volume = 2 * volume / 3
+			continue
+		Structure.RHYTHM:
+			volume = 3 * volume / 2
+			continue
+		_:
+			if rng.randf() <= 0.5 * chunk.density:
+				notes.append(make_note(Structure.choose(chord, rng), note_length, volume))
+	return notes
+
+
 func create_bar(track: int, chunk: Dictionary, iteration: int, root: int, time: int) -> Array:
 	var chord = generate_chord(root)
 	# each entry is a [event_time, note] pair, where a 0-duration note is a note off event
 	var notes = create_drums(chunk, iteration) if track == Structure.DRUMS else []
 	var down_beat = true
-	var note_length = 1.0 if chunk.repeats else signature
-	var volume = DEFAULT
+	var skip = 0
 	for beat in signature if chunk.repeats else 1:
-		match track:
-			Structure.CHORDS:
-				if down_beat or rng.randf() <= chunk.density:
-					for note in chord:
-# warning-ignore:integer_division
-						notes.append([beat, create_note(note, note_length, DEFAULT / 4)])
-			Structure.DRONE:
-				if down_beat:
-					notes.append([beat, create_note(root % 8, signature, DEFAULT)])
-			Structure.DRUMS:
-				pass
-			Structure.COUNTER_HARMONY, Structure.DESCANT:
-				volume = 48
-				continue
-			Structure.RHYTHM:
-				volume = 192
-				continue
-			_:
-				if rng.randf() <= chunk.density:
-					notes.append([beat, create_note(Structure.choose(chord, rng), note_length, volume)])
+		if skip:
+			skip -= 1
+			continue
+		var note_length = 1.0 if chunk.repeats else signature
+		if signature - beat > 1 and rng.randf() <= 0.5 * chunk.density:
+			note_length = rng.randi_range(2, signature - beat)
+			skip = note_length - 1
+		for note in create_note(track, down_beat, chord, root, note_length, chunk):
+			notes.append([beat, note])
 		down_beat = false
 	for note in notes:
 		note[0] = time + note[0] * timebase
@@ -126,8 +140,7 @@ func create_loop(track: int, chunk: Dictionary, iteration: int) -> Array:
 	var bar_length = timebase * signature
 	var time = len(chunk.chords) * bar_length * iteration
 	for chord in chunk.chords:
-		for note in create_bar(track, chunk, iteration, chord, time):
-			notes.append(note)
+		notes += create_bar(track, chunk, iteration, chord, time)
 		time += bar_length
 	return notes
 
@@ -135,7 +148,7 @@ func create_loop(track: int, chunk: Dictionary, iteration: int) -> Array:
 func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
 	var bar_length = timebase * signature
-	var time = chunk.bar * bar_length
+	var time = chunk.bar * bar_length - timebase * (signature - 1)
 	var chunk_length = len(chunk.chords) * bar_length
 	if track != Structure.DRUMS:
 		var program = chunk.program[track]
@@ -146,8 +159,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var reseed = rng.randi()
 	for i in max(chunk.repeats, 1):
 		rng.seed = reseed
-		for note in create_loop(track, chunk, i):
-			notes.append(note)
+		notes += create_loop(track, chunk, i)
 	if chunk.repeats and track > Structure.DRONE and track != Structure.DRUMS:
 		var iterations = chunk.intricacy
 		if iterations > 0:
@@ -157,12 +169,19 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 				_:
 					iterations -= 1
 		for i in iterations:
-			for n in len(notes):
-				if rng.randf() <= chunk.density:
-					pass #insert
+			var note_length = timebase / (2 * (1 + i))
+			var n = 0
+			while n < len(notes) - 1:
+				var before = notes[n]
+				n += 1
+				if notes[n][0] - before[0] > 2 * note_length or rng.randf() <= chunk.density:
+					continue
+				before[1][DURATION] = note_length
+				var note = [before[0] + note_length, before[1].duplicate()]
+				notes = notes.slice(0, n - 1) + [[before[0] + note_length, before[1].duplicate()]] + notes.slice(n, len(notes) - 1)
+				n += 1
 	var octave = Structure.get_octave(style, track)
 	var scale = Scales[Modes[mode]]
-	time = chunk.bar * bar_length
 	for event in notes:
 		var note = event[1]
 		var note_number = get_note_number(scale, octave, note[PITCH])
@@ -177,11 +196,8 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 func create_track(track: int, structure: Array) -> Array:
 	var events = []
 	var endtime = timebase
-	var offset = timebase * (signature - 1)
 	for chunk in structure:
-		for event in create_chunk(track, chunk):
-			event.time -= offset
-			events.append(event)
+		events += create_chunk(track, chunk)
 	if events:
 		endtime = events.back().time + signature * timebase
 		var eot = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.end_of_track})
