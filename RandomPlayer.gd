@@ -91,16 +91,16 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 			if down_beat or rng.randf() <= 0.5 * chunk.density:
 				for note in chord:
 # warning-ignore:integer_division
-					notes.append(make_note(note, note_length, volume / 2))
+					notes.append(make_note(note, note_length, volume / 4))
 		Structure.DRONE:
 			if down_beat:
-				notes.append(make_note(root % 8, signature, volume))
+				notes.append(make_note(root % 8, signature, volume / 2))
 		Structure.DRUMS:
 			pass
 		Structure.COUNTER_HARMONY, Structure.DESCANT:
 			volume = 2 * volume / 3
 			continue
-		Structure.RHYTHM:
+		Structure.PERCUSSION:
 			volume = 3 * volume / 2
 			continue
 		_:
@@ -225,9 +225,9 @@ func play(rng_seed: int, parameters: Dictionary):
 	if parameters.has("Mode"):
 		mode = parameters.Mode
 	if parameters.has("Signature"):
-		signature = parameters.Signature
+		signature = parameters.Signature * 2
 	$MidiPlayer.smf_data = create_smf(parameters)
-	$MidiPlayer.tempo = parameters.Tempo
+	$MidiPlayer.tempo = parameters.Tempo * 2
 	$MidiPlayer.play()
 
 
