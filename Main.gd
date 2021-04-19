@@ -5,20 +5,30 @@ var time_begin
 var time_delay
 var modes
 var styles
-
+var parameters = {
+	Mode = 3,
+	Style = "Random",
+	Tracks = 16,
+	Density = 50,
+	Intricacy = 50,
+	Tempo = 100,
+	Length = 41,
+}
 
 func _ready():
 	time_begin = OS.get_ticks_usec()
 	time_delay = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-	modes = $Control.find_node("Modes")
+	modes = $Controls.find_node("Mode")
 	modes.clear()
 	for mode in RandomPlayer.Modes:
 		modes.add_item(mode)
-	styles = $Control.find_node("Styles")
+	modes.select(parameters.Mode)
+	styles = $Controls.find_node("Style")
 	styles.clear()
 	styles.add_item("Random")
 	for style in Structure.Banks:
 		styles.add_item(style)
+	$Controls.find_node("Length").value = parameters.Length
 
 
 func _process(_delta):
@@ -31,12 +41,32 @@ func _process(_delta):
 	#print("Time is: ", time)
 
 
-func get_value(name: String) -> int:
-	return int($Control.find_node(name).value)
+func get_value(name: String):
+	var control = $Controls.find_node(name)
+	if not control:
+		return null
+	match name:
+		"Mode":
+			return control.selected
+		"Style":
+			return control.get_item_text(control.selected)
+	return control.value
 
 
 func _on_Play_toggled(button_pressed):
 	if button_pressed:
-		$RandomPlayer.play($Control.find_node("Seed").text.hash(), modes.selected, styles.get_item_text(styles.selected), get_value("Tracks"), get_value("Length"), get_value("Density"))
+		for parameter in parameters:
+			var value = get_value(parameter)
+			if value:
+				parameters[parameter] = value
+		$RandomPlayer.play($Controls.find_node("Seed").text.hash(), parameters)
 	else:
 		$RandomPlayer.stop()
+
+
+func _on_OpenSoundfont_pressed():
+	$SoundfontDialog.popup_centered()
+
+
+func _on_SoundfontDialog_file_selected(path):
+	parameters.Soundfont = $SoundfontDialog.current_path

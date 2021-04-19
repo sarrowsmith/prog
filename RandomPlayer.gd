@@ -7,10 +7,9 @@ var SMF = preload("res://addons/midi/SMF.gd").new()
 export(String, FILE, "*.sf2; Soundfont 2") var soundfont
 export(int) var key = 0
 export(int) var timebase = 48
-export(int) var nbars = 1
-export(int) var ntracks = 1
 export(int) var mode = 3
 export(int) var signature = 4
+export(int) var tempo = 100
 
 enum {PITCH, DURATION, VOLUME}
 
@@ -36,6 +35,8 @@ const C = 0
 const REST = 0
 const DEFAULT = 96
 var Scales = {} # const, but it's calculated on ready
+
+var style = "Random"
 
 onready var rng = RandomNumberGenerator.new()
 
@@ -137,7 +138,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var time = chunk.bar * bar_length
 	var chunk_length = len(chunk.chords) * bar_length
 	if track != Structure.DRUMS:
-		var program = chunk.program[min(track, Structure.OTHER)]
+		var program = chunk.program[track]
 		if not program:
 			return events
 		events.append(SMF.MIDIEventChunk.new(time - 1, track, SMF.MIDIEventProgramChange.new(program)))
@@ -153,7 +154,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 			for n in len(notes):
 				if rng.randf() <= chunk.density:
 					pass #insert
-	var octave = Structure.get_octave(track)
+	var octave = Structure.get_octave(style, track)
 	var scale = Scales[Modes[mode]]
 	time = chunk.bar * bar_length
 	for event in notes:
@@ -182,21 +183,28 @@ func create_track(track: int, structure: Array) -> Array:
 	return events
 
 
-func create_smf(style: String, length: int, density: float) -> Dictionary:
+func create_smf(parameters: Dictionary) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
-	var structure = Structure.create_structure(style, length, density, rng)
-	while track < ntracks:
+	var structure = Structure.create_structure(parameters.Style, parameters.Length, 0.01 * parameters.Density, rng)
+	while track < parameters.Tracks:
 		tracks.append(SMF.MIDITrack.new(track, create_track(track, structure)))
 		track += 1
-	return SMF.SMFData.new(0, ntracks, timebase, tracks)
+	return SMF.SMFData.new(0, parameters.Tracks, timebase, tracks)
 
 
-func play(rng_seed: int, valence: int, style: String, tracks: int, length: int, percentage: int):
+func play(rng_seed: int, parameters: Dictionary):
 	rng.seed = rng_seed
-	mode = valence
-	ntracks = tracks
-	$MidiPlayer.smf_data = create_smf(style, length, percentage * 0.01)
+	if parameters.has("Soundfont") and parameters.Soundfont != soundfont:
+		soundfont = parameters.Soundfont
+		$MidiPlayer.soundfont = soundfont
+	if parameters.has("Key"):
+		key = parameters.Key
+	if parameters.has("Mode"):
+		mode = parameters.Mode
+	if parameters.has("Signature"):
+		signature = parameters.Signature
+	$MidiPlayer.smf_data = create_smf(parameters)
 	$MidiPlayer.play()
 
 
