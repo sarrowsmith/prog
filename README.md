@@ -3,5 +3,5 @@
 
 ## Requirements
 
-[Godot](https://godotengine.org/) (obviously)
-[Godot MIDI Player](https://godotengine.org/asset-library/asset/240)
+ * [Godot](https://godotengine.org/) (obviously)
+ * [Godot MIDI Player](https://godotengine.org/asset-library/asset/240)
