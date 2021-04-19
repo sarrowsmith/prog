@@ -61,6 +61,7 @@ suffix = "tracks"
 margin_top = 76.0
 margin_right = 372.0
 margin_bottom = 112.0
+size_flags_horizontal = 3
 columns = 2
 
 [node name="Label" type="Label" parent="Controls/Menu/GridContainer"]
@@ -71,12 +72,13 @@ text = "Density"
 
 [node name="Density" type="HSlider" parent="Controls/Menu/GridContainer"]
 margin_left = 59.0
-margin_right = 75.0
+margin_right = 372.0
 margin_bottom = 16.0
+size_flags_horizontal = 3
 min_value = 1.0
 value = 50.0
 rounded = true
-tick_count = 3
+tick_count = 9
 ticks_on_borders = true
 
 [node name="Label2" type="Label" parent="Controls/Menu/GridContainer"]
@@ -88,12 +90,13 @@ text = "Intricacy"
 [node name="Intricacy" type="HSlider" parent="Controls/Menu/GridContainer"]
 margin_left = 59.0
 margin_top = 20.0
-margin_right = 75.0
+margin_right = 372.0
 margin_bottom = 36.0
+size_flags_horizontal = 3
 min_value = 1.0
 value = 50.0
 rounded = true
-tick_count = 3
+tick_count = 9
 ticks_on_borders = true
 
 [node name="Tempo" type="SpinBox" parent="Controls/Menu"]
