@@ -4,12 +4,14 @@
 [ext_resource path="res://addons/midi/MidiPlayer.tscn" type="PackedScene" id=3]
 [ext_resource path="res://RandomPlayer.gd" type="Script" id=4]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Spatial"]
 script = ExtResource( 2 )
 
 [node name="Controls" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_right = -908.0
+margin_bottom = 6.10352e-05
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -26,8 +28,6 @@ __meta__ = {
 [node name="Menu" type="VBoxContainer" parent="Controls"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = 372.0
-margin_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
@@ -93,10 +93,10 @@ margin_top = 20.0
 margin_right = 372.0
 margin_bottom = 36.0
 size_flags_horizontal = 3
-min_value = 1.0
-value = 50.0
+max_value = 4.0
+value = 2.0
 rounded = true
-tick_count = 9
+tick_count = 5
 ticks_on_borders = true
 
 [node name="Tempo" type="SpinBox" parent="Controls/Menu"]
@@ -104,9 +104,9 @@ margin_top = 116.0
 margin_right = 372.0
 margin_bottom = 140.0
 size_flags_horizontal = 3
-min_value = 40.0
-max_value = 210.0
-value = 100.0
+min_value = 60.0
+max_value = 240.0
+value = 120.0
 suffix = "bpm"
 
 [node name="Length" type="SpinBox" parent="Controls/Menu"]
@@ -131,6 +131,8 @@ margin_right = 372.0
 margin_bottom = 220.0
 size_flags_horizontal = 3
 placeholder_text = "seed"
+caret_blink = true
+caret_blink_speed = 0.5
 
 [node name="Play" type="Button" parent="Controls/Menu"]
 margin_top = 224.0

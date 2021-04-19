@@ -79,7 +79,7 @@ static func get_octave(style: String, track: int) -> int:
 # it is defined by a program, a number of repeats, the bar it starts on,
 # a density and the chords
 # the repeated loops *do not need to be generated identical*
-static func create_structure(style: String, length: int, base_density: float, rng: RandomNumberGenerator) -> Array:
+static func create_structure(style: String, length: int, base_density: float, base_intricacy: int, rng: RandomNumberGenerator) -> Array:
 	var programs = []
 	if Banks.has(style):
 		for track in Banks[style]:
@@ -93,16 +93,16 @@ static func create_structure(style: String, length: int, base_density: float, rn
 	var chunks = []
 	var bars = 1
 	while bars < length:
-		var repeats = 2 * rng.randi_range(1, 4)
+		var repeats = 1 + rng.randi_range(1, 5)
 		var chords = [1, 3, 5, 4]
 		var program = programs.duplicate()
 		var chunk = len(chunks)
-		var top = chunk / 2 + COUNTER_HARMONY
-		if top > DRUMS and rng.randf() <= base_density:
-			top = rng.randi_range(COUNTER_HARMONY, OTHER)
-		for p in range(top, OTHER):
+		var top = max(0, (chunk - 1)) + HARMONY
+		if top > DRUMS and bars + repeats < length and rng.randf() <= base_density:
+			top = rng.randi_range(DESCANT, 15)
+		for p in range(top, 16):
 			program[p] = 0
-		chunks.append({program = program, repeats = repeats, bar = bars, density = base_density, chords = chords})
+		chunks.append({program = program, repeats = repeats, bar = bars, density = base_density, intricacy = base_intricacy, chords = chords})
 		bars += repeats * len(chords)
 	for p in range(PERCUSSION, OTHER):
 		programs[p] = 0

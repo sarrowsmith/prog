@@ -149,7 +149,13 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 		for note in create_loop(track, chunk, i):
 			notes.append(note)
 	if chunk.repeats and track > Structure.DRONE and track != Structure.DRUMS:
-		var iterations = int(clamp(chunk.density * track, 0, 4))
+		var iterations = chunk.intricacy
+		if iterations > 0:
+			match track:
+				Structure.MELODY, Structure.PERCUSSION, Structure.DESCANT:
+					pass
+				_:
+					iterations -= 1
 		for i in iterations:
 			for n in len(notes):
 				if rng.randf() <= chunk.density:
@@ -186,7 +192,7 @@ func create_track(track: int, structure: Array) -> Array:
 func create_smf(parameters: Dictionary) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
-	var structure = Structure.create_structure(parameters.Style, parameters.Length, 0.01 * parameters.Density, rng)
+	var structure = Structure.create_structure(parameters.Style, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, rng)
 	while track < parameters.Tracks:
 		tracks.append(SMF.MIDITrack.new(track, create_track(track, structure)))
 		track += 1
@@ -205,6 +211,7 @@ func play(rng_seed: int, parameters: Dictionary):
 	if parameters.has("Signature"):
 		signature = parameters.Signature
 	$MidiPlayer.smf_data = create_smf(parameters)
+	$MidiPlayer.tempo = parameters.Tempo
 	$MidiPlayer.play()
 
 

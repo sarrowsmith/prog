@@ -1,4 +1,4 @@
-extends Node2D
+extends Spatial
 
 
 var time_begin
@@ -11,7 +11,7 @@ var parameters = {
 	Tracks = 16,
 	Density = 50,
 	Intricacy = 50,
-	Tempo = 100,
+	Tempo = 120,
 	Length = 41,
 }
 
