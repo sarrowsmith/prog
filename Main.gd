@@ -69,4 +69,4 @@ func _on_OpenSoundfont_pressed():
 
 
 func _on_SoundfontDialog_file_selected(path):
-	parameters.Soundfont = $SoundfontDialog.current_path
+	parameters.Soundfont = path
