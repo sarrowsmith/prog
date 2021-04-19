@@ -1,2 +1,2 @@
 # Prog
-*Pro*cedural music *g*eneration
+**Pro**cedural music **g**eneration
