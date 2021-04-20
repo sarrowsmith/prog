@@ -157,9 +157,11 @@ current_path = "/home/sion/Godot/Projects/Prog/"
 [node name="RandomPlayer" type="Node" parent="."]
 script = ExtResource( 4 )
 soundfont = "res://resources/default-GM.sf2"
+movement = 20
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 [connection signal="pressed" from="Controls/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
-[connection signal="finished" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_finished"]
+[connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]
+[connection signal="finished" from="RandomPlayer/MidiPlayer" to="RandomPlayer" method="_on_MidiPlayer_finished"]

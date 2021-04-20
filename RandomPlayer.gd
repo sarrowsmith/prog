@@ -2,6 +2,8 @@ class_name RandomPlayer
 extends Node
 
 
+signal finished
+
 var SMF = preload("res://addons/midi/SMF.gd").new()
 
 export(String, FILE, "*.sf2; Soundfont 2") var soundfont
@@ -9,7 +11,8 @@ export(int) var key = 0
 export(int) var timebase = 48
 export(int) var mode = 3
 export(int) var signature = 4
-export(int) var tempo = 100
+export(int) var tempo = 120
+export(int) var movement = 90 # minimum length in bars
 
 enum {PITCH, DURATION, VOLUME}
 
@@ -37,6 +40,16 @@ const DEFAULT = 96
 var Scales = {} # const, but it's calculated on ready
 
 var style = "Random"
+var programs = []
+var movements = 0
+var adjustments = [
+	{},
+	{Length = 3.0},
+	{Mode =-1, Length = 6.0, Tempo = 0.8, Density = -1, Intricacy = -1},
+	{Mode = +1, Length = 4.0, Tempo = 1.2, Density = +1},
+	{Mode = +2, Length = 4.0, Density = +1, Intricacy = +1},
+]
+var queue = []
 
 onready var rng = RandomNumberGenerator.new()
 
@@ -216,7 +229,7 @@ func create_track(track: int, structure: Array) -> Array:
 func create_smf(parameters: Dictionary) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
-	var structure = Structure.create_structure(parameters.Style, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, rng)
+	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, len(queue) == movements, rng)
 	while track < parameters.Tracks:
 		tracks.append(SMF.MIDITrack.new(track, create_track(track, structure)))
 		track += 1
@@ -225,19 +238,53 @@ func create_smf(parameters: Dictionary) -> Dictionary:
 
 func play(rng_seed: int, parameters: Dictionary):
 	rng.seed = rng_seed
+	programs = Structure.create_programs(parameters.Style, rng)
+	movements = min(int(parameters.Length / movement), 4)
+	adjustments[0] = parameters
 	if parameters.has("Soundfont") and parameters.Soundfont != soundfont:
 		soundfont = parameters.Soundfont
 		$MidiPlayer.soundfont = soundfont
+	queue.clear()
 	if parameters.has("Key"):
 		key = parameters.Key
 	if parameters.has("Mode"):
 		mode = parameters.Mode
 	if parameters.has("Signature"):
 		signature = parameters.Signature
-	$MidiPlayer.smf_data = create_smf(parameters)
-	$MidiPlayer.tempo = parameters.Tempo
-	$MidiPlayer.play()
+	if movements:
+		adjustments[0] = parameters.duplicate()
+		for i in movements:
+			if i:
+				parameters = adjustments[0].duplicate()
+			var adjustment = adjustments[i+1]
+			for parameter in adjustment:
+				match parameter:
+					"Mode", "Intricacy":
+						parameters.Mode = max(0, min(parameters[parameter] + adjustment[parameter], 6))
+					"Length":
+						parameters.Length = int((4 * parameters.Length) / (movements * adjustment.Length))
+					_:
+						parameters[parameter] *= adjustment[parameter]
+			queue.push_back([create_smf(parameters), parameters.Tempo])
+	else:
+		queue.push_back([create_smf(parameters), parameters.Tempo])
+	play_next()
+
+
+func play_next() -> bool:
+	var entry = queue.pop_front()
+	if entry:
+		$MidiPlayer.smf_data = entry[0]
+		$MidiPlayer.tempo = entry[1]
+		$MidiPlayer.play()
+		return true
+	return false
 
 
 func stop():
 	$MidiPlayer.stop()
+
+
+func _on_MidiPlayer_finished():
+	if not play_next():
+		emit_signal("finished")

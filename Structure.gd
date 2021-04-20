@@ -82,12 +82,7 @@ static func get_octave(style: String, track: int) -> int:
 	return octave
 
 
-# structure is an array of chunks
-# a chunk is loop repeated a given number of times
-# it is defined by a program, a number of repeats, the bar it starts on,
-# a density and the chords
-# the repeated loops *do not need to be generated identical*
-static func create_structure(style: String, length: int, base_density: float, base_intricacy: int, rng: RandomNumberGenerator) -> Array:
+static func create_programs(style: String, rng: RandomNumberGenerator) -> Array:
 	var programs = []
 	if Banks.has(style):
 		for track in Banks[style]:
@@ -98,6 +93,15 @@ static func create_structure(style: String, length: int, base_density: float, ba
 	else:
 		for track in 16:
 			programs.append(rng.randi_range(track * 8 + 1, track * 8 + 8))
+	return programs
+
+
+# structure is an array of chunks
+# a chunk is loop repeated a given number of times
+# it is defined by a program, a number of repeats, the bar it starts on,
+# a density and the chords
+# the repeated loops *do not need to be generated identical*
+static func create_structure(programs: Array, length: int, base_density: float, base_intricacy: int, final: bool, rng: RandomNumberGenerator) -> Array:
 	var chunks = []
 	var bars = 1
 	var top = HARMONY
@@ -114,7 +118,8 @@ static func create_structure(style: String, length: int, base_density: float, ba
 		var density = base_density + (1 - base_density) / (2 + chunk)
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars += repeats * len(chords)
-	for p in range(top, OTHER):
-		programs[p] = 0
-	chunks.append({program = programs, repeats = 0, bar = bars, density = base_density, chords = [1]})
+	if final:
+		for p in range(top, OTHER):
+			programs[p] = 0
+		chunks.append({program = programs, repeats = 0, bar = bars, density = base_density, chords = [1]})
 	return chunks

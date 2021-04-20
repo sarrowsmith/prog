@@ -72,5 +72,5 @@ func _on_SoundfontDialog_file_selected(path):
 	parameters.Soundfont = path
 
 
-func _on_MidiPlayer_finished():
+func _on_RandomPlayer_finished():
 	$Controls.find_node("Play").pressed = false
