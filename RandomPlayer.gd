@@ -88,7 +88,7 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 	var volume = DEFAULT
 	match track:
 		Structure.CHORDS:
-			if down_beat or rng.randf() <= 0.5 * chunk.density:
+			if down_beat or rng.randf() < chunk.density:
 				for note in chord:
 # warning-ignore:integer_division
 					notes.append(make_note(note, note_length, volume / 4))
@@ -97,14 +97,18 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 				notes.append(make_note(root % 8, signature, volume / 2))
 		Structure.DRUMS:
 			pass
+		Structure.PERCUSSION:
+			if rng.randf() < chunk.density:
+				volume = 3 * volume / 2
+# warning-ignore:integer_division
+				notes.append(make_note(chord.front(), note_length, volume))
+				if rng.randf() < chunk.density:
+					notes.append(make_note(chord.back(), note_length, volume))
 		Structure.COUNTER_HARMONY, Structure.DESCANT:
 			volume = 2 * volume / 3
 			continue
-		Structure.PERCUSSION:
-			volume = 3 * volume / 2
-			continue
 		_:
-			if rng.randf() <= 0.5 * chunk.density:
+			if rng.randf() < chunk.density:
 				notes.append(make_note(Structure.choose(chord, rng), note_length, volume))
 	return notes
 
@@ -120,7 +124,7 @@ func create_bar(track: int, chunk: Dictionary, iteration: int, root: int, time: 
 			skip -= 1
 			continue
 		var note_length = 1.0 if chunk.repeats else signature
-		if signature - beat > 1 and rng.randf() <= chunk.density:
+		if signature - beat > 1 and rng.randf() > chunk.density:
 			note_length = rng.randi_range(2, signature - beat)
 			skip = note_length - 1
 		for note in create_note(track, down_beat, chord, root, note_length, chunk):
@@ -160,21 +164,25 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	for i in max(chunk.repeats, 1):
 		rng.seed = reseed
 		notes += create_loop(track, chunk, i)
-	if chunk.repeats and track > Structure.DRONE and track != Structure.DRUMS:
-		var iterations = chunk.intricacy
-		if iterations > 0:
-			match track:
-				Structure.MELODY, Structure.PERCUSSION, Structure.DESCANT:
-					pass
-				_:
-					iterations -= 1
-		for i in iterations:
+	if chunk.repeats:
+		var iterations = 0
+		match track:
+			Structure.DRONE, Structure.DRUMS:
+				pass
+			Structure.MELODY, Structure.PERCUSSION, Structure.DESCANT:
+				iterations = chunk.intricacy
+			Structure.CHORDS, Structure.BASS:
+				iterations -= 1
+				continue
+			_:
+				iterations -= 1
+		for i in max(0, iterations):
 			var note_length = timebase / (2 * (1 + i))
 			var n = 0
 			while n < len(notes) - 1:
 				var before = notes[n]
 				n += 1
-				if notes[n][0] - before[0] > 2 * note_length or rng.randf() <= chunk.density:
+				if notes[n][0] - before[0] != 2 * note_length or rng.randf() > chunk.density:
 					continue
 				before[1][DURATION] = note_length
 				var note = [before[0] + note_length, before[1].duplicate()]
@@ -225,9 +233,9 @@ func play(rng_seed: int, parameters: Dictionary):
 	if parameters.has("Mode"):
 		mode = parameters.Mode
 	if parameters.has("Signature"):
-		signature = parameters.Signature * 2
+		signature = parameters.Signature
 	$MidiPlayer.smf_data = create_smf(parameters)
-	$MidiPlayer.tempo = parameters.Tempo * 2
+	$MidiPlayer.tempo = parameters.Tempo
 	$MidiPlayer.play()
 
 

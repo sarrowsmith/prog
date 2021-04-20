@@ -134,6 +134,8 @@ caret_blink = true
 caret_blink_speed = 0.5
 
 [node name="Play" type="Button" parent="Controls/Menu"]
+anchor_left = -0.0403226
+anchor_right = -0.0403226
 margin_top = 224.0
 margin_right = 372.0
 margin_bottom = 244.0
