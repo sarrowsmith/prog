@@ -160,3 +160,4 @@ soundfont = "res://resources/default-GM.sf2"
 [connection signal="pressed" from="Controls/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
+[connection signal="finished" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_finished"]

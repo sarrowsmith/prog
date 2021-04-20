@@ -120,7 +120,7 @@ func create_bar(track: int, chunk: Dictionary, iteration: int, root: int, time: 
 			skip -= 1
 			continue
 		var note_length = 1.0 if chunk.repeats else signature
-		if signature - beat > 1 and rng.randf() <= 0.5 * chunk.density:
+		if signature - beat > 1 and rng.randf() <= chunk.density:
 			note_length = rng.randi_range(2, signature - beat)
 			skip = note_length - 1
 		for note in create_note(track, down_beat, chord, root, note_length, chunk):

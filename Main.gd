@@ -70,3 +70,8 @@ func _on_OpenSoundfont_pressed():
 
 func _on_SoundfontDialog_file_selected(path):
 	parameters.Soundfont = path
+
+
+func _on_MidiPlayer_finished():
+	$Controls.find_node("Play").pressed = false
+	#_on_Play_toggled(false)
