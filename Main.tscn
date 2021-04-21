@@ -213,7 +213,7 @@ current_path = "/home/sion/Godot/Projects/Prog/"
 
 [node name="RandomPlayer" type="Node" parent="."]
 script = ExtResource( 4 )
-soundfont = "res://resources/default-GM.sf2"
+soundfont = "res://resources/MuseScore_General_Full.sf2"
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 [connection signal="pressed" from="Controls/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
