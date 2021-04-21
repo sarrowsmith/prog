@@ -11,7 +11,7 @@ export(int) var key = 0
 export(int) var timebase = 48
 export(int) var mode = 3
 export(int) var signature = 4
-export(int) var tempo = 120
+export(int) var tempo = 130
 export(int) var movement = 30 # minimum length in bars
 
 enum {PITCH, DURATION, VOLUME}
@@ -104,10 +104,10 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 			if down_beat or rng.randf() < chunk.density:
 				for note in chord:
 # warning-ignore:integer_division
-					notes.append(make_note(note, note_length, volume / 4))
+					notes.append(make_note(note, note_length, volume / 2))
 		Structure.DRONE:
 			if down_beat:
-				notes.append(make_note(root % 8, signature, volume / 2))
+				notes.append(make_note(root % 8, signature, volume / 4))
 		Structure.DRUMS:
 			pass
 		Structure.PERCUSSION:
@@ -117,7 +117,7 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 				notes.append(make_note(chord.front(), note_length, volume))
 				if rng.randf() < chunk.density:
 					notes.append(make_note(chord.back(), note_length, volume))
-		Structure.COUNTER_HARMONY, Structure.DESCANT:
+		Structure.BASS, Structure.COUNTER_HARMONY, Structure.DESCANT:
 			volume = 2 * volume / 3
 			continue
 		_:

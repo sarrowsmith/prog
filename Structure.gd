@@ -106,11 +106,11 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 	var bars = 1
 	var top = HARMONY
 	while bars < length:
-		var repeats = 1 + rng.randi_range(1, 5)
+		var repeats = 1 + rng.randi_range(1, 1 + base_intricacy / 2)
 		var chords = choose(Loops, rng)
 		var program = programs.duplicate()
 		var chunk = len(chunks)
-		top = max(0, (chunk - 1)) + HARMONY
+		top = max(0, 2 * (chunk - 1)) + HARMONY
 		if top > DRUMS and bars + repeats < length and rng.randf() <= base_density:
 			top = rng.randi_range(DESCANT, 15)
 		for p in range(top, 16):

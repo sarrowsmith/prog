@@ -11,7 +11,7 @@ var parameters = {
 	Tracks = 16,
 	Density = 50,
 	Intricacy = 50,
-	Tempo = 120,
+	Tempo = 130,
 	Length = 41,
 }
 

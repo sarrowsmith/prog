@@ -142,8 +142,8 @@ margin_right = 227.0
 margin_bottom = 44.0
 size_flags_horizontal = 3
 min_value = 60.0
-max_value = 240.0
-value = 120.0
+max_value = 210.0
+value = 130.0
 
 [node name="Tempo2" type="SpinBox" parent="Controls/Menu/GridContainer3"]
 margin_left = 231.0
@@ -152,8 +152,8 @@ margin_right = 371.0
 margin_bottom = 52.0
 size_flags_horizontal = 3
 min_value = 60.0
-max_value = 240.0
-value = 120.0
+max_value = 210.0
+value = 130.0
 suffix = "bpm"
 __meta__ = {
 "_edit_use_anchors_": false
