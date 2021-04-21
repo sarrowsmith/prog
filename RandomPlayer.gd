@@ -162,6 +162,16 @@ func create_loop(track: int, chunk: Dictionary, iteration: int) -> Array:
 	return notes
 
 
+func create_insertion(notes: Array, n: int, note_length: int, chunk: Dictionary) -> Array:
+	var before = notes[n]
+	n += 1
+	var after = notes[n]
+	if after[0] - before[0] != 2 * note_length or rng.randf() > chunk.density:
+		return []
+	before[1][DURATION] = note_length
+	return [[before[0] + note_length, before[1].duplicate()]]
+
+
 func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
 	var bar_length = timebase * signature
@@ -193,14 +203,10 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 			var note_length = timebase / (2 * (1 + i))
 			var n = 0
 			while n < len(notes) - 1:
-				var before = notes[n]
-				n += 1
-				if notes[n][0] - before[0] != 2 * note_length or rng.randf() > chunk.density:
-					continue
-				before[1][DURATION] = note_length
-				var note = [before[0] + note_length, before[1].duplicate()]
-				notes = notes.slice(0, n - 1) + [[before[0] + note_length, before[1].duplicate()]] + notes.slice(n, len(notes) - 1)
-				n += 1
+				var note = create_insertion(notes, n, note_length, chunk)
+				if note:
+					notes = notes.slice(0, n) + note + notes.slice(n + 1, len(notes) - 1)
+				n += len(note) + 1
 	var octave = Structure.get_octave(style, track)
 	var scale = Scales[Modes[mode]]
 	for event in notes:
@@ -272,6 +278,7 @@ func play(rng_seed: int, parameters: Dictionary):
 			queue.push_back([create_smf(parameters, i + 1 == movements), parameters.Tempo])
 	else:
 		queue.push_back([create_smf(parameters, true), parameters.Tempo])
+# warning-ignore:return_value_discarded
 	play_next()
 
 
