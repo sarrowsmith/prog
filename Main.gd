@@ -33,6 +33,7 @@ func _ready():
 		if control:
 			control.share($Controls.find_node(parameter))
 			control.value = parameters[parameter]
+	$Controls.find_node("Play").grab_focus()
 
 
 func _process(_delta):
@@ -43,6 +44,23 @@ func _process(_delta):
 	# May be below 0 (did not begin yet).
 	time = max(0, time)
 	#print("Time is: ", time)
+
+
+func set_active(name: String, on: bool):
+	var control = $Controls.find_node(name)
+	if control:
+		if control is Button:
+			control.disabled = not on
+		else:
+			control.editable = on
+
+
+func enable_controls(on: bool):
+	for parameter in parameters:
+		set_active(parameter, on)
+		set_active(parameter + "2", on)
+	set_active("OpenSoundfont", on)
+	set_active("Feed", on)
 
 
 func get_value(name: String):
@@ -66,6 +84,7 @@ func _on_Play_toggled(button_pressed):
 		$RandomPlayer.play($Controls.find_node("Seed").text.hash(), parameters)
 	else:
 		$RandomPlayer.stop()
+	enable_controls(not button_pressed)
 
 
 func _on_OpenSoundfont_pressed():
