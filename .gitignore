@@ -10,6 +10,7 @@ data_*/
 
 # Shouldn't keep fonts in version control
 *.ttf
+*.otf
 *.sf2
 
 # Godot-git ignores
