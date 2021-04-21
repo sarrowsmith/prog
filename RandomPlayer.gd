@@ -162,14 +162,33 @@ func create_loop(track: int, chunk: Dictionary, iteration: int) -> Array:
 	return notes
 
 
-func create_insertion(notes: Array, n: int, note_length: int, chunk: Dictionary) -> Array:
+func create_insertion(notes: Array, n: int, iteration: int, chunk: Dictionary) -> Array:
+	var note_length = timebase / (2 * iteration)
 	var before = notes[n]
 	n += 1
 	var after = notes[n]
-	if after[0] - before[0] != 2 * note_length or rng.randf() > chunk.density:
+	if after[0] - before[0] != 2 * note_length or rng.randf() < chunk.density / iteration:
 		return []
+	var note = [before[0] + note_length, before[1].duplicate()]
+	var pitch = 0
+	match rng.randi_range(0, 2):
+		0:
+			pass
+		1:
+			pitch = rng.randi_range(-2,+2) * 2
+		_:
+			var gap = after[1][PITCH] - before[1][PITCH]
+			var change = int(abs(gap))
+			match change:
+				0:
+					pitch = rng.randi_range(-1,+1)
+				1:
+					pass
+				_:
+					pitch = rng.randi_range(-2,+2) * 2 if change % 2 else gap / 2
+	note[1][PITCH] += pitch
 	before[1][DURATION] = note_length
-	return [[before[0] + note_length, before[1].duplicate()]]
+	return [note]
 
 
 func create_chunk(track: int, chunk: Dictionary) -> Array:
@@ -200,10 +219,9 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 			_:
 				iterations -= 1
 		for i in max(0, iterations):
-			var note_length = timebase / (2 * (1 + i))
 			var n = 0
 			while n < len(notes) - 1:
-				var note = create_insertion(notes, n, note_length, chunk)
+				var note = create_insertion(notes, n, i + 1, chunk)
 				if note:
 					notes = notes.slice(0, n) + note + notes.slice(n + 1, len(notes) - 1)
 				n += len(note) + 1
