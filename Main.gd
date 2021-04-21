@@ -28,7 +28,11 @@ func _ready():
 	styles.add_item("Random")
 	for style in Structure.Banks:
 		styles.add_item(style)
-	$Controls.find_node("Length").value = parameters.Length
+	for parameter in parameters:
+		var control = $Controls.find_node(parameter + "2")
+		if control:
+			control.share($Controls.find_node(parameter))
+			control.value = parameters[parameter]
 
 
 func _process(_delta):
@@ -74,3 +78,7 @@ func _on_SoundfontDialog_file_selected(path):
 
 func _on_RandomPlayer_finished():
 	$Controls.find_node("Play").pressed = false
+
+
+func _on_MidiPlayer_changed_tempo(tempo):
+	$Controls.find_node("Tempo").value = tempo

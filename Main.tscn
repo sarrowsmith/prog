@@ -34,45 +34,85 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Mode" type="OptionButton" parent="Controls/Menu"]
-margin_right = 372.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-text = "Mode"
-
-[node name="Style" type="OptionButton" parent="Controls/Menu"]
-margin_top = 24.0
-margin_right = 372.0
-margin_bottom = 44.0
-size_flags_horizontal = 3
-text = "Style"
-
 [node name="Tracks" type="SpinBox" parent="Controls/Menu"]
-margin_top = 48.0
 margin_right = 372.0
-margin_bottom = 72.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 16.0
 value = 16.0
 suffix = "tracks"
 
-[node name="GridContainer" type="GridContainer" parent="Controls/Menu"]
-margin_top = 76.0
+[node name="GridContainer2" type="GridContainer" parent="Controls/Menu"]
+margin_top = 28.0
 margin_right = 372.0
-margin_bottom = 112.0
-size_flags_horizontal = 3
+margin_bottom = 104.0
 columns = 2
 
-[node name="Label" type="Label" parent="Controls/Menu/GridContainer"]
-margin_top = 1.0
-margin_right = 55.0
-margin_bottom = 15.0
+[node name="Mode" type="OptionButton" parent="Controls/Menu/GridContainer2"]
+margin_right = 184.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Mode"
+
+[node name="Style" type="OptionButton" parent="Controls/Menu/GridContainer2"]
+margin_left = 188.0
+margin_right = 372.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Style"
+
+[node name="Label5" type="Label" parent="Controls/Menu/GridContainer2"]
+margin_top = 29.0
+margin_right = 184.0
+margin_bottom = 43.0
+text = "Random seed"
+
+[node name="Seed" type="LineEdit" parent="Controls/Menu/GridContainer2"]
+margin_left = 188.0
+margin_top = 24.0
+margin_right = 372.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+placeholder_text = "seed"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="Label2" type="Label" parent="Controls/Menu/GridContainer2"]
+margin_top = 57.0
+margin_right = 184.0
+margin_bottom = 71.0
+text = "Intricacy"
+
+[node name="Intricacy" type="SpinBox" parent="Controls/Menu/GridContainer2"]
+margin_left = 188.0
+margin_top = 52.0
+margin_right = 372.0
+margin_bottom = 76.0
+size_flags_horizontal = 3
+max_value = 4.0
+value = 2.0
+rounded = true
+
+[node name="GridContainer3" type="GridContainer" parent="Controls/Menu"]
+margin_top = 108.0
+margin_right = 372.0
+margin_bottom = 188.0
+size_flags_horizontal = 3
+columns = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Controls/Menu/GridContainer3"]
+margin_top = 5.0
+margin_right = 83.0
+margin_bottom = 19.0
 text = "Density"
 
-[node name="Density" type="HSlider" parent="Controls/Menu/GridContainer"]
-margin_left = 59.0
-margin_right = 372.0
+[node name="Density" type="HSlider" parent="Controls/Menu/GridContainer3"]
+margin_left = 87.0
+margin_right = 227.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 value = 50.0
@@ -80,65 +120,82 @@ rounded = true
 tick_count = 9
 ticks_on_borders = true
 
-[node name="Label2" type="Label" parent="Controls/Menu/GridContainer"]
-margin_top = 21.0
-margin_right = 55.0
-margin_bottom = 35.0
-text = "Intricacy"
-
-[node name="Intricacy" type="HSlider" parent="Controls/Menu/GridContainer"]
-margin_left = 59.0
-margin_top = 20.0
-margin_right = 372.0
-margin_bottom = 36.0
+[node name="Density2" type="SpinBox" parent="Controls/Menu/GridContainer3"]
+margin_left = 231.0
+margin_right = 371.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
-max_value = 4.0
-value = 2.0
+value = 50.0
 rounded = true
-tick_count = 5
-ticks_on_borders = true
+suffix = "%"
 
-[node name="Tempo" type="SpinBox" parent="Controls/Menu"]
-margin_top = 116.0
-margin_right = 372.0
-margin_bottom = 140.0
+[node name="Label3" type="Label" parent="Controls/Menu/GridContainer3"]
+margin_top = 33.0
+margin_right = 83.0
+margin_bottom = 47.0
+text = "Tempo"
+
+[node name="Tempo" type="HSlider" parent="Controls/Menu/GridContainer3"]
+margin_left = 87.0
+margin_top = 28.0
+margin_right = 227.0
+margin_bottom = 44.0
+size_flags_horizontal = 3
+min_value = 60.0
+max_value = 240.0
+value = 120.0
+
+[node name="Tempo2" type="SpinBox" parent="Controls/Menu/GridContainer3"]
+margin_left = 231.0
+margin_top = 28.0
+margin_right = 371.0
+margin_bottom = 52.0
 size_flags_horizontal = 3
 min_value = 60.0
 max_value = 240.0
 value = 120.0
 suffix = "bpm"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Length" type="SpinBox" parent="Controls/Menu"]
-margin_top = 144.0
-margin_right = 372.0
-margin_bottom = 168.0
+[node name="Label4" type="Label" parent="Controls/Menu/GridContainer3"]
+margin_top = 61.0
+margin_right = 83.0
+margin_bottom = 75.0
+text = "Target length"
+
+[node name="Length" type="HSlider" parent="Controls/Menu/GridContainer3"]
+margin_left = 87.0
+margin_top = 56.0
+margin_right = 227.0
+margin_bottom = 72.0
 size_flags_horizontal = 3
 min_value = 1.0
-max_value = 65536.0
+max_value = 1024.0
+value = 512.0
+
+[node name="Length2" type="SpinBox" parent="Controls/Menu/GridContainer3"]
+margin_left = 231.0
+margin_top = 56.0
+margin_right = 371.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 1024.0
 value = 1.0
 suffix = "bars"
 
 [node name="OpenSoundfont" type="Button" parent="Controls/Menu"]
-margin_top = 172.0
+margin_top = 192.0
 margin_right = 372.0
-margin_bottom = 192.0
+margin_bottom = 212.0
 text = "Soundfont"
 
-[node name="Seed" type="LineEdit" parent="Controls/Menu"]
-margin_top = 196.0
-margin_right = 372.0
-margin_bottom = 220.0
-size_flags_horizontal = 3
-placeholder_text = "seed"
-caret_blink = true
-caret_blink_speed = 0.5
-
 [node name="Play" type="Button" parent="Controls/Menu"]
-anchor_left = -0.0403226
-anchor_right = -0.0403226
-margin_top = 224.0
+margin_top = 216.0
 margin_right = 372.0
-margin_bottom = 244.0
+margin_bottom = 236.0
 size_flags_horizontal = 3
 toggle_mode = true
 text = "Play!"
@@ -146,7 +203,7 @@ text = "Play!"
 [node name="SoundfontDialog" type="FileDialog" parent="."]
 margin_right = 480.0
 margin_bottom = 320.0
-window_title = "Select Soundfont"
+window_title = "Open a File"
 resizable = true
 mode = 0
 access = 2
@@ -157,11 +214,11 @@ current_path = "/home/sion/Godot/Projects/Prog/"
 [node name="RandomPlayer" type="Node" parent="."]
 script = ExtResource( 4 )
 soundfont = "res://resources/default-GM.sf2"
-movement = 20
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 [connection signal="pressed" from="Controls/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
 [connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]
+[connection signal="changed_tempo" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_changed_tempo"]
 [connection signal="finished" from="RandomPlayer/MidiPlayer" to="RandomPlayer" method="_on_MidiPlayer_finished"]

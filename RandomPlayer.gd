@@ -12,7 +12,7 @@ export(int) var timebase = 48
 export(int) var mode = 3
 export(int) var signature = 4
 export(int) var tempo = 120
-export(int) var movement = 90 # minimum length in bars
+export(int) var movement = 30 # minimum length in bars
 
 enum {PITCH, DURATION, VOLUME}
 
@@ -165,7 +165,7 @@ func create_loop(track: int, chunk: Dictionary, iteration: int) -> Array:
 func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
 	var bar_length = timebase * signature
-	var time = chunk.bar * bar_length - timebase * (signature - 1)
+	var time = (chunk.bar - 1) * bar_length + 1
 	var chunk_length = len(chunk.chords) * bar_length
 	if track != Structure.DRUMS:
 		var program = chunk.program[track]
@@ -220,16 +220,16 @@ func create_track(track: int, structure: Array) -> Array:
 	for chunk in structure:
 		events += create_chunk(track, chunk)
 	if events:
-		endtime = events.back().time + signature * timebase
+		endtime = events.back().time + 1
 		var eot = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.end_of_track})
 		events.append(SMF.MIDIEventChunk.new(endtime, track, eot))
 	return events
 
 
-func create_smf(parameters: Dictionary) -> Dictionary:
+func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
-	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, len(queue) == movements, rng)
+	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, final, rng)
 	while track < parameters.Tracks:
 		tracks.append(SMF.MIDITrack.new(track, create_track(track, structure)))
 		track += 1
@@ -251,6 +251,10 @@ func play(rng_seed: int, parameters: Dictionary):
 		mode = parameters.Mode
 	if parameters.has("Signature"):
 		signature = parameters.Signature
+	if parameters.has("Tempo"):
+		tempo = parameters.Tempo
+	else:
+		parameters.Tempo = tempo
 	if movements:
 		adjustments[0] = parameters.duplicate()
 		for i in movements:
@@ -265,9 +269,9 @@ func play(rng_seed: int, parameters: Dictionary):
 						parameters.Length = int((4 * parameters.Length) / (movements * adjustment.Length))
 					_:
 						parameters[parameter] *= adjustment[parameter]
-			queue.push_back([create_smf(parameters), parameters.Tempo])
+			queue.push_back([create_smf(parameters, i + 1 == movements), parameters.Tempo])
 	else:
-		queue.push_back([create_smf(parameters), parameters.Tempo])
+		queue.push_back([create_smf(parameters, true), parameters.Tempo])
 	play_next()
 
 
@@ -287,4 +291,5 @@ func stop():
 
 func _on_MidiPlayer_finished():
 	if not play_next():
+		$MidiPlayer.tempo = tempo
 		emit_signal("finished")
