@@ -2,8 +2,8 @@ class_name Structure
 
 
 # track to octave, using tracks for:
-enum {CHORDS, DRONE, BASS, MELODY, HARMONY, RHYTHM, PERCUSSION, COUNTER_HARMONY, DESCANT, DRUMS, OTHER}
-const Octaves = [4, 3, 3, 5, 5, 5, 5, 6, 7, 5, 5]
+enum {CHORDS, DRONE, BASS, MELODY, HARMONY, RHYTHM, PERCUSSION, COUNTER, DESCANT, DRUMS, OTHER}
+const Octaves = [4, 3, 3, 5, 5, 4, 5, 6, 7, 5, 5]
 const Banks = {
 	Orchestral = [
 		[1, 2, 20, 41, 47, 49, 50, 62],
@@ -58,7 +58,7 @@ const Banks = {
 		[81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96],
 	],
 }
-const Overrides = {BASS: 4, COUNTER_HARMONY: 5, DESCANT: 6}
+const Overrides = {BASS: 4, COUNTER: 5, DESCANT: 6}
 
 const Loops = [
 	[1, 3, 5, 4],
@@ -106,6 +106,7 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 	var bars = 1
 	var top = HARMONY
 	while bars < length:
+# warning-ignore:integer_division
 		var repeats = 1 + rng.randi_range(1, 1 + base_intricacy / 2)
 		var chords = choose(Loops, rng)
 		var program = programs.duplicate()

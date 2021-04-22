@@ -99,6 +99,8 @@ func create_drums(chunk: Dictionary, iteration: int) -> Array:
 func create_note(track: int, down_beat: bool, chord: Array, root: int, note_length: int, chunk: Dictionary) -> Array:
 	var notes = []
 	var volume = DEFAULT
+	if down_beat:
+		volume *= 1.1
 	match track:
 		Structure.CHORDS:
 			if down_beat or rng.randf() < chunk.density:
@@ -107,9 +109,12 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 					notes.append(make_note(note, note_length, volume / 2))
 		Structure.DRONE:
 			if down_beat:
-				notes.append(make_note(root % 8, signature, volume / 4))
+				notes.append(make_note(root % 8, signature, volume / 3))
 		Structure.DRUMS:
 			pass
+		Structure.RHYTHM:
+# warning-ignore:narrowing_conversion
+			notes.append(make_note(max(chord[0], chord[2]), note_length, volume))
 		Structure.PERCUSSION:
 			if rng.randf() < chunk.density:
 				volume = 3 * volume / 2
@@ -117,7 +122,7 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 				notes.append(make_note(chord.front(), note_length, volume))
 				if rng.randf() < chunk.density:
 					notes.append(make_note(chord.back(), note_length, volume))
-		Structure.BASS, Structure.COUNTER_HARMONY, Structure.DESCANT:
+		Structure.BASS, Structure.COUNTER, Structure.DESCANT:
 			volume = 2 * volume / 3
 			continue
 		_:
@@ -162,7 +167,7 @@ func create_loop(track: int, chunk: Dictionary, iteration: int) -> Array:
 	return notes
 
 
-func create_insertion(notes: Array, n: int, iteration: int, chunk: Dictionary) -> Array:
+func create_insertion(notes: Array, n: int, iteration: int, chunk: Dictionary, triplet: bool) -> Array:
 	var note_length = timebase / (2 * iteration)
 	var before = notes[n]
 	n += 1
@@ -171,23 +176,40 @@ func create_insertion(notes: Array, n: int, iteration: int, chunk: Dictionary) -
 		return []
 	var note = [before[0] + note_length, before[1].duplicate()]
 	var pitch = 0
-	match rng.randi_range(0, 2):
+	var gap = after[1][PITCH] - before[1][PITCH]
+	var change = int(abs(gap))
+	var how = -1
+	if change < 8:
+		how = rng.randi_range(0, 2)
+	match how:
 		0:
 			pass
 		1:
+			if triplet:
+				continue
 			pitch = rng.randi_range(-2,+2) * 2
 		_:
-			var gap = after[1][PITCH] - before[1][PITCH]
-			var change = int(abs(gap))
 			match change:
 				0:
 					pitch = rng.randi_range(-1,+1)
 				1:
 					pass
 				_:
-					pitch = rng.randi_range(-2,+2) * 2 if change % 2 else gap / 2
+					if triplet and not change % 3:
+						note_length = timebase / (3 * iteration)
+						pitch = gap / 3
+					elif change % 2:
+						pitch = rng.randi_range(-2,+2) * 2 if how > 0 else 4 * sign(gap)
+					else:
+						pitch = gap / 2
 	note[1][PITCH] += pitch
+	note[1][DURATION] = note_length
+	note[1][VOLUME] *= 0.9
 	before[1][DURATION] = note_length
+	if triplet:
+		var note2 = note.duplicate()
+		note2[1][PITCH] += pitch
+		return [note, note2]
 	return [note]
 
 
@@ -195,7 +217,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
 	var bar_length = timebase * signature
 	var time = (chunk.bar - 1) * bar_length + 1
-	var chunk_length = len(chunk.chords) * bar_length
+
 	if track != Structure.DRUMS:
 		var program = chunk.program[track]
 		if not program:
@@ -212,16 +234,19 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 			Structure.DRONE, Structure.DRUMS:
 				pass
 			Structure.MELODY, Structure.PERCUSSION, Structure.DESCANT:
-				iterations = chunk.intricacy
+				iterations = +1
+				continue
 			Structure.CHORDS, Structure.BASS:
-				iterations -= 1
+				iterations = -1
 				continue
 			_:
-				iterations -= 1
+				iterations += chunk.intricacy - 1
+		var triplet = iterations / 4
 		for i in max(0, iterations):
+			var iteration = max(1, i + 1 - triplet)
 			var n = 0
 			while n < len(notes) - 1:
-				var note = create_insertion(notes, n, i + 1, chunk)
+				var note = create_insertion(notes, n, iteration, chunk, triplet)
 				if note:
 					notes = notes.slice(0, n) + note + notes.slice(n + 1, len(notes) - 1)
 				n += len(note) + 1

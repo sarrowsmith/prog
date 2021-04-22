@@ -212,7 +212,6 @@ toggle_mode = true
 text = "Play!"
 
 [node name="SoundfontDialog" type="FileDialog" parent="."]
-visible = true
 margin_right = 640.0
 margin_bottom = 320.0
 theme = ExtResource( 1 )
