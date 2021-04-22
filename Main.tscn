@@ -37,7 +37,7 @@ __meta__ = {
 }
 
 [node name="Tracks" type="SpinBox" parent="Controls/Menu"]
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 31.0
 size_flags_horizontal = 3
 min_value = 1.0
@@ -47,33 +47,33 @@ suffix = "tracks"
 
 [node name="GridContainer2" type="GridContainer" parent="Controls/Menu"]
 margin_top = 35.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 132.0
 columns = 2
 
 [node name="Mode" type="OptionButton" parent="Controls/Menu/GridContainer2"]
-margin_right = 212.0
+margin_right = 184.0
 margin_bottom = 27.0
 size_flags_horizontal = 3
 text = "Mode"
 
 [node name="Style" type="OptionButton" parent="Controls/Menu/GridContainer2"]
-margin_left = 216.0
-margin_right = 428.0
+margin_left = 188.0
+margin_right = 372.0
 margin_bottom = 27.0
 size_flags_horizontal = 3
 text = "Style"
 
 [node name="Label5" type="Label" parent="Controls/Menu/GridContainer2"]
 margin_top = 36.0
-margin_right = 212.0
+margin_right = 184.0
 margin_bottom = 57.0
 text = "Random seed"
 
 [node name="Seed" type="LineEdit" parent="Controls/Menu/GridContainer2"]
-margin_left = 216.0
+margin_left = 188.0
 margin_top = 31.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 62.0
 size_flags_horizontal = 3
 placeholder_text = "seed"
@@ -82,14 +82,14 @@ caret_blink_speed = 0.5
 
 [node name="Label2" type="Label" parent="Controls/Menu/GridContainer2"]
 margin_top = 71.0
-margin_right = 212.0
+margin_right = 184.0
 margin_bottom = 92.0
 text = "Intricacy"
 
 [node name="Intricacy" type="SpinBox" parent="Controls/Menu/GridContainer2"]
-margin_left = 216.0
+margin_left = 188.0
 margin_top = 66.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 97.0
 size_flags_horizontal = 3
 max_value = 4.0
@@ -98,24 +98,24 @@ rounded = true
 
 [node name="GridContainer3" type="VBoxContainer" parent="Controls/Menu"]
 margin_top = 136.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 297.0
 size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Controls/Menu/GridContainer3"]
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 31.0
 
 [node name="Label" type="Label" parent="Controls/Menu/GridContainer3/HBoxContainer"]
 margin_top = 5.0
-margin_right = 212.0
+margin_right = 184.0
 margin_bottom = 26.0
 size_flags_horizontal = 3
 text = "Density"
 
 [node name="Density2" type="SpinBox" parent="Controls/Menu/GridContainer3/HBoxContainer"]
-margin_left = 216.0
-margin_right = 428.0
+margin_left = 188.0
+margin_right = 372.0
 margin_bottom = 31.0
 size_flags_horizontal = 3
 value = 50.0
@@ -124,7 +124,7 @@ suffix = "%"
 
 [node name="Density" type="HSlider" parent="Controls/Menu/GridContainer3"]
 margin_top = 35.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 51.0
 size_flags_horizontal = 3
 value = 50.0
@@ -134,19 +134,19 @@ ticks_on_borders = true
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Controls/Menu/GridContainer3"]
 margin_top = 55.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 86.0
 
 [node name="Label3" type="Label" parent="Controls/Menu/GridContainer3/HBoxContainer2"]
 margin_top = 5.0
-margin_right = 212.0
+margin_right = 184.0
 margin_bottom = 26.0
 size_flags_horizontal = 3
 text = "Tempo"
 
 [node name="Tempo2" type="SpinBox" parent="Controls/Menu/GridContainer3/HBoxContainer2"]
-margin_left = 216.0
-margin_right = 428.0
+margin_left = 188.0
+margin_right = 372.0
 margin_bottom = 31.0
 size_flags_horizontal = 3
 min_value = 60.0
@@ -159,28 +159,30 @@ __meta__ = {
 
 [node name="Tempo" type="HSlider" parent="Controls/Menu/GridContainer3"]
 margin_top = 90.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 106.0
 size_flags_horizontal = 3
 min_value = 60.0
 max_value = 210.0
 value = 130.0
+tick_count = 16
+ticks_on_borders = true
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Controls/Menu/GridContainer3"]
 margin_top = 110.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 141.0
 
 [node name="Label4" type="Label" parent="Controls/Menu/GridContainer3/HBoxContainer3"]
 margin_top = 5.0
-margin_right = 212.0
+margin_right = 184.0
 margin_bottom = 26.0
 size_flags_horizontal = 3
 text = "Target length"
 
 [node name="Length2" type="SpinBox" parent="Controls/Menu/GridContainer3/HBoxContainer3"]
-margin_left = 216.0
-margin_right = 428.0
+margin_left = 188.0
+margin_right = 372.0
 margin_bottom = 31.0
 size_flags_horizontal = 3
 min_value = 1.0
@@ -190,22 +192,24 @@ suffix = "bars"
 
 [node name="Length" type="HSlider" parent="Controls/Menu/GridContainer3"]
 margin_top = 145.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 161.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 1024.0
 value = 512.0
+tick_count = 17
+ticks_on_borders = true
 
 [node name="OpenSoundfont" type="Button" parent="Controls/Menu"]
 margin_top = 301.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 328.0
 text = "Soundfont"
 
 [node name="Play" type="Button" parent="Controls/Menu"]
 margin_top = 332.0
-margin_right = 428.0
+margin_right = 372.0
 margin_bottom = 359.0
 size_flags_horizontal = 3
 toggle_mode = true
