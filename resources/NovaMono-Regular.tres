@@ -1,7 +1,6 @@
 [gd_resource type="DynamicFont" load_steps=2 format=2]
 
-[sub_resource type="DynamicFontData" id=1441]
-font_path = "res://resources/NovaMono-Regular.ttf"
+[ext_resource path="res://resources/fonts/NovaMono-Regular.tres" type="DynamicFontData" id=1]
 
 [resource]
-font_data = SubResource( 1441 )
+font_data = ExtResource( 1 )
