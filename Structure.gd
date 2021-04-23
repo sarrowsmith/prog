@@ -12,7 +12,7 @@ const Banks = {
 		[1, 2, 7, 41, 47, 57, 58, 60, 61, 69, 70, 72, 74],
 		[1, 2, 7, 41, 47, 57, 58, 60, 61, 69, 70, 72, 74],
 		[1, 2, 20, 41, 47, 49, 50, 62],
-		[10, 12, 13, 14, 46],
+		[10, 12, 13, 14, 15, 46],
 		[1, 2, 41, 57, 65, 72, 73],
 		[1, 2, 41, 57, 65, 72, 73],
 		[0],
@@ -27,7 +27,7 @@ const Banks = {
 		[3, 22, 25, 26],
 		[4, 10, 16, 109, 115],
 		[2, 3, 4, 25, 26, 27, 41, 47, 65, 66, 73, 74, 75],
-		[2, 3, 4, 25, 26, 27, 41, 47, 65, 66, 73, 74, 75],
+		[2, 3, 4, 25, 26, 27, 41, 47, 65, 66, 73, 74, 75, 79],
 		[0],
 		[2, 3, 4, 25, 26, 27, 41, 47, 65, 66, 73, 74, 75, 76, 106, 111],
 	],
@@ -68,6 +68,9 @@ const Loops = [
 	[1, 4, 5, 1],
 ]
 
+static func styles() -> Array:
+	return ["Random", "Mixed", "Chaotic"] + Banks.keys()
+
 
 static func choose(from: Array, rng: RandomNumberGenerator):
 	return from[rng.randi_range(0, len(from) - 1)]
@@ -92,7 +95,14 @@ static func create_programs(style: String, rng: RandomNumberGenerator) -> Array:
 			programs.append(choose(track, rng))
 	else:
 		for track in 16:
-			programs.append(rng.randi_range(track * 8 + 1, track * 8 + 8))
+			match style:
+				"Random":
+					programs.append(rng.randi_range(track * 8 + 1, track * 8 + 8))
+				"Mixed":
+					var bank = Banks[choose(Banks.keys(), rng)]
+					programs.append(choose(bank[min(track, OTHER)], rng))
+				_:
+					programs.append(rng.randi_range(1, 128))
 	return programs
 
 

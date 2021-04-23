@@ -6,9 +6,10 @@ var time_delay
 var modes
 var styles
 var parameters = {
-	Mode = 3,
-	Style = "Random",
 	Tracks = 16,
+	Style = "Random",
+	Mode = 3,
+	Key = 7,
 	Density = 50,
 	Intricacy = 50,
 	Tempo = 130,
@@ -25,8 +26,7 @@ func _ready():
 	modes.select(parameters.Mode)
 	styles = $Controls.find_node("Style")
 	styles.clear()
-	styles.add_item("Random")
-	for style in Structure.Banks:
+	for style in Structure.styles():
 		styles.add_item(style)
 	for parameter in parameters:
 		var control = $Controls.find_node(parameter + "2")
@@ -68,7 +68,7 @@ func get_value(name: String):
 	if not control:
 		return null
 	match name:
-		"Mode":
+		"Mode", "Key":
 			return control.selected
 		"Style":
 			return control.get_item_text(control.selected)

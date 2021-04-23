@@ -86,9 +86,13 @@ func generate_chord(root: int) -> Array:
 		chord.append(root + 2 * i)
 	if seventh:
 		chord.append(root + 7 + seventh)
-	var inversion = rng.randi_range(0, 2 + seventh)
-	for i in inversion:
-		chord[i] += 7
+	var inversion = rng.randi_range(0, 1 + seventh)
+	if inversion > 1:
+		for i in range(inversion, len(chord)):
+			chord[i] -= 7
+	else:
+		for i in inversion:
+			chord[i] += 7
 	return chord
 
 
@@ -117,7 +121,7 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 			notes.append(make_note(max(chord[0], chord[2]), note_length, volume))
 		Structure.PERCUSSION:
 			if rng.randf() < chunk.density:
-				volume = 3 * volume / 2
+				volume = 2 * volume
 # warning-ignore:integer_division
 				notes.append(make_note(chord.front(), note_length, volume))
 				if rng.randf() < chunk.density:
@@ -295,7 +299,7 @@ func play(rng_seed: int, parameters: Dictionary):
 		$MidiPlayer.soundfont = soundfont
 	queue.clear()
 	if parameters.has("Key"):
-		key = parameters.Key
+		key = parameters.Key - 7 # Not an octave 7, but C - F
 	if parameters.has("Mode"):
 		mode = parameters.Mode
 	if parameters.has("Signature"):
