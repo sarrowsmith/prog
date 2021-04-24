@@ -1,4 +1,4 @@
-extends Spatial
+extends Control
 
 
 var time_begin
@@ -15,6 +15,7 @@ var parameters = {
 	Tempo = 130,
 	Length = 41,
 }
+
 
 func _ready():
 	time_begin = OS.get_ticks_usec()
@@ -34,16 +35,13 @@ func _ready():
 			control.share($Controls.find_node(parameter))
 			control.value = parameters[parameter]
 	$Controls.find_node("Play").grab_focus()
+	fade_image(1.0, 0.5, 1.0)
 
 
-func _process(_delta):
-	# Obtain from ticks.
-	var time = (OS.get_ticks_usec() - time_begin) / 1000000.0
-	# Compensate for latency.
-	time -= time_delay
-	# May be below 0 (did not begin yet).
-	time = max(0, time)
-	#print("Time is: ", time)
+func fade_image(from: float, to: float, time: float):
+	$Fader.interpolate_property($HappyKettle, "modulate", Color(1.0, 1.0, 1.0, from), Color(1.0, 1.0, 1.0, to), time)
+	$Fader.start()
+	yield($Fader, "tween_all_completed")
 
 
 func set_active(name: String, on: bool):
@@ -82,11 +80,14 @@ func _on_Play_toggled(button_pressed):
 			if value:
 				parameters[parameter] = value
 		$RandomPlayer.play($Controls.find_node("Seed").text.hash(), parameters)
+		fade_image(0.5, 0, 0.5)
 	else:
 		$RandomPlayer.stop()
+		fade_image(0.0, 0.5, 1.0)
 	enable_controls(not button_pressed)
 	$Controls.find_node("Play").text = "Stop!" if button_pressed else "Play!"
 	$Controls.find_node("Pause").disabled = not button_pressed
+	$ViewportContainer/Viewport/Visualiser.start(button_pressed)
 
 
 func _on_OpenSoundfont_pressed():
@@ -103,11 +104,4 @@ func _on_RandomPlayer_finished():
 
 func _on_MidiPlayer_changed_tempo(tempo):
 	$Controls.find_node("Tempo").value = tempo
-
-
-func _on_MidiPlayer_appeared_cue_point(cue_point):
-	print(cue_point)
-
-
-func _on_MidiPlayer_appeared_instrument_name(channel_number, name):
-	print("%d.%s" %[channel_number, name])
+	$ViewportContainer/Viewport/Visualiser.set_tempo(tempo)

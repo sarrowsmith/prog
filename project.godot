@@ -43,6 +43,11 @@ _global_script_classes=[ {
 "class": "Structure",
 "language": "GDScript",
 "path": "res://Structure.gd"
+}, {
+"base": "Spatial",
+"class": "Visualiser",
+"language": "GDScript",
+"path": "res://Visualiser.gd"
 } ]
 _global_script_class_icons={
 "AudioStreamPlayerADSR": "",
@@ -51,7 +56,8 @@ _global_script_class_icons={
 "RandomPlayer": "",
 "SMF": "",
 "SoundFont": "",
-"Structure": ""
+"Structure": "",
+"Visualiser": ""
 }
 
 [application]
@@ -72,6 +78,15 @@ window/size/test_width=1280
 window/size/test_height=720
 window/vsync/use_vsync=false
 window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+
+[editor]
+
+convert_text_resources_to_binary_on_export=true
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/midi/plugin.cfg" )
 
 [input]
 
@@ -182,12 +197,11 @@ weapon_select_down={
 
 [rendering]
 
-quality/driver/driver_name="GLES2"
-quality/intended_usage/framebuffer_allocation=0
-quality/intended_usage/framebuffer_allocation.mobile=0
+quality/intended_usage/framebuffer_allocation.mobile=2
 2d/snapping/use_gpu_pixel_snap=true
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
 environment/default_clear_color=Color( 0.0235294, 0.0627451, 0.0666667, 1 )
 environment/default_environment="res://default_env.tres"
+quality/dynamic_fonts/use_oversampling=false
 quality/2d/use_pixel_snap=true

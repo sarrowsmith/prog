@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -7,31 +7,67 @@
 [ext_resource path="res://dialog_theme.tres" type="Theme" id=5]
 [ext_resource path="res://resources/prog.png" type="Texture" id=6]
 [ext_resource path="res://Volume.gd" type="Script" id=7]
-[ext_resource path="res://Visualiser.gd" type="Script" id=8]
+[ext_resource path="res://Visualiser.tscn" type="PackedScene" id=8]
+[ext_resource path="res://visualiser_world.tres" type="World" id=9]
 
-[node name="Main" type="Spatial"]
-script = ExtResource( 2 )
-
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="Main" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HappyKettle" type="TextureRect" parent="CenterContainer"]
-modulate = Color( 1, 1, 1, 0.501961 )
+[node name="Fader" type="Tween" parent="."]
+
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+margin_left = 320.0
+margin_right = 1280.0
+margin_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="ViewportContainer"]
+size = Vector2( 960, 720 )
+size_override_stretch = true
+own_world = true
+world = ExtResource( 9 )
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="Visualiser" parent="ViewportContainer/Viewport" instance=ExtResource( 8 )]
+
+[node name="HappyKettle" type="CenterContainer" parent="."]
+margin_right = 1280.0
+margin_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Image" type="TextureRect" parent="HappyKettle"]
 margin_left = 280.0
 margin_right = 1000.0
 margin_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 texture = ExtResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Controls" type="MarginContainer" parent="."]
-anchor_bottom = 1.0
-margin_right = 276.0
+margin_right = 320.0
+margin_bottom = 720.0
+size_flags_vertical = 7
 theme = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -39,7 +75,7 @@ __meta__ = {
 
 [node name="Panel" type="Panel" parent="Controls"]
 show_behind_parent = true
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -49,7 +85,7 @@ __meta__ = {
 }
 
 [node name="Menu" type="VBoxContainer" parent="Controls"]
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -58,12 +94,12 @@ __meta__ = {
 }
 
 [node name="GridContainer2" type="GridContainer" parent="Controls/Menu"]
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 124.0
 columns = 2
 
 [node name="Tracks" type="SpinBox" parent="Controls/Menu/GridContainer2"]
-margin_right = 136.0
+margin_right = 158.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 min_value = 1.0
@@ -72,23 +108,23 @@ value = 16.0
 suffix = "tracks"
 
 [node name="Style" type="OptionButton" parent="Controls/Menu/GridContainer2"]
-margin_left = 140.0
-margin_right = 276.0
+margin_left = 162.0
+margin_right = 320.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 text = "Style"
 
 [node name="Mode" type="OptionButton" parent="Controls/Menu/GridContainer2"]
 margin_top = 32.0
-margin_right = 136.0
+margin_right = 158.0
 margin_bottom = 60.0
 size_flags_horizontal = 3
 text = "Mode"
 
 [node name="Key" type="OptionButton" parent="Controls/Menu/GridContainer2"]
-margin_left = 140.0
+margin_left = 162.0
 margin_top = 32.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 60.0
 size_flags_horizontal = 3
 text = "C"
@@ -97,14 +133,14 @@ selected = 7
 
 [node name="Label5" type="Label" parent="Controls/Menu/GridContainer2"]
 margin_top = 64.0
-margin_right = 136.0
+margin_right = 158.0
 margin_bottom = 92.0
 text = "Random seed:"
 
 [node name="Seed" type="LineEdit" parent="Controls/Menu/GridContainer2"]
-margin_left = 140.0
+margin_left = 162.0
 margin_top = 64.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 92.0
 size_flags_horizontal = 3
 placeholder_text = "seed"
@@ -113,14 +149,14 @@ caret_blink_speed = 0.5
 
 [node name="Label2" type="Label" parent="Controls/Menu/GridContainer2"]
 margin_top = 96.0
-margin_right = 136.0
+margin_right = 158.0
 margin_bottom = 124.0
 text = "Intricacy:"
 
 [node name="Intricacy" type="SpinBox" parent="Controls/Menu/GridContainer2"]
-margin_left = 140.0
+margin_left = 162.0
 margin_top = 96.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 124.0
 size_flags_horizontal = 3
 max_value = 4.0
@@ -129,23 +165,23 @@ rounded = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Controls/Menu"]
 margin_top = 128.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 280.0
 size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Controls/Menu/VBoxContainer"]
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 28.0
 
 [node name="Label" type="Label" parent="Controls/Menu/VBoxContainer/HBoxContainer"]
-margin_right = 136.0
+margin_right = 158.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 text = "Density:"
 
 [node name="Density2" type="SpinBox" parent="Controls/Menu/VBoxContainer/HBoxContainer"]
-margin_left = 140.0
-margin_right = 276.0
+margin_left = 162.0
+margin_right = 320.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 value = 50.0
@@ -154,7 +190,7 @@ suffix = "%"
 
 [node name="Density" type="HSlider" parent="Controls/Menu/VBoxContainer"]
 margin_top = 32.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 48.0
 size_flags_horizontal = 3
 value = 50.0
@@ -164,18 +200,18 @@ ticks_on_borders = true
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Controls/Menu/VBoxContainer"]
 margin_top = 52.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 80.0
 
 [node name="Label3" type="Label" parent="Controls/Menu/VBoxContainer/HBoxContainer2"]
-margin_right = 136.0
+margin_right = 158.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 text = "Tempo:"
 
 [node name="Tempo2" type="SpinBox" parent="Controls/Menu/VBoxContainer/HBoxContainer2"]
-margin_left = 140.0
-margin_right = 276.0
+margin_left = 162.0
+margin_right = 320.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 min_value = 60.0
@@ -188,7 +224,7 @@ __meta__ = {
 
 [node name="Tempo" type="HSlider" parent="Controls/Menu/VBoxContainer"]
 margin_top = 84.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 100.0
 size_flags_horizontal = 3
 min_value = 60.0
@@ -199,18 +235,18 @@ ticks_on_borders = true
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Controls/Menu/VBoxContainer"]
 margin_top = 104.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 132.0
 
 [node name="Label4" type="Label" parent="Controls/Menu/VBoxContainer/HBoxContainer3"]
-margin_right = 136.0
+margin_right = 158.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 text = "Target length:"
 
 [node name="Length2" type="SpinBox" parent="Controls/Menu/VBoxContainer/HBoxContainer3"]
-margin_left = 140.0
-margin_right = 276.0
+margin_left = 162.0
+margin_right = 320.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 min_value = 1.0
@@ -220,7 +256,7 @@ suffix = "bars"
 
 [node name="Length" type="HSlider" parent="Controls/Menu/VBoxContainer"]
 margin_top = 136.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 152.0
 size_flags_horizontal = 3
 min_value = 1.0
@@ -231,13 +267,13 @@ ticks_on_borders = true
 
 [node name="OpenSoundfont" type="Button" parent="Controls/Menu"]
 margin_top = 284.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 312.0
 text = "Soundfont"
 
 [node name="Play" type="Button" parent="Controls/Menu"]
 margin_top = 316.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 662.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -246,18 +282,18 @@ text = "Play!"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Controls/Menu"]
 margin_top = 666.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 694.0
 
 [node name="Label5" type="Label" parent="Controls/Menu/HBoxContainer"]
-margin_right = 136.0
+margin_right = 158.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 text = "Volume:"
 
 [node name="Pause" type="Button" parent="Controls/Menu/HBoxContainer"]
-margin_left = 140.0
-margin_right = 276.0
+margin_left = 162.0
+margin_right = 320.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -267,7 +303,7 @@ text = "Pause"
 
 [node name="Volume" type="HSlider" parent="Controls/Menu"]
 margin_top = 698.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 714.0
 max_value = 1.0
 step = 0.05
@@ -275,7 +311,7 @@ script = ExtResource( 7 )
 
 [node name="Progress" type="ProgressBar" parent="Controls/Menu"]
 margin_top = 718.0
-margin_right = 276.0
+margin_right = 320.0
 margin_bottom = 720.0
 max_value = 1024.0
 step = 1.0
@@ -299,9 +335,6 @@ soundfont = "res://resources/default-GM.sf2"
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 
-[node name="Visualiser" type="Spatial" parent="."]
-script = ExtResource( 8 )
-
 [connection signal="pressed" from="Controls/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
 [connection signal="toggled" from="Controls/Menu/HBoxContainer/Pause" to="RandomPlayer" method="pause"]
@@ -309,6 +342,6 @@ script = ExtResource( 8 )
 [connection signal="value_changed" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="_on_Volume_value_changed"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
 [connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]
-[connection signal="appeared_instrument_name" from="RandomPlayer/MidiPlayer" to="Visualiser" method="_on_MidiPlayer_appeared_instrument_name"]
+[connection signal="appeared_instrument_name" from="RandomPlayer/MidiPlayer" to="ViewportContainer/Viewport/Visualiser" method="_on_MidiPlayer_appeared_instrument_name"]
 [connection signal="changed_tempo" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_changed_tempo"]
 [connection signal="finished" from="RandomPlayer/MidiPlayer" to="RandomPlayer" method="_on_MidiPlayer_finished"]
