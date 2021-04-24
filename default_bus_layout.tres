@@ -6,5 +6,6 @@ room_size = 0.25
 wet = 0.3
 
 [resource]
+bus/0/volume_db = -5.93425
 bus/0/effect/0/effect = SubResource( 1 )
 bus/0/effect/0/enabled = true

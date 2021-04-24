@@ -73,7 +73,10 @@ static func styles() -> Array:
 
 
 static func instrument_name(program: int) -> String:
-	return String(program)
+	if program:
+		return String(program)
+	return ""
+
 
 
 static func choose(from: Array, rng: RandomNumberGenerator):

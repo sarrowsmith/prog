@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://dialog_theme.tres" type="Theme" id=5]
 [ext_resource path="res://resources/prog.png" type="Texture" id=6]
 [ext_resource path="res://Volume.gd" type="Script" id=7]
+[ext_resource path="res://Visualiser.gd" type="Script" id=8]
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 2 )
@@ -298,6 +299,9 @@ soundfont = "res://resources/default-GM.sf2"
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 
+[node name="Visualiser" type="Spatial" parent="."]
+script = ExtResource( 8 )
+
 [connection signal="pressed" from="Controls/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
 [connection signal="toggled" from="Controls/Menu/HBoxContainer/Pause" to="RandomPlayer" method="pause"]
@@ -305,7 +309,6 @@ soundfont = "res://resources/default-GM.sf2"
 [connection signal="value_changed" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="_on_Volume_value_changed"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
 [connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]
-[connection signal="appeared_cue_point" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_appeared_cue_point"]
-[connection signal="appeared_instrument_name" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_appeared_instrument_name"]
+[connection signal="appeared_instrument_name" from="RandomPlayer/MidiPlayer" to="Visualiser" method="_on_MidiPlayer_appeared_instrument_name"]
 [connection signal="changed_tempo" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_changed_tempo"]
 [connection signal="finished" from="RandomPlayer/MidiPlayer" to="RandomPlayer" method="_on_MidiPlayer_finished"]

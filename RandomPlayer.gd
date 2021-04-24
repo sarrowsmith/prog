@@ -36,7 +36,7 @@ const Intervals = {
 const Modes = ["Lydian", "Major", "Mixolydian", "Dorian", "Minor", "Phrygian", "Locrian"]
 const C = 0
 const REST = 0
-const DEFAULT = 96
+const DEFAULT = 127
 var Scales = {} # const, but it's calculated on ready
 
 var style = "Random"
@@ -122,7 +122,7 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 			notes.append(make_note(max(chord[0], chord[2]), note_length, volume))
 		Structure.PERCUSSION:
 			if rng.randf() < chunk.density:
-				volume = 2 * volume
+				volume = max(2 * volume, 255)
 # warning-ignore:integer_division
 				notes.append(make_note(chord.front(), note_length, volume))
 				if rng.randf() < chunk.density:
@@ -223,7 +223,10 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var bar_length = timebase * signature
 	var time = (chunk.bar - 1) * bar_length + 1
 
-	if track != Structure.DRUMS:
+	if track == Structure.DRUMS:
+		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:-" % track})
+		events.append(SMF.MIDIEventChunk.new(time - 1, track, chunk_start))
+	else:
 		var program = chunk.program[track]
 		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:%s" % [track, Structure.instrument_name(program)]})
 		events.append(SMF.MIDIEventChunk.new(time - 1, track, chunk_start))
