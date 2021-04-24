@@ -72,6 +72,10 @@ static func styles() -> Array:
 	return ["Random", "Mixed", "Chaotic"] + Banks.keys()
 
 
+static func instrument_name(program: int) -> String:
+	return String(program)
+
+
 static func choose(from: Array, rng: RandomNumberGenerator):
 	return from[rng.randi_range(0, len(from) - 1)]
 

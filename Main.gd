@@ -85,6 +85,8 @@ func _on_Play_toggled(button_pressed):
 	else:
 		$RandomPlayer.stop()
 	enable_controls(not button_pressed)
+	$Controls.find_node("Play").text = "Stop!" if button_pressed else "Play!"
+	$Controls.find_node("Pause").disabled = not button_pressed
 
 
 func _on_OpenSoundfont_pressed():
@@ -101,3 +103,11 @@ func _on_RandomPlayer_finished():
 
 func _on_MidiPlayer_changed_tempo(tempo):
 	$Controls.find_node("Tempo").value = tempo
+
+
+func _on_MidiPlayer_appeared_cue_point(cue_point):
+	print(cue_point)
+
+
+func _on_MidiPlayer_appeared_instrument_name(channel_number, name):
+	print("%d.%s" %[channel_number, name])

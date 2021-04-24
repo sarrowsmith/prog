@@ -50,6 +50,7 @@ var adjustments = [
 	{Mode = +2, Length = 4.0, Density = +1, Intricacy = +1},
 ]
 var queue = []
+var position = -1.0
 
 onready var rng = RandomNumberGenerator.new()
 
@@ -224,6 +225,8 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 
 	if track != Structure.DRUMS:
 		var program = chunk.program[track]
+		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:%s" % [track, Structure.instrument_name(program)]})
+		events.append(SMF.MIDIEventChunk.new(time - 1, track, chunk_start))
 		if not program:
 			return events
 		events.append(SMF.MIDIEventChunk.new(time - 1, track, SMF.MIDIEventProgramChange.new(program)))
@@ -331,16 +334,27 @@ func play(rng_seed: int, parameters: Dictionary):
 
 func play_next() -> bool:
 	var entry = queue.pop_front()
-	if entry:
-		$MidiPlayer.smf_data = entry[0]
-		$MidiPlayer.tempo = entry[1]
-		$MidiPlayer.play()
-		return true
-	return false
+	if not entry:
+		return false
+	$MidiPlayer.smf_data = entry[0]
+	$MidiPlayer.tempo = entry[1]
+	$MidiPlayer.play()
+	return true
 
 
 func stop():
 	$MidiPlayer.stop()
+
+
+func pause(pause: bool):
+	if pause:
+		if $MidiPlayer.playing:
+			position = $MidiPlayer.position
+			$MidiPlayer.stop()
+	else:
+		if position > 0:
+			$MidiPlayer.play()
+			$MidiPlayer.position = position
 
 
 func _on_MidiPlayer_finished():
