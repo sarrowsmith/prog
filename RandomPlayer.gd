@@ -267,6 +267,8 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 		var note_number = get_note_number(scale, octave, note[PITCH])
 		# note (or rest if note[VOLUME] == 0) on
 		events.append(SMF.MIDIEventChunk.new(time + event[0], track, SMF.MIDIEventNoteOn.new(note_number, note[VOLUME])))
+		var note_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.cue_point, "text": "%d:%d:%d:%d" % ([track]+note)})
+		events.append(SMF.MIDIEventChunk.new(time + event[0], track, note_event))
 		# note off ("note on with velocity 0 as note off" not supported in Godot MIDI Player.)
 		events.append(SMF.MIDIEventChunk.new(time + event[0] + note[DURATION], track, SMF.MIDIEventNoteOff.new(note_number, 0)))
 	events.sort_custom(self, "order_events")

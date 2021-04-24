@@ -49,9 +49,14 @@ func _on_MidiPlayer_appeared_instrument_name(channel_number, name):
 	if instrument:
 		if not (instruments.has(key) and instruments[key] == instrument):
 			instruments[key] = instrument
-			print("%s: %s" % [key, instrument])
+			pass #print("%s: %s" % [key, instrument])
 	else:
 		if instruments.erase(key):
-			print(key + " stopped")
+			pass #print(key + " stopped")
 
 
+
+
+func _on_MidiPlayer_appeared_cue_point(cue_point):
+	var note = cue_point.split(":")
+	var track = note[0]
