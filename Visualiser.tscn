@@ -1,0 +1,127 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Visualiser.gd" type="Script" id=1]
+[ext_resource path="res://default_env.tres" type="Environment" id=2]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=2]
+curve = SubResource( 1 )
+
+[sub_resource type="ParticlesMaterial" id=6]
+lifetime_randomness = 0.13
+trail_divisor = 4
+trail_size_modifier = SubResource( 2 )
+direction = Vector3( 0, -1, 0 )
+spread = 22.5
+initial_velocity = 10.0
+initial_velocity_random = 0.2
+angle_random = 1.0
+color = Color( 0, 1, 1, 1 )
+
+[sub_resource type="SphereMesh" id=5]
+radius = 0.02
+height = 0.05
+
+[sub_resource type="ParticlesMaterial" id=8]
+lifetime_randomness = 0.13
+trail_divisor = 4
+trail_size_modifier = SubResource( 2 )
+direction = Vector3( 0, -1, 0 )
+spread = 22.5
+initial_velocity = 10.0
+initial_velocity_random = 0.2
+angle_random = 1.0
+color = Color( 0.992157, 0, 1, 1 )
+
+[sub_resource type="ParticlesMaterial" id=7]
+lifetime_randomness = 0.13
+trail_divisor = 4
+trail_size_modifier = SubResource( 2 )
+direction = Vector3( 0, -1, 0 )
+spread = 22.5
+initial_velocity = 10.0
+initial_velocity_random = 0.2
+angle_random = 1.0
+color = Color( 1, 1, 0, 1 )
+
+[sub_resource type="ParticlesMaterial" id=3]
+lifetime_randomness = 0.13
+trail_divisor = 4
+trail_size_modifier = SubResource( 2 )
+direction = Vector3( 0, -1, 0 )
+spread = 22.5
+initial_velocity = 10.0
+initial_velocity_random = 0.2
+angle_random = 1.0
+
+[sub_resource type="SpatialMaterial" id=4]
+
+[node name="Visualiser" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="Scaler" type="Tween" parent="."]
+
+[node name="Lights" type="Spatial" parent="."]
+
+[node name="CLight" type="SpotLight" parent="Lights"]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -7, -2, -2 )
+light_color = Color( 0, 1, 1, 1 )
+spot_range = 50.0
+
+[node name="Particles" type="Particles" parent="Lights/CLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+emitting = false
+amount = 256
+explosiveness = 1.0
+process_material = SubResource( 6 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="MLight" type="SpotLight" parent="Lights"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 7, -2, -2 )
+light_color = Color( 1, 0, 1, 1 )
+spot_range = 50.0
+
+[node name="Particles" type="Particles" parent="Lights/MLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+emitting = false
+amount = 256
+explosiveness = 1.0
+process_material = SubResource( 8 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="YLight" type="SpotLight" parent="Lights"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 10 )
+light_color = Color( 1, 1, 0, 1 )
+spot_range = 50.0
+
+[node name="Particles" type="Particles" parent="Lights/YLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+emitting = false
+amount = 256
+explosiveness = 1.0
+process_material = SubResource( 7 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="TopLight" type="SpotLight" parent="Lights"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0 )
+spot_range = 50.0
+
+[node name="Particles" type="Particles" parent="Lights/TopLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+emitting = false
+amount = 256
+explosiveness = 1.0
+process_material = SubResource( 3 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="Objects" type="Spatial" parent="."]
+
+[node name="CSGBox" type="CSGBox" parent="Objects"]
+transform = Transform( 0.707107, -0.707107, 0, 0.5, 0.5, -0.707107, 0.5, 0.5, 0.707107, 0, 0, 0 )
+material = SubResource( 4 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
+environment = ExtResource( 2 )
