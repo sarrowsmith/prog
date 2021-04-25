@@ -1,7 +1,12 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Visualiser.gd" type="Script" id=1]
 [ext_resource path="res://default_env.tres" type="Environment" id=2]
+[ext_resource path="res://ParticleLight.gd" type="Script" id=3]
+[ext_resource path="res://resources/cyan_light_mat.tres" type="Material" id=4]
+[ext_resource path="res://resources/magenta_light_mat.tres" type="Material" id=5]
+[ext_resource path="res://resources/yellow_light_mat.tres" type="Material" id=6]
+[ext_resource path="res://resources/white_light_mat.tres" type="Material" id=7]
 
 [sub_resource type="Curve" id=1]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
@@ -9,7 +14,27 @@ _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
 [sub_resource type="CurveTexture" id=2]
 curve = SubResource( 1 )
 
-[sub_resource type="ParticlesMaterial" id=6]
+[sub_resource type="ParticlesMaterial" id=26]
+lifetime_randomness = 0.13
+trail_divisor = 4
+trail_size_modifier = SubResource( 2 )
+direction = Vector3( 0, -1, 0 )
+spread = 22.5
+initial_velocity = 10.0
+initial_velocity_random = 0.2
+angle_random = 1.0
+
+[sub_resource type="SphereMesh" id=27]
+material = ExtResource( 7 )
+radius = 0.05
+height = 0.1
+
+[sub_resource type="SphereMesh" id=17]
+material = ExtResource( 7 )
+radius = 0.1
+height = 0.2
+
+[sub_resource type="ParticlesMaterial" id=20]
 lifetime_randomness = 0.13
 trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
@@ -20,11 +45,17 @@ initial_velocity_random = 0.2
 angle_random = 1.0
 color = Color( 0, 1, 1, 1 )
 
-[sub_resource type="SphereMesh" id=5]
-radius = 0.02
-height = 0.05
+[sub_resource type="SphereMesh" id=21]
+material = ExtResource( 4 )
+radius = 0.05
+height = 0.1
 
-[sub_resource type="ParticlesMaterial" id=8]
+[sub_resource type="SphereMesh" id=12]
+material = ExtResource( 4 )
+radius = 0.1
+height = 0.2
+
+[sub_resource type="ParticlesMaterial" id=22]
 lifetime_randomness = 0.13
 trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
@@ -35,97 +66,131 @@ initial_velocity_random = 0.2
 angle_random = 1.0
 color = Color( 0.992157, 0, 1, 1 )
 
-[sub_resource type="ParticlesMaterial" id=7]
+[sub_resource type="SphereMesh" id=23]
+material = ExtResource( 5 )
+radius = 0.05
+height = 0.1
+
+[sub_resource type="SphereMesh" id=18]
+material = ExtResource( 5 )
+radius = 0.1
+height = 0.2
+
+[sub_resource type="ParticlesMaterial" id=24]
 lifetime_randomness = 0.13
 trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
-spread = 22.5
+spread = 30.0
 initial_velocity = 10.0
 initial_velocity_random = 0.2
 angle_random = 1.0
 color = Color( 1, 1, 0, 1 )
 
-[sub_resource type="ParticlesMaterial" id=3]
-lifetime_randomness = 0.13
-trail_divisor = 4
-trail_size_modifier = SubResource( 2 )
-direction = Vector3( 0, -1, 0 )
-spread = 22.5
-initial_velocity = 10.0
-initial_velocity_random = 0.2
-angle_random = 1.0
+[sub_resource type="SphereMesh" id=25]
+material = ExtResource( 6 )
+radius = 0.05
+height = 0.1
 
-[sub_resource type="SpatialMaterial" id=4]
+[sub_resource type="SphereMesh" id=15]
+material = ExtResource( 6 )
+radius = 0.1
+height = 0.2
+
+[sub_resource type="SpatialMaterial" id=8]
 
 [node name="Visualiser" type="Spatial"]
 script = ExtResource( 1 )
 
 [node name="Scaler" type="Tween" parent="."]
 
-[node name="Lights" type="Spatial" parent="."]
+[node name="TopLight" type="Spatial" parent="."]
+script = ExtResource( 3 )
 
-[node name="CLight" type="SpotLight" parent="Lights"]
-transform = Transform( -0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -7, -2, -2 )
-light_color = Color( 0, 1, 1, 1 )
+[node name="Light" type="SpotLight" parent="TopLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 11.55, 0 )
 spot_range = 50.0
 
-[node name="Particles" type="Particles" parent="Lights/CLight"]
-transform = Transform( 1, 0, 0, 0, -0.5, -0.866025, 0, 0.866025, -0.5, 0, 0, 0 )
-emitting = false
-amount = 256
-one_shot = true
-explosiveness = 1.0
-process_material = SubResource( 6 )
-draw_pass_1 = SubResource( 5 )
-
-[node name="MLight" type="SpotLight" parent="Lights"]
-transform = Transform( -0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 7, -2, -2 )
-light_color = Color( 1, 0, 1, 1 )
-spot_range = 50.0
-
-[node name="Particles" type="Particles" parent="Lights/MLight"]
-transform = Transform( 1, 0, 0, 0, -0.5, -0.866025, 0, 0.866025, -0.5, 0, 0, 0 )
-emitting = false
-amount = 256
-one_shot = true
-explosiveness = 1.0
-process_material = SubResource( 8 )
-draw_pass_1 = SubResource( 5 )
-
-[node name="YLight" type="SpotLight" parent="Lights"]
-transform = Transform( 1, 0, 0, 0, 0.866025, -0.5, 0, 0.5, 0.866025, 0, -2, 10 )
-light_color = Color( 1, 1, 0, 1 )
-spot_range = 50.0
-
-[node name="Particles" type="Particles" parent="Lights/YLight"]
-transform = Transform( 1, 0, 0, 0, -0.5, -0.866025, 0, 0.866025, -0.5, 0, 0, 0 )
-emitting = false
-amount = 256
-one_shot = true
-explosiveness = 1.0
-process_material = SubResource( 7 )
-draw_pass_1 = SubResource( 5 )
-
-[node name="TopLight" type="SpotLight" parent="Lights"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0 )
-spot_range = 50.0
-
-[node name="Particles" type="Particles" parent="Lights/TopLight"]
+[node name="Particles" type="Particles" parent="TopLight/Light"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
 emitting = false
 amount = 256
 one_shot = true
 explosiveness = 1.0
-process_material = SubResource( 3 )
-draw_pass_1 = SubResource( 5 )
+process_material = SubResource( 26 )
+draw_pass_1 = SubResource( 27 )
+
+[node name="MeshInstance" type="MeshInstance" parent="TopLight/Light"]
+transform = Transform( 0.987552, 0.152609, -0.0381052, -0.152578, 0.988284, 0.00372981, 0.038228, 0.00213065, 0.999267, 0, 0, 0 )
+mesh = SubResource( 17 )
+material/0 = null
+
+[node name="Lights" type="Spatial" parent="."]
+script = ExtResource( 3 )
+
+[node name="CLight" type="SpotLight" parent="Lights"]
+transform = Transform( -0.5, -0.433013, -0.75, 0, 0.866025, -0.5, 0.866025, -0.25, -0.433013, -10, -5.77, -5.77 )
+light_color = Color( 0, 1, 1, 1 )
+spot_range = 50.0
+
+[node name="Particles" type="Particles" parent="Lights/CLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+emitting = false
+amount = 256
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 20 )
+draw_pass_1 = SubResource( 21 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Lights/CLight"]
+transform = Transform( 1, 0, 0, 0, 1, 0, -2.98023e-08, 0, 1, 0, 0, 0 )
+mesh = SubResource( 12 )
+material/0 = null
+
+[node name="MLight" type="SpotLight" parent="Lights"]
+transform = Transform( -0.5, 0.433013, 0.75, 0, 0.866025, -0.5, -0.866025, -0.25, -0.433013, 10, -5.77, -5.77 )
+light_color = Color( 1, 0, 1, 1 )
+spot_range = 50.0
+
+[node name="Particles" type="Particles" parent="Lights/MLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+emitting = false
+amount = 256
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 22 )
+draw_pass_1 = SubResource( 23 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Lights/MLight"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 2.98023e-08, 0, 1, 0, 0, 0 )
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="YLight" type="SpotLight" parent="Lights"]
+transform = Transform( 1, 0, 0, 0, 0.866025, -0.5, 0, 0.5, 0.866025, 0, -5.77, 11.55 )
+light_color = Color( 1, 1, 0, 1 )
+spot_range = 50.0
+
+[node name="Particles" type="Particles" parent="Lights/YLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+emitting = false
+amount = 256
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 24 )
+draw_pass_1 = SubResource( 25 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Lights/YLight"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, -2.98023e-08, 1, 0, 0, 0 )
+mesh = SubResource( 15 )
+material/0 = null
 
 [node name="Objects" type="Spatial" parent="."]
 
 [node name="CSGBox" type="CSGBox" parent="Objects"]
 transform = Transform( 0.707107, -0.707107, 0, 0.5, 0.5, -0.707107, 0.5, 0.5, 0.707107, 0, 0, 0 )
-material = SubResource( 4 )
+material = SubResource( 8 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20 )
 environment = ExtResource( 2 )

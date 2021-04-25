@@ -11,21 +11,25 @@ var conversion = TAU * rate * timescale / 60
 # Well, that's the theory. In practice, it's much slower, which is why the
 # default rate looks high.
 
-var instruments = {}
-var things = {}
 var speed = 1.0
+var instruments = {}
 
-onready var objects = $Objects
-onready var lights = $Lights
+enum {OBJECTS, LIGHTS, TOPLIGHT}
+onready var objects = [$Objects, $Lights, $TopLight]
+onready var responders = {
+	Structure.CHORDS: $Lights,
+	Structure.DRONE: $TopLight,
+}
 
 
 func _ready():
-	objects.scale = Vector3.ZERO
+	for thing in objects:
+		thing.scale = Vector3.ZERO
 
 
 func _process(delta):
-	objects.rotation_degrees.y += delta * speed * conversion
-	lights.rotation_degrees.y -= delta * speed * conversion
+	objects[OBJECTS].rotation_degrees.y += delta * speed * conversion
+	objects[LIGHTS].rotation_degrees.y -= delta * speed * conversion
 
 
 func scale_thing(thing: Spatial, to: float, time: float):
@@ -35,28 +39,35 @@ func scale_thing(thing: Spatial, to: float, time: float):
 
 
 func start(start: bool):
-	scale_thing(objects, 1.0 if start else 0.0, 1.0)
+	for thing in objects:
+		thing.visible = start
+		scale_thing(thing, 1.0 if start else 0.0, 1.0)
 
 
 func set_tempo(tempo: int):
 	speed = tempo / timescale
 
 
-func _on_MidiPlayer_appeared_instrument_name(channel_number, name):
+func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 	var parts = name.split(":")
-	var key = "%d.%s" % [channel_number, parts[0]]
+	var track = int(parts[0])
 	var instrument = parts[1]
 	if instrument:
-		if not (instruments.has(key) and instruments[key] == instrument):
-			instruments[key] = instrument
-			pass #print("%s: %s" % [key, instrument])
+		if not (instruments.has(track) and instruments[track] == instrument):
+			instruments[track] = instrument
+			if responders.has(track):
+				responders[track].set_instrument(instrument)
 	else:
-		if instruments.erase(key):
-			pass #print(key + " stopped")
+		if instruments.erase(track):
+			if responders.has(track):
+				responders[track].stop()
+				responders.erase(track)
 
 
 
 
 func _on_MidiPlayer_appeared_cue_point(cue_point):
 	var note = cue_point.split(":")
-	var track = note[0]
+	var track = int(note[0])
+	if responders.has(track):
+		responders[track].respond(self, note)
