@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://Visualiser.gd" type="Script" id=1]
 [ext_resource path="res://default_env.tres" type="Environment" id=2]
@@ -7,6 +7,9 @@
 [ext_resource path="res://resources/magenta_light_mat.tres" type="Material" id=5]
 [ext_resource path="res://resources/yellow_light_mat.tres" type="Material" id=6]
 [ext_resource path="res://resources/white_light_mat.tres" type="Material" id=7]
+[ext_resource path="res://Stellation.gd" type="Script" id=8]
+[ext_resource path="res://resources/rough_mat.tres" type="Material" id=9]
+[ext_resource path="res://resources/metallic_mat.tres" type="Material" id=11]
 
 [sub_resource type="Curve" id=1]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
@@ -19,8 +22,9 @@ lifetime_randomness = 0.13
 trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
-spread = 22.5
-initial_velocity = 10.0
+spread = 30.0
+gravity = Vector3( 0, 9.8, 0 )
+initial_velocity = 20.0
 initial_velocity_random = 0.2
 angle_random = 1.0
 
@@ -31,16 +35,17 @@ height = 0.1
 
 [sub_resource type="SphereMesh" id=17]
 material = ExtResource( 7 )
-radius = 0.1
-height = 0.2
+radius = 0.25
+height = 0.5
 
 [sub_resource type="ParticlesMaterial" id=20]
 lifetime_randomness = 0.13
 trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
-spread = 22.5
-initial_velocity = 10.0
+spread = 30.0
+gravity = Vector3( 4.9, 0, 8.487 )
+initial_velocity = 20.0
 initial_velocity_random = 0.2
 angle_random = 1.0
 color = Color( 0, 1, 1, 1 )
@@ -52,16 +57,17 @@ height = 0.1
 
 [sub_resource type="SphereMesh" id=12]
 material = ExtResource( 4 )
-radius = 0.1
-height = 0.2
+radius = 0.25
+height = 0.5
 
 [sub_resource type="ParticlesMaterial" id=22]
 lifetime_randomness = 0.13
 trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
-spread = 22.5
-initial_velocity = 10.0
+spread = 30.0
+gravity = Vector3( 4.9, 0, 8.487 )
+initial_velocity = 20.0
 initial_velocity_random = 0.2
 angle_random = 1.0
 color = Color( 0.992157, 0, 1, 1 )
@@ -73,8 +79,8 @@ height = 0.1
 
 [sub_resource type="SphereMesh" id=18]
 material = ExtResource( 5 )
-radius = 0.1
-height = 0.2
+radius = 0.25
+height = 0.5
 
 [sub_resource type="ParticlesMaterial" id=24]
 lifetime_randomness = 0.13
@@ -82,7 +88,8 @@ trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
 spread = 30.0
-initial_velocity = 10.0
+gravity = Vector3( 4.9, 0, 8.487 )
+initial_velocity = 20.0
 initial_velocity_random = 0.2
 angle_random = 1.0
 color = Color( 1, 1, 0, 1 )
@@ -94,33 +101,39 @@ height = 0.1
 
 [sub_resource type="SphereMesh" id=15]
 material = ExtResource( 6 )
-radius = 0.1
-height = 0.2
+radius = 0.25
+height = 0.5
 
-[sub_resource type="SpatialMaterial" id=8]
+[sub_resource type="SphereMesh" id=28]
+
+[sub_resource type="SphereMesh" id=29]
+
+[sub_resource type="CubeMesh" id=30]
 
 [node name="Visualiser" type="Spatial"]
 script = ExtResource( 1 )
 
 [node name="Scaler" type="Tween" parent="."]
 
-[node name="TopLight" type="Spatial" parent="."]
+[node name="BottomLight" type="Spatial" parent="."]
 script = ExtResource( 3 )
 
-[node name="Light" type="SpotLight" parent="TopLight"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 11.55, 0 )
+[node name="Light" type="SpotLight" parent="BottomLight"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -11.55, 0 )
 spot_range = 50.0
+spot_attenuation = 0.25
 
-[node name="Particles" type="Particles" parent="TopLight/Light"]
+[node name="Particles" type="Particles" parent="BottomLight/Light"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
 emitting = false
 amount = 256
+lifetime = 3.0
 one_shot = true
 explosiveness = 1.0
 process_material = SubResource( 26 )
 draw_pass_1 = SubResource( 27 )
 
-[node name="MeshInstance" type="MeshInstance" parent="TopLight/Light"]
+[node name="MeshInstance" type="MeshInstance" parent="BottomLight/Light"]
 transform = Transform( 0.987552, 0.152609, -0.0381052, -0.152578, 0.988284, 0.00372981, 0.038228, 0.00213065, 0.999267, 0, 0, 0 )
 mesh = SubResource( 17 )
 material/0 = null
@@ -129,16 +142,20 @@ material/0 = null
 script = ExtResource( 3 )
 
 [node name="CLight" type="SpotLight" parent="Lights"]
-transform = Transform( -0.5, -0.433013, -0.75, 0, 0.866025, -0.5, 0.866025, -0.25, -0.433013, -10, -5.77, -5.77 )
-light_color = Color( 0, 1, 1, 1 )
+transform = Transform( -0.5, 0.433013, -0.75, 0, 0.866025, 0.5, 0.866025, 0.25, -0.433013, -10, 5.77, -5.77 )
+light_color = Color( 0.501961, 1, 1, 1 )
+light_energy = 2.0
 spot_range = 50.0
+spot_attenuation = 0.25
 
 [node name="Particles" type="Particles" parent="Lights/CLight"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
 emitting = false
 amount = 256
+lifetime = 3.0
 one_shot = true
 explosiveness = 1.0
+randomness = 1.0
 process_material = SubResource( 20 )
 draw_pass_1 = SubResource( 21 )
 
@@ -148,16 +165,20 @@ mesh = SubResource( 12 )
 material/0 = null
 
 [node name="MLight" type="SpotLight" parent="Lights"]
-transform = Transform( -0.5, 0.433013, 0.75, 0, 0.866025, -0.5, -0.866025, -0.25, -0.433013, 10, -5.77, -5.77 )
-light_color = Color( 1, 0, 1, 1 )
+transform = Transform( -0.5, -0.433013, 0.75, 0, 0.866025, 0.5, -0.866025, 0.25, -0.433013, 10, 5.77, -5.77 )
+light_color = Color( 1, 0.501961, 1, 1 )
+light_energy = 2.0
 spot_range = 50.0
+spot_attenuation = 0.25
 
 [node name="Particles" type="Particles" parent="Lights/MLight"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
 emitting = false
 amount = 256
+lifetime = 3.0
 one_shot = true
 explosiveness = 1.0
+randomness = 1.0
 process_material = SubResource( 22 )
 draw_pass_1 = SubResource( 23 )
 
@@ -167,16 +188,20 @@ mesh = SubResource( 18 )
 material/0 = null
 
 [node name="YLight" type="SpotLight" parent="Lights"]
-transform = Transform( 1, 0, 0, 0, 0.866025, -0.5, 0, 0.5, 0.866025, 0, -5.77, 11.55 )
-light_color = Color( 1, 1, 0, 1 )
+transform = Transform( 1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 5.77, 11.55 )
+light_color = Color( 1, 1, 0.501961, 1 )
+light_energy = 2.0
 spot_range = 50.0
+spot_attenuation = 0.25
 
 [node name="Particles" type="Particles" parent="Lights/YLight"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
 emitting = false
 amount = 256
+lifetime = 3.0
 one_shot = true
 explosiveness = 1.0
+randomness = 1.0
 process_material = SubResource( 24 )
 draw_pass_1 = SubResource( 25 )
 
@@ -187,10 +212,35 @@ material/0 = null
 
 [node name="Objects" type="Spatial" parent="."]
 
-[node name="CSGBox" type="CSGBox" parent="Objects"]
-transform = Transform( 0.707107, -0.707107, 0, 0.5, 0.5, -0.707107, 0.5, 0.5, 0.707107, 0, 0, 0 )
-material = SubResource( 8 )
+[node name="Rough" type="MeshInstance" parent="Objects"]
+visible = false
+mesh = SubResource( 28 )
+material/0 = ExtResource( 9 )
+
+[node name="Metal" type="MeshInstance" parent="Objects"]
+visible = false
+mesh = SubResource( 29 )
+material/0 = ExtResource( 11 )
+
+[node name="Stellation" type="Spatial" parent="."]
+script = ExtResource( 8 )
+
+[node name="CubeX" type="MeshInstance" parent="Stellation"]
+transform = Transform( 1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0 )
+mesh = SubResource( 30 )
+material/0 = ExtResource( 11 )
+
+[node name="CubeY" type="MeshInstance" parent="Stellation"]
+transform = Transform( 0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0, 0 )
+mesh = SubResource( 30 )
+material/0 = ExtResource( 11 )
+
+[node name="CubeZ" type="MeshInstance" parent="Stellation"]
+transform = Transform( 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0, 1, 0, 0, 0 )
+mesh = SubResource( 30 )
+material/0 = ExtResource( 11 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20 )
+transform = Transform( 1, 0, 0, 0, 0.976296, 0.21644, 0, -0.21644, 0.976296, 0, 3.8, 30 )
 environment = ExtResource( 2 )
+fov = 42.5

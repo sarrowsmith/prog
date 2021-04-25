@@ -49,6 +49,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/midi/SoundFont.gd"
 }, {
+"base": "Responder",
+"class": "Stellation",
+"language": "GDScript",
+"path": "res://Stellation.gd"
+}, {
 "base": "Reference",
 "class": "Structure",
 "language": "GDScript",
@@ -68,6 +73,7 @@ _global_script_class_icons={
 "Responder": "",
 "SMF": "",
 "SoundFont": "",
+"Stellation": "",
 "Structure": "",
 "Visualiser": ""
 }

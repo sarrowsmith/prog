@@ -35,7 +35,8 @@ func _ready():
 			control.share($Controls.find_node(parameter))
 			control.value = parameters[parameter]
 	$Controls.find_node("Play").grab_focus()
-	fade_image(1.0, 0.5, 1.0)
+	$Fader.interpolate_property($HappyKettle/Image, "modulate", Color(1.0, 1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0, 0.9), 1.0)
+	$Fader.start()
 
 
 func fade_image(from: float, to: float, time: float):
@@ -80,10 +81,10 @@ func _on_Play_toggled(button_pressed):
 			if value:
 				parameters[parameter] = value
 		$RandomPlayer.play($Controls.find_node("Seed").text.hash(), parameters)
-		fade_image(0.5, 0, 0.5)
+		fade_image(1.0, 0, 1.5)
 	else:
 		$RandomPlayer.stop()
-		fade_image(0.0, 0.5, 1.0)
+		fade_image(0.0, 1.0, 2.0)
 	enable_controls(not button_pressed)
 	$Controls.find_node("Play").text = "Stop!" if button_pressed else "Play!"
 	$Controls.find_node("Pause").disabled = not button_pressed

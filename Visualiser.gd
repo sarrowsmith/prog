@@ -14,11 +14,12 @@ var conversion = TAU * rate * timescale / 60
 var speed = 1.0
 var instruments = {}
 
-enum {OBJECTS, LIGHTS, TOPLIGHT}
-onready var objects = [$Objects, $Lights, $TopLight]
+enum {OBJECTS, LIGHTS, TOPLIGHT, STELLATION}
+onready var objects = [$Objects, $Lights, $BottomLight, $Stellation]
 onready var responders = {
 	Structure.CHORDS: $Lights,
-	Structure.DRONE: $TopLight,
+	Structure.DRONE: $BottomLight,
+	Structure.MELODY: $Stellation,
 }
 
 
@@ -32,20 +33,30 @@ func _process(delta):
 	objects[LIGHTS].rotation_degrees.y -= delta * speed * conversion
 
 
-func scale_thing(thing: Spatial, to: float, time: float):
+func scale_thing(thing: Spatial, to: float, time: float, hide: bool):
 	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE * to, time)
 	$Scaler.start()
 	yield($Scaler, "tween_all_completed")
+	if hide:
+		thing.visible = false
 
 
 func start(start: bool):
 	for thing in objects:
-		thing.visible = start
-		scale_thing(thing, 1.0 if start else 0.0, 1.0)
+		scale_thing(thing, 1.0 if start else 0.0, 2.5, not start)
+
+
+func pulse_thing(thing: Spatial, to: float, out: float, back: float):
+	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE * to, out)
+	$Scaler.start()
+	yield($Scaler, "tween_all_completed")
+	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE, out)
+	$Scaler.start()
 
 
 func set_tempo(tempo: int):
 	speed = tempo / timescale
+	$Stellation.speed = speed * conversion
 
 
 func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
@@ -64,10 +75,9 @@ func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 				responders.erase(track)
 
 
-
-
 func _on_MidiPlayer_appeared_cue_point(cue_point):
 	var note = cue_point.split(":")
 	var track = int(note[0])
 	if responders.has(track):
+		note.remove(0)
 		responders[track].respond(self, note)
