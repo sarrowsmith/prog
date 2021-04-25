@@ -64,6 +64,12 @@ func _ready():
 			Scales[k].append(Scales[k][-1] + interval)
 
 
+# We don't really care about this, but it makes life easier for others
+func bar_time() -> float:
+	return 60 * signature / float(tempo)
+
+
+
 func get_note_number(scale: Array, octave: int, note: int) -> int:
 	var idx = note - 1
 # warning-ignore:integer_division

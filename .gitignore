@@ -20,3 +20,5 @@ git_api.*
 addons/
 bin/
 
+# Imported resources
+resources/*/

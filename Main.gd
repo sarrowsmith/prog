@@ -35,8 +35,10 @@ func _ready():
 			control.share($Controls.find_node(parameter))
 			control.value = parameters[parameter]
 	$Controls.find_node("Play").grab_focus()
-	$Fader.interpolate_property($HappyKettle/Image, "modulate", Color(1.0, 1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0, 0.9), 1.0)
+	fade_image(1.0, 0.5, 1.5)
+	$Fader.interpolate_property($ViewportContainer, "modulate", Color(1.0, 1.0, 1.0, 0.0), Color(1.0, 1.0, 1.0, 1.0), 2.0)
 	$Fader.start()
+	yield($Fader, "tween_all_completed")
 
 
 func fade_image(from: float, to: float, time: float):
@@ -75,20 +77,21 @@ func get_value(name: String):
 
 
 func _on_Play_toggled(button_pressed):
+	var bar_length = $RandomPlayer.bar_time()
 	if button_pressed:
 		for parameter in parameters:
 			var value = get_value(parameter)
 			if value:
 				parameters[parameter] = value
 		$RandomPlayer.play($Controls.find_node("Seed").text.hash(), parameters)
-		fade_image(1.0, 0, 1.5)
+		fade_image(0.5, 0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
-		fade_image(0.0, 1.0, 2.0)
+		fade_image(0.0, 0.5, 0.5 * bar_length)
 	enable_controls(not button_pressed)
 	$Controls.find_node("Play").text = "Stop!" if button_pressed else "Play!"
 	$Controls.find_node("Pause").disabled = not button_pressed
-	$ViewportContainer/Viewport/Visualiser.start(button_pressed)
+	$ViewportContainer/Viewport/Visualiser.start(button_pressed, bar_length)
 
 
 func _on_OpenSoundfont_pressed():
@@ -105,4 +108,4 @@ func _on_RandomPlayer_finished():
 
 func _on_MidiPlayer_changed_tempo(tempo):
 	$Controls.find_node("Tempo").value = tempo
-	$ViewportContainer/Viewport/Visualiser.set_tempo(tempo)
+	$ViewportContainer/Viewport/Visualiser.set_bar_length($RandomPlayer.bar_time())

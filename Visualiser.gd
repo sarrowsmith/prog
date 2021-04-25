@@ -2,23 +2,18 @@ class_name Visualiser
 extends Spatial
 
 
-export(float) var timescale = 130
-# rotations per beat
-export(float) var rate = 0.5
+# rotations per bar
+export(float) var rate = 0.0625
 
-# functionally a const, this is the conversion from bpm to radians/s
-var conversion = TAU * rate * timescale / 60
-# Well, that's the theory. In practice, it's much slower, which is why the
-# default rate looks high.
-
-var speed = 1.0
+# radians per second per bar
+var speed = 0.0
 var instruments = {}
 
 enum {OBJECTS, LIGHTS, TOPLIGHT, STELLATION}
 onready var objects = [$Objects, $Lights, $BottomLight, $Stellation]
 onready var responders = {
 	Structure.CHORDS: $Lights,
-	Structure.DRONE: $BottomLight,
+	Structure.BASS: $BottomLight,
 	Structure.MELODY: $Stellation,
 }
 
@@ -29,8 +24,8 @@ func _ready():
 
 
 func _process(delta):
-	objects[OBJECTS].rotation_degrees.y += delta * speed * conversion
-	objects[LIGHTS].rotation_degrees.y -= delta * speed * conversion
+	objects[OBJECTS].rotate_y(delta * speed)
+	objects[LIGHTS].rotate_y(-delta * speed)
 
 
 func scale_thing(thing: Spatial, to: float, time: float, hide: bool):
@@ -41,9 +36,9 @@ func scale_thing(thing: Spatial, to: float, time: float, hide: bool):
 		thing.visible = false
 
 
-func start(start: bool):
+func start(start: bool, time: float):
 	for thing in objects:
-		scale_thing(thing, 1.0 if start else 0.0, 2.5, not start)
+		scale_thing(thing, 1.0 if start else 0.0, time, not start)
 
 
 func pulse_thing(thing: Spatial, to: float, out: float, back: float):
@@ -54,9 +49,9 @@ func pulse_thing(thing: Spatial, to: float, out: float, back: float):
 	$Scaler.start()
 
 
-func set_tempo(tempo: int):
-	speed = tempo / timescale
-	$Stellation.speed = speed * conversion
+func set_bar_length(bar_length: float):
+	speed = TAU * rate / bar_length
+	$Stellation.speed = TAU / bar_length
 
 
 func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
