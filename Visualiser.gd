@@ -8,6 +8,7 @@ export(float) var rate = 0.0625
 # radians per second per bar
 var speed = 0.0
 var instruments = {}
+var timescale = 1.0
 
 enum {OBJECTS, LIGHTS, TOPLIGHT, STELLATION}
 onready var objects = [$Objects, $Lights, $BottomLight, $Stellation]
@@ -28,24 +29,22 @@ func _process(delta):
 	objects[LIGHTS].rotate_y(-delta * speed)
 
 
-func scale_thing(thing: Spatial, to: float, time: float, hide: bool):
+func scale_thing(thing: Spatial, to: float, time: float):
 	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE * to, time)
 	$Scaler.start()
 	yield($Scaler, "tween_all_completed")
-	if hide:
-		thing.visible = false
 
 
 func start(start: bool, time: float):
 	for thing in objects:
-		scale_thing(thing, 1.0 if start else 0.0, time, not start)
+		scale_thing(thing, 1.0 if start else 0.0, time)
 
 
-func pulse_thing(thing: Spatial, to: float, out: float, back: float):
-	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE * to, out)
+func pulse_thing(thing: Spatial, to: float, time: float):
+	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE * to, timescale)
 	$Scaler.start()
 	yield($Scaler, "tween_all_completed")
-	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE, out)
+	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE, (time - 1) * timescale)
 	$Scaler.start()
 
 

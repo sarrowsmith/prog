@@ -64,10 +64,14 @@ func _ready():
 			Scales[k].append(Scales[k][-1] + interval)
 
 
-# We don't really care about this, but it makes life easier for others
+# We don't really care about these, but they make life easier for others
 func bar_time() -> float:
-	return 60 * signature / float(tempo)
+	return 60.0 * signature / float(tempo)
 
+
+# timescale is seconds per tick
+func timescale() -> float:
+	return 60.0 / float(timebase * tempo)
 
 
 func get_note_number(scale: Array, octave: int, note: int) -> int:

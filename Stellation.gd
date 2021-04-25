@@ -21,4 +21,4 @@ func respond(visualiser: Visualiser, note: Array):
 		last = pitch
 		return
 	var cube = cubes[int(sign(pitch - last)) + 1]
-	visualiser.pulse_thing(cube, 1.72, 0.075, int(note[RandomPlayer.DURATION]) - 0.1)
+	visualiser.pulse_thing(cube, 1.72, float(note[RandomPlayer.DURATION]))

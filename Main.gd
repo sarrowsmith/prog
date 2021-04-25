@@ -20,35 +20,38 @@ var parameters = {
 func _ready():
 	time_begin = OS.get_ticks_usec()
 	time_delay = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-	modes = $Controls.find_node("Mode")
+	modes = $Configure.find_node("Mode")
 	modes.clear()
 	for mode in RandomPlayer.Modes:
 		modes.add_item(mode)
 	modes.select(parameters.Mode)
-	styles = $Controls.find_node("Style")
+	styles = $Configure.find_node("Style")
 	styles.clear()
 	for style in Structure.styles():
 		styles.add_item(style)
 	for parameter in parameters:
-		var control = $Controls.find_node(parameter + "2")
+		var control = $Configure.find_node(parameter + "2")
 		if control:
-			control.share($Controls.find_node(parameter))
+			control.share($Configure.find_node(parameter))
 			control.value = parameters[parameter]
 	$Controls.find_node("Play").grab_focus()
-	fade_image(1.0, 0.5, 1.5)
 	$Fader.interpolate_property($ViewportContainer, "modulate", Color(1.0, 1.0, 1.0, 0.0), Color(1.0, 1.0, 1.0, 1.0), 2.0)
-	$Fader.start()
-	yield($Fader, "tween_all_completed")
+	fade_image(1.0, 0.5, 1.5)
+	$ViewportContainer/Viewport/Visualiser.timescale = $RandomPlayer.timescale()
 
 
 func fade_image(from: float, to: float, time: float):
 	$Fader.interpolate_property($HappyKettle, "modulate", Color(1.0, 1.0, 1.0, from), Color(1.0, 1.0, 1.0, to), time)
 	$Fader.start()
-	yield($Fader, "tween_all_completed")
+
+
+func fade(from: float, to: float, time: float):
+	$Fader.interpolate_property($Configure, "modulate", Color(1.0, 1.0, 1.0, from), Color(1.0, 1.0, 1.0, to), 0.5 * time)
+	fade_image(0.5 * from, 0.5 * to, time)
 
 
 func set_active(name: String, on: bool):
-	var control = $Controls.find_node(name)
+	var control = $Configure.find_node(name)
 	if control:
 		if control is Button:
 			control.disabled = not on
@@ -56,7 +59,7 @@ func set_active(name: String, on: bool):
 			control.editable = on
 
 
-func enable_controls(on: bool):
+func enable_Configure(on: bool):
 	for parameter in parameters:
 		set_active(parameter, on)
 		set_active(parameter + "2", on)
@@ -65,7 +68,7 @@ func enable_controls(on: bool):
 
 
 func get_value(name: String):
-	var control = $Controls.find_node(name)
+	var control = $Configure.find_node(name)
 	if not control:
 		return null
 	match name:
@@ -83,13 +86,13 @@ func _on_Play_toggled(button_pressed):
 			var value = get_value(parameter)
 			if value:
 				parameters[parameter] = value
-		$RandomPlayer.play($Controls.find_node("Seed").text.hash(), parameters)
-		fade_image(0.5, 0, 0.5 * bar_length)
+		$RandomPlayer.play($Configure.find_node("Seed").text.hash(), parameters)
+		fade(1.0, 0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
-		fade_image(0.0, 0.5, 0.5 * bar_length)
-	enable_controls(not button_pressed)
-	$Controls.find_node("Play").text = "Stop!" if button_pressed else "Play!"
+		fade(0.0, 1.0, 0.5 * bar_length)
+	enable_Configure(not button_pressed)
+	$Controls.find_node("Play").text = "Stop" if button_pressed else "Play!"
 	$Controls.find_node("Pause").disabled = not button_pressed
 	$ViewportContainer/Viewport/Visualiser.start(button_pressed, bar_length)
 
@@ -107,5 +110,5 @@ func _on_RandomPlayer_finished():
 
 
 func _on_MidiPlayer_changed_tempo(tempo):
-	$Controls.find_node("Tempo").value = tempo
+	$Configure.find_node("Tempo").value = tempo
 	$ViewportContainer/Viewport/Visualiser.set_bar_length($RandomPlayer.bar_time())
