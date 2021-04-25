@@ -2,20 +2,21 @@ class_name Visualiser
 extends Spatial
 
 
-# rotations per bar
-export(float) var rate = 0.0625
+# centi-rotations per bar
+export(float) var rate = 3.125
 
 # radians per second per bar
 var speed = 0.0
 var instruments = {}
 var timescale = 1.0
 
-enum {OBJECTS, LIGHTS, TOPLIGHT, STELLATION}
-onready var objects = [$Objects, $Lights, $BottomLight, $Stellation]
+enum {OBJECTS, LIGHTS, BOTTOM_LIGHT}
+onready var objects = [$Objects, $Lights, $BottomLight]
 onready var responders = {
 	Structure.CHORDS: $Lights,
 	Structure.BASS: $BottomLight,
-	Structure.MELODY: $Stellation,
+	Structure.MELODY: $Objects/Stellation,
+	Structure.DRONE: $Objects/Orbiter,
 }
 
 
@@ -25,8 +26,8 @@ func _ready():
 
 
 func _process(delta):
-	objects[OBJECTS].rotate_y(delta * speed)
-	objects[LIGHTS].rotate_y(-delta * speed)
+	objects[OBJECTS].rotate_y(delta * speed * rate)
+	objects[LIGHTS].rotate_y(-0.5 * delta * speed * rate)
 
 
 func scale_thing(thing: Spatial, to: float, time: float):
@@ -40,17 +41,11 @@ func start(start: bool, time: float):
 		scale_thing(thing, 1.0 if start else 0.0, time)
 
 
-func pulse_thing(thing: Spatial, to: float, time: float):
-	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE * to, timescale)
-	$Scaler.start()
-	yield($Scaler, "tween_all_completed")
-	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE, (time - 1) * timescale)
-	$Scaler.start()
-
 
 func set_bar_length(bar_length: float):
-	speed = TAU * rate / bar_length
-	$Stellation.speed = TAU / bar_length
+	speed = TAU * bar_length * 0.01
+	for k in responders:
+		responders[k].speed = speed
 
 
 func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):

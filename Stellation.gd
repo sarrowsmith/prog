@@ -2,17 +2,13 @@ class_name Stellation
 extends Responder
 
 
-export(float) var rate = 0.125
-
 var last = -1
-var speed = 0
-var axis = Vector3.UP
 
 onready var cubes = [$CubeY, $CubeX, $CubeZ]
 
 
-func _process(delta):
-	rotate_object_local(axis, delta * speed * rate)
+func _ready():
+	axis = Vector3.RIGHT
 
 
 func respond(visualiser: Visualiser, note: Array):
@@ -20,5 +16,5 @@ func respond(visualiser: Visualiser, note: Array):
 	if last < 0:
 		last = pitch
 		return
-	var cube = cubes[int(sign(pitch - last)) + 1]
-	visualiser.pulse_thing(cube, 1.72, float(note[RandomPlayer.DURATION]))
+	thing = cubes[int(sign(pitch - last)) + 1]
+	.respond(visualiser, note)

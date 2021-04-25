@@ -1,0 +1,8 @@
+[gd_resource type="SpatialMaterial" format=2]
+
+[resource]
+metallic = 1.0
+roughness = 0.5
+rim_enabled = true
+rim = 1.0
+rim_tint = 0.5

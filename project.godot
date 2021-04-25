@@ -25,6 +25,11 @@ _global_script_classes=[ {
 "path": "res://addons/midi/MidiPlayer.gd"
 }, {
 "base": "Responder",
+"class": "Orbiter",
+"language": "GDScript",
+"path": "res://Orbiter.gd"
+}, {
+"base": "Responder",
 "class": "ParticleLight",
 "language": "GDScript",
 "path": "res://ParticleLight.gd"
@@ -68,6 +73,7 @@ _global_script_class_icons={
 "AudioStreamPlayerADSR": "",
 "Bank": "",
 "MidiPlayer": "",
+"Orbiter": "",
 "ParticleLight": "",
 "RandomPlayer": "",
 "Responder": "",

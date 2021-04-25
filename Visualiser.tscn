@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://Visualiser.gd" type="Script" id=1]
 [ext_resource path="res://default_env.tres" type="Environment" id=2]
@@ -9,7 +9,9 @@
 [ext_resource path="res://resources/white_light_mat.tres" type="Material" id=7]
 [ext_resource path="res://Stellation.gd" type="Script" id=8]
 [ext_resource path="res://resources/rough_mat.tres" type="Material" id=9]
+[ext_resource path="res://Orbiter.gd" type="Script" id=10]
 [ext_resource path="res://resources/metallic_mat.tres" type="Material" id=11]
+[ext_resource path="res://Pulser.gd" type="Script" id=12]
 
 [sub_resource type="Curve" id=1]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
@@ -44,7 +46,7 @@ trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
 spread = 30.0
-gravity = Vector3( 4.9, 0, 8.487 )
+gravity = Vector3( 0, -4.9, 8.487 )
 initial_velocity = 20.0
 initial_velocity_random = 0.2
 angle_random = 1.0
@@ -66,7 +68,7 @@ trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
 spread = 30.0
-gravity = Vector3( 4.9, 0, 8.487 )
+gravity = Vector3( 0, -4.9, 8.487 )
 initial_velocity = 20.0
 initial_velocity_random = 0.2
 angle_random = 1.0
@@ -88,7 +90,7 @@ trail_divisor = 4
 trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
 spread = 30.0
-gravity = Vector3( 4.9, 0, 8.487 )
+gravity = Vector3( 0, -4.9, 8.487 )
 initial_velocity = 20.0
 initial_velocity_random = 0.2
 angle_random = 1.0
@@ -104,11 +106,15 @@ material = ExtResource( 6 )
 radius = 0.25
 height = 0.5
 
+[sub_resource type="CubeMesh" id=17]
+
 [sub_resource type="SphereMesh" id=15]
+radius = 0.5
+height = 1.0
 
 [sub_resource type="SphereMesh" id=16]
-
-[sub_resource type="CubeMesh" id=17]
+radius = 0.5
+height = 1.0
 
 [node name="Visualiser" type="Spatial"]
 script = ExtResource( 1 )
@@ -166,7 +172,7 @@ material/0 = null
 
 [node name="MLight" type="SpotLight" parent="Lights"]
 transform = Transform( -0.5, -0.433013, 0.75, 0, 0.866025, 0.5, -0.866025, 0.25, -0.433013, 10, 5.77, -5.77 )
-light_color = Color( 1, 0.501961, 1, 1 )
+light_color = Color( 1, 0.25098, 0.501961, 1 )
 light_energy = 2.0
 spot_range = 50.0
 spot_attenuation = 0.25
@@ -212,32 +218,49 @@ material/0 = null
 
 [node name="Objects" type="Spatial" parent="."]
 
-[node name="Rough" type="MeshInstance" parent="Objects"]
-visible = false
-mesh = SubResource( 15 )
-material/0 = ExtResource( 9 )
-
-[node name="Metal" type="MeshInstance" parent="Objects"]
-visible = false
-mesh = SubResource( 16 )
-material/0 = ExtResource( 11 )
-
-[node name="Stellation" type="Spatial" parent="."]
+[node name="Stellation" type="Spatial" parent="Objects"]
 script = ExtResource( 8 )
+rate = 3.125
+pulse = 1.77
 
-[node name="CubeX" type="MeshInstance" parent="Stellation"]
+[node name="Pulser" type="Tween" parent="Objects/Stellation"]
+script = ExtResource( 12 )
+
+[node name="CubeX" type="MeshInstance" parent="Objects/Stellation"]
 transform = Transform( 1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0 )
 mesh = SubResource( 17 )
 material/0 = ExtResource( 11 )
 
-[node name="CubeY" type="MeshInstance" parent="Stellation"]
+[node name="CubeY" type="MeshInstance" parent="Objects/Stellation"]
 transform = Transform( 0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0, 0 )
 mesh = SubResource( 17 )
 material/0 = ExtResource( 11 )
 
-[node name="CubeZ" type="MeshInstance" parent="Stellation"]
+[node name="CubeZ" type="MeshInstance" parent="Objects/Stellation"]
 transform = Transform( 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 17 )
+material/0 = ExtResource( 11 )
+
+[node name="Orbiter" type="Spatial" parent="Objects"]
+script = ExtResource( 10 )
+rate = 6.125
+period = 5.0
+
+[node name="Pulser" type="Tween" parent="Objects/Orbiter"]
+script = ExtResource( 12 )
+
+[node name="Epicycle" type="Spatial" parent="Objects/Orbiter"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0 )
+
+[node name="Rough" type="MeshInstance" parent="Objects/Orbiter/Epicycle"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0 )
+visible = false
+mesh = SubResource( 15 )
+material/0 = ExtResource( 9 )
+
+[node name="Metal" type="MeshInstance" parent="Objects/Orbiter/Epicycle"]
+visible = false
+mesh = SubResource( 16 )
 material/0 = ExtResource( 11 )
 
 [node name="Camera" type="Camera" parent="."]
