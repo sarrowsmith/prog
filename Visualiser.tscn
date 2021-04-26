@@ -220,7 +220,6 @@ material/0 = null
 
 [node name="Stellation" type="Spatial" parent="Objects"]
 script = ExtResource( 8 )
-rate = 3.125
 pulse = 1.77
 
 [node name="Pulser" type="Tween" parent="Objects/Stellation"]
@@ -243,8 +242,6 @@ material/0 = ExtResource( 11 )
 
 [node name="Orbiter" type="Spatial" parent="Objects"]
 script = ExtResource( 10 )
-rate = 6.125
-period = 5.0
 
 [node name="Pulser" type="Tween" parent="Objects/Orbiter"]
 script = ExtResource( 12 )

@@ -21,8 +21,7 @@ onready var responders = {
 
 
 func _ready():
-	for thing in objects:
-		thing.scale = Vector3.ZERO
+	zero()
 
 
 func _process(delta):
@@ -30,16 +29,14 @@ func _process(delta):
 	objects[LIGHTS].rotate_y(-0.5 * delta * speed * rate)
 
 
+func zero():
+	for k in responders:
+		responders[k].scale = Vector3.ZERO
+
+
 func scale_thing(thing: Spatial, to: float, time: float):
-	$Scaler.interpolate_property(thing, "scale", thing.scale, Vector3.ONE * to, time)
+	$Scaler.interpolate_property(thing, "scale", null, Vector3.ONE * to, time)
 	$Scaler.start()
-	yield($Scaler, "tween_all_completed")
-
-
-func start(start: bool, time: float):
-	for thing in objects:
-		scale_thing(thing, 1.0 if start else 0.0, time)
-
 
 
 func set_bar_length(bar_length: float):
@@ -57,15 +54,15 @@ func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 			instruments[track] = instrument
 			if responders.has(track):
 				responders[track].set_instrument(instrument)
+				scale_thing(responders[track], 1.0, 100 * speed / TAU)
 	else:
 		if instruments.erase(track):
 			if responders.has(track):
-				responders[track].stop()
-				responders.erase(track)
+				scale_thing(responders[track], 0.0, 100 * speed / TAU)
 
 
 func _on_MidiPlayer_appeared_cue_point(cue_point):
-	var note = cue_point.split(":")
+	var note = cue_point.split_floats(":")
 	var track = int(note[0])
 	if responders.has(track):
 		note.remove(0)

@@ -91,10 +91,10 @@ func _on_Play_toggled(button_pressed):
 	else:
 		$RandomPlayer.stop()
 		fade(0.0, 1.0, 0.5 * bar_length)
+		$ViewportContainer/Viewport/Visualiser.zero()
 	enable_Configure(not button_pressed)
 	$Controls.find_node("Play").text = "Stop" if button_pressed else "Play!"
 	$Controls.find_node("Pause").disabled = not button_pressed
-	$ViewportContainer/Viewport/Visualiser.start(button_pressed, bar_length)
 
 
 func _on_OpenSoundfont_pressed():

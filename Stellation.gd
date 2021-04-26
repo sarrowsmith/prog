@@ -2,7 +2,7 @@ class_name Stellation
 extends Responder
 
 
-var last = -1
+var last = -1.0
 
 onready var cubes = [$CubeY, $CubeX, $CubeZ]
 
@@ -12,9 +12,8 @@ func _ready():
 
 
 func respond(visualiser: Visualiser, note: Array):
-	var pitch = int(note[RandomPlayer.PITCH])
-	if last < 0:
-		last = pitch
-		return
-	thing = cubes[int(sign(pitch - last)) + 1]
-	.respond(visualiser, note)
+	var pitch = note[RandomPlayer.PITCH]
+	if last > 0.0:
+		thing = cubes[int(sign(pitch - last)) + 1]
+		.respond(visualiser, note)
+	last = pitch
