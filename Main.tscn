@@ -362,7 +362,7 @@ soundfont = "res://resources/default-GM.sf2"
 
 [connection signal="pressed" from="Configure/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
-[connection signal="toggled" from="Controls/Menu/Pause" to="RandomPlayer" method="pause"]
+[connection signal="toggled" from="Controls/Menu/Pause" to="." method="_on_Pause_toggled"]
 [connection signal="mouse_exited" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="release_focus"]
 [connection signal="value_changed" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="_on_Volume_value_changed"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]

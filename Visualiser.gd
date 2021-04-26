@@ -10,8 +10,8 @@ var speed = 0.0
 var instruments = {}
 var timescale = 1.0
 
-enum {OBJECTS, LIGHTS, BOTTOM_LIGHT}
-onready var objects = [$Objects, $Lights, $BottomLight]
+enum {THINGS, CAMERA}
+onready var objects = [$Objects, $Boom]
 onready var responders = {
 	Structure.CHORDS: $Lights,
 	Structure.BASS: $BottomLight,
@@ -21,17 +21,23 @@ onready var responders = {
 
 
 func _ready():
-	zero()
+	stop()
 
 
 func _process(delta):
-	objects[OBJECTS].rotate_y(delta * speed * rate)
-	objects[LIGHTS].rotate_y(-0.5 * delta * speed * rate)
+	objects[THINGS].rotate_y(delta * speed * rate)
+	objects[CAMERA].rotate_y(-0.125 * delta * speed * rate)
 
 
-func zero():
+func stop():
 	for k in responders:
 		responders[k].scale = Vector3.ZERO
+	set_process(false)
+	instruments.clear()
+
+
+func start():
+	set_process(true)
 
 
 func scale_thing(thing: Spatial, to: float, time: float):
@@ -48,12 +54,13 @@ func set_bar_length(bar_length: float):
 func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 	var parts = name.split(":")
 	var track = int(parts[0])
-	var instrument = parts[1]
+	parts.remove(0)
+	var instrument = parts[0]
 	if instrument:
 		if not (instruments.has(track) and instruments[track] == instrument):
 			instruments[track] = instrument
 			if responders.has(track):
-				responders[track].set_instrument(instrument)
+				responders[track].set_instrument(parts)
 				scale_thing(responders[track], 1.0, 100 * speed / TAU)
 	else:
 		if instruments.erase(track):

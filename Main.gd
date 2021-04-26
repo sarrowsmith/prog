@@ -87,11 +87,12 @@ func _on_Play_toggled(button_pressed):
 			if value:
 				parameters[parameter] = value
 		$RandomPlayer.play($Configure.find_node("Seed").text.hash(), parameters)
+		$ViewportContainer/Viewport/Visualiser.start()
 		fade(1.0, 0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
 		fade(0.0, 1.0, 0.5 * bar_length)
-		$ViewportContainer/Viewport/Visualiser.zero()
+		$ViewportContainer/Viewport/Visualiser.stop()
 	enable_Configure(not button_pressed)
 	$Controls.find_node("Play").text = "Stop" if button_pressed else "Play!"
 	$Controls.find_node("Pause").disabled = not button_pressed
@@ -112,3 +113,8 @@ func _on_RandomPlayer_finished():
 func _on_MidiPlayer_changed_tempo(tempo):
 	$Configure.find_node("Tempo").value = tempo
 	$ViewportContainer/Viewport/Visualiser.set_bar_length($RandomPlayer.bar_time())
+
+
+func _on_Pause_toggled(button_pressed):
+	$RandomPlayer.pause(button_pressed)
+	$ViewportContainer/Viewport/Visualiser.set_process(not button_pressed)
