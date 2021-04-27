@@ -19,17 +19,16 @@ onready var epicycle = $Epicycle
 # warning-ignore:shadowed_variable
 # warning-ignore:shadowed_variable
 func spawn(track: int, rng: RandomNumberGenerator) -> Responder:
-	var clone = duplicate()
-	clone.visible = false
+	self.track = track
+	self.rng = rng
+	scale = Vector3.ZERO
 	# Populating bodies requires created.epicycle to be available, which it
 	# won't be until created enters the scene tree. So we set up the parameters
 	# & defer construction to start(). Similarly with initial positions.
-	clone.form = forms[rng.randi_range(0, len(forms) - 1)]
-	clone.track = track
-	clone.period = sqrt(track * track * track)
-	clone.epiperiod = abs(rng.randfn(1.0 if track < Structure.OTHER else 256.0 / track))
-	clone.rng = rng
-	return clone
+	form = forms[rng.randi_range(0, len(forms) - 1)]
+	period = sqrt(track * track * track)
+	epiperiod = abs(rng.randfn(1.0 if track < Structure.OTHER else 256.0 / track))
+	return self
 
 
 func _ready():
@@ -64,13 +63,20 @@ func respond(visualiser: Visualiser, note: Array):
 
 func set_instrument(instrumentation: Array):
 	# instrumentation = [instrument, mode, key] as floats
+	var instrument = instrumentation[0] / 128
 	for body in bodies:
 		for thing in body.get_children():
 			if thing.visible:
+				var colour = Color.white
 				match form:
 					"Rough":
-						pass
-					"Metal":
-						pass
+						var intensity = 1 - 0.1 * instrumentation[1]
+						colour = Color.from_hsv(fmod(1 + instrumentation[2] / 12 + instrument, 1), 0.5 * (1 + intensity), intensity)
+					"Glass":
+						colour = Color.black
 					_:
-						continue
+						colour = colour.linear_interpolate(Color.orange, instrument * instrument)
+				if colour:
+					var mat = thing.get_surface_material(0).duplicate()
+					mat.albedo_color = colour
+					thing.set_surface_material(0, mat)

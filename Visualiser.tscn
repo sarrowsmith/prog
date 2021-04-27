@@ -212,6 +212,9 @@ mesh = SubResource( 14 )
 material/0 = null
 
 [node name="Orbiter" parent="." instance=ExtResource( 10 )]
+period = 1.0
+pulse = 1.25
+epiperiod = 1.0
 
 [node name="Objects" type="Spatial" parent="."]
 

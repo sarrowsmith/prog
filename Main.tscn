@@ -27,7 +27,7 @@ scancode = 81
 shortcut = SubResource( 9 )
 
 [sub_resource type="InputEventKey" id=5]
-scancode = 16777221
+scancode = 16777220
 
 [sub_resource type="ShortCut" id=6]
 shortcut = SubResource( 5 )

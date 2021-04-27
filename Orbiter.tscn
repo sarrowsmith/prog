@@ -5,6 +5,7 @@
 [ext_resource path="res://resources/metallic_mat.tres" type="Material" id=3]
 [ext_resource path="res://resources/rough_mat.tres" type="Material" id=4]
 [ext_resource path="res://resources/mirror_mat.tres" type="Material" id=5]
+[ext_resource path="res://resources/glass_mat.tres" type="Material" id=6]
 
 [sub_resource type="SphereMesh" id=5]
 radius = 0.75
@@ -21,15 +22,6 @@ height = 1.5
 [sub_resource type="SphereMesh" id=3]
 radius = 0.75
 height = 1.5
-
-[sub_resource type="SpatialMaterial" id=4]
-flags_transparent = true
-albedo_color = Color( 0.898039, 0.988235, 1, 0.0901961 )
-metallic = 1.0
-roughness = 0.18
-refraction_enabled = true
-refraction_scale = -0.08
-refraction_texture_channel = 0
 
 [node name="Orbiter" type="Spatial"]
 script = ExtResource( 2 )
@@ -85,9 +77,9 @@ visible = false
 [node name="A" type="MeshInstance" parent="Epicycle/Glass"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 0, 0 )
 mesh = SubResource( 3 )
-material/0 = SubResource( 4 )
+material/0 = ExtResource( 6 )
 
 [node name="B" type="MeshInstance" parent="Epicycle/Glass"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0, 0 )
 mesh = SubResource( 3 )
-material/0 = SubResource( 4 )
+material/0 = ExtResource( 6 )

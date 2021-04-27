@@ -19,4 +19,4 @@ func respond(visualiser: Visualiser, note: Array):
 
 
 func set_instrument(instrumentation: Array):
-	print(instrumentation)
+	pass

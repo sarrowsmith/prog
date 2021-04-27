@@ -2,6 +2,8 @@ class_name Visualiser
 extends Spatial
 
 
+var orbiter_prototype = load("res://Orbiter.tscn")
+
 # centi-rotations per bar
 export(float) var rate = 3.125
 
@@ -28,8 +30,8 @@ func _ready():
 
 func _process(delta):
 	pass
-#	objects[THINGS].rotate_y(delta * speed * rate)
-#	objects[CAMERA].rotate_y(-0.125 * delta * speed * rate)
+	objects[THINGS].rotate_y(delta * speed * rate)
+	objects[CAMERA].rotate_y(-0.125 * delta * speed * rate)
 
 
 func stop():
@@ -43,8 +45,9 @@ func start(rng_seed: int):
 	rng.seed = rng_seed
 	for track in 16:
 		if not responders.has(track):
-			responders[track] = $Orbiter.spawn(track, rng)
-			$Objects.add_child(responders[track])
+			var orbiter = orbiter_prototype.instance().spawn(track, rng)
+			responders[track] = orbiter
+			$Objects.add_child(orbiter)
 	set_process(true)
 
 
@@ -63,14 +66,11 @@ func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 	var parts = name.split_floats(":")
 	var track = int(parts[0])
 	parts.remove(0)
-	var target = 0.0
-	if parts[0]:
-		if not responders.has(track):
-			responders[track] = $Orbiter.spawn(track, rng)
-			$Objects.add_child(responders[track])
-		responders[track].set_instrument(parts)
-		target = 1
 	if responders.has(track):
+		var target = 0.0
+		if parts[0]:
+			responders[track].set_instrument(parts)
+			target = 1.0
 		scale_thing(responders[track], target, 100 * speed / TAU)
 
 
