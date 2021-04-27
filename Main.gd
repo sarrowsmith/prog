@@ -48,6 +48,11 @@ func fade_image(from: float, to: float, time: float):
 func fade(from: float, to: float, time: float):
 	$Fader.interpolate_property($Configure, "modulate", Color(1.0, 1.0, 1.0, from), Color(1.0, 1.0, 1.0, to), 0.5 * time)
 	fade_image(0.5 * from, 0.5 * to, time)
+	if to > 0:
+		$Configure.visible = true
+	yield($Fader, "tween_all_completed")
+	if to == 0:
+		$Configure.visible = false
 
 
 func set_active(name: String, on: bool):
