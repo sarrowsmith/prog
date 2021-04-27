@@ -4,6 +4,7 @@ extends Responder
 
 var particles = []
 var next = 0
+var skip = false
 
 
 func _ready():
@@ -12,5 +13,8 @@ func _ready():
 
 
 func respond(_visualiser: Visualiser, _note: Array):
+	skip = not skip
+	if skip:
+		return
 	particles[next].restart()
 	next = (next + 1) % len(particles)

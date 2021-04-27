@@ -9,14 +9,16 @@ export(float) var rate = 3.125
 var speed = 0.0
 var instruments = {}
 var timescale = 1.0
+var rng = RandomNumberGenerator.new()
 
 enum {THINGS, CAMERA}
 onready var objects = [$Objects, $Boom]
 onready var responders = {
 	Structure.CHORDS: $Lights,
+	Structure.DRONE: $Orbiter,
 	Structure.BASS: $BottomLight,
 	Structure.MELODY: $Objects/Stellation,
-	Structure.DRONE: $Objects/Orbiter,
+	Structure.DRUMS: $Base,
 }
 
 
@@ -25,8 +27,9 @@ func _ready():
 
 
 func _process(delta):
-	objects[THINGS].rotate_y(delta * speed * rate)
-	objects[CAMERA].rotate_y(-0.125 * delta * speed * rate)
+	pass
+#	objects[THINGS].rotate_y(delta * speed * rate)
+#	objects[CAMERA].rotate_y(-0.125 * delta * speed * rate)
 
 
 func stop():
@@ -36,7 +39,12 @@ func stop():
 	instruments.clear()
 
 
-func start():
+func start(rng_seed: int):
+	rng.seed = rng_seed
+	for track in 16:
+		if not responders.has(track):
+			responders[track] = $Orbiter.spawn(track, rng)
+			$Objects.add_child(responders[track])
 	set_process(true)
 
 
@@ -55,17 +63,15 @@ func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 	var parts = name.split(":")
 	var track = int(parts[0])
 	parts.remove(0)
-	var instrument = parts[0]
-	if instrument:
-		if not (instruments.has(track) and instruments[track] == instrument):
-			instruments[track] = instrument
-			if responders.has(track):
-				responders[track].set_instrument(parts)
-				scale_thing(responders[track], 1.0, 100 * speed / TAU)
-	else:
-		if instruments.erase(track):
-			if responders.has(track):
-				scale_thing(responders[track], 0.0, 100 * speed / TAU)
+	var target = 0.0
+	if parts[0]:
+		if not responders.has(track):
+			responders[track] = $Orbiter.spawn(track, rng)
+			$Objects.add_child(responders[track])
+		responders[track].set_instrument(parts)
+		target = 1
+	if responders.has(track):
+		scale_thing(responders[track], target, 100 * speed / TAU)
 
 
 func _on_MidiPlayer_appeared_cue_point(cue_point):

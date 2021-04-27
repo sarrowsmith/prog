@@ -3,7 +3,7 @@ extends Spatial
 
 
 export(float) var period = 1
-export(float) var pulse = 1.5
+export(float) var pulse = 1.25
 
 var speed = 0
 var axis = Vector3.UP

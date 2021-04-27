@@ -137,10 +137,11 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars += repeats * len(chords)
 	if final:
+		chunks.append({program = programs, repeats = 0, bar = bars, density = base_density, chords = [1]})
 		for p in range(top, 16):
 			programs[p] = 0
 		chunks.append({program = programs, repeats = 0, bar = bars, density = base_density, chords = [1]})
-		for p in range(0, top):
+		for p in range(0, min(top,16)):
 			programs[p] = 0
 		chunks.append({program = programs, repeats = 0, bar = bars + 1, density = base_density, chords = [1]})
 	return chunks

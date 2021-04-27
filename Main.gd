@@ -86,8 +86,9 @@ func _on_Play_toggled(button_pressed):
 			var value = get_value(parameter)
 			if value:
 				parameters[parameter] = value
-		$RandomPlayer.play($Configure.find_node("Seed").text.hash(), parameters)
-		$ViewportContainer/Viewport/Visualiser.start()
+		var rng_seed = $Configure.find_node("Seed").text.hash()
+		$RandomPlayer.play(rng_seed, parameters)
+		$ViewportContainer/Viewport/Visualiser.start(rng_seed)
 		fade(1.0, 0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
@@ -118,3 +119,7 @@ func _on_MidiPlayer_changed_tempo(tempo):
 func _on_Pause_toggled(button_pressed):
 	$RandomPlayer.pause(button_pressed)
 	$ViewportContainer/Viewport/Visualiser.set_process(not button_pressed)
+
+
+func _on_Fullscreen_toggled(button_pressed):
+	pass # Replace with function body.
