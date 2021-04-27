@@ -1,12 +1,10 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=2]
-
-[ext_resource path="res://addons/RefractionShader.shader" type="Shader" id=1]
+[gd_resource type="SpatialMaterial" format=2]
 
 [resource]
-shader = ExtResource( 1 )
-shader_param/tint = Color( 1, 1, 1, 0 )
-shader_param/specular = 0.0
-shader_param/roughness = 0.0
-shader_param/metallic = 0.0
-shader_param/strength = 2.0
-shader_param/use_normal_map = false
+flags_transparent = true
+albedo_color = Color( 0.898039, 0.988235, 1, 0.0901961 )
+metallic = 1.0
+roughness = 0.18
+refraction_enabled = true
+refraction_scale = -0.08
+refraction_texture_channel = 0

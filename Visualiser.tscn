@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=2]
+[gd_scene load_steps=34 format=2]
 
 [ext_resource path="res://Visualiser.gd" type="Script" id=1]
 [ext_resource path="res://default_env.tres" type="Environment" id=2]
@@ -13,7 +13,6 @@
 [ext_resource path="res://resources/metallic_mat.tres" type="Material" id=11]
 [ext_resource path="res://Pulser.gd" type="Script" id=12]
 [ext_resource path="res://resources/mirror_mat.tres" type="Material" id=13]
-[ext_resource path="res://resources/glass_mat.tres" type="Material" id=14]
 
 [sub_resource type="Curve" id=1]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
@@ -108,14 +107,24 @@ material = ExtResource( 6 )
 radius = 0.25
 height = 0.5
 
-[sub_resource type="CubeMesh" id=17]
+[sub_resource type="CubeMesh" id=15]
+
+[sub_resource type="SphereMesh" id=16]
+
+[sub_resource type="SphereMesh" id=17]
 
 [sub_resource type="SphereMesh" id=18]
 
-[sub_resource type="SphereMesh" id=16]
-radius = 3.0
-
 [sub_resource type="SphereMesh" id=19]
+
+[sub_resource type="SpatialMaterial" id=20]
+flags_transparent = true
+albedo_color = Color( 0.898039, 0.988235, 1, 0.0901961 )
+metallic = 1.0
+roughness = 0.18
+refraction_enabled = true
+refraction_scale = -0.08
+refraction_texture_channel = 0
 
 [node name="Visualiser" type="Spatial"]
 script = ExtResource( 1 )
@@ -229,21 +238,20 @@ script = ExtResource( 12 )
 
 [node name="CubeX" type="MeshInstance" parent="Objects/Stellation"]
 transform = Transform( 1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0 )
-mesh = SubResource( 17 )
+mesh = SubResource( 15 )
 material/0 = ExtResource( 11 )
 
 [node name="CubeY" type="MeshInstance" parent="Objects/Stellation"]
 transform = Transform( 0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0, 0 )
-mesh = SubResource( 17 )
+mesh = SubResource( 15 )
 material/0 = ExtResource( 11 )
 
 [node name="CubeZ" type="MeshInstance" parent="Objects/Stellation"]
 transform = Transform( 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0, 1, 0, 0, 0 )
-mesh = SubResource( 17 )
+mesh = SubResource( 15 )
 material/0 = ExtResource( 11 )
 
 [node name="Orbiter" type="Spatial" parent="Objects"]
-visible = false
 script = ExtResource( 10 )
 pulse = 1.25
 
@@ -251,30 +259,30 @@ pulse = 1.25
 script = ExtResource( 12 )
 
 [node name="Epicycle" type="Spatial" parent="Objects/Orbiter"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5 )
 
 [node name="Rough" type="MeshInstance" parent="Objects/Orbiter/Epicycle"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0 )
 visible = false
-mesh = SubResource( 18 )
+mesh = SubResource( 16 )
 material/0 = ExtResource( 9 )
 
 [node name="Metal" type="MeshInstance" parent="Objects/Orbiter/Epicycle"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0 )
 visible = false
-mesh = SubResource( 16 )
+mesh = SubResource( 17 )
 material/0 = ExtResource( 11 )
 
 [node name="Mirror" type="MeshInstance" parent="Objects/Orbiter/Epicycle"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0 )
-mesh = SubResource( 19 )
+visible = false
+mesh = SubResource( 18 )
 material/0 = ExtResource( 13 )
 
 [node name="Glass" type="MeshInstance" parent="Objects/Orbiter/Epicycle"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0 )
-visible = false
-mesh = SubResource( 16 )
-material/0 = ExtResource( 14 )
+mesh = SubResource( 19 )
+material/0 = SubResource( 20 )
 
 [node name="Boom" type="Spatial" parent="."]
 
