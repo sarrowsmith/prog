@@ -63,4 +63,14 @@ func respond(visualiser: Visualiser, note: Array):
 
 
 func set_instrument(instrumentation: Array):
-	pass
+	# instrumentation = [instrument, mode, key] as floats
+	for body in bodies:
+		for thing in body.get_children():
+			if thing.visible:
+				match form:
+					"Rough":
+						pass
+					"Metal":
+						pass
+					_:
+						continue

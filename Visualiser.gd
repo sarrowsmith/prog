@@ -60,7 +60,7 @@ func set_bar_length(bar_length: float):
 
 
 func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
-	var parts = name.split(":")
+	var parts = name.split_floats(":")
 	var track = int(parts[0])
 	parts.remove(0)
 	var target = 0.0

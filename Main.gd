@@ -122,4 +122,8 @@ func _on_Pause_toggled(button_pressed):
 
 
 func _on_Fullscreen_toggled(button_pressed):
-	pass # Replace with function body.
+	OS.window_fullscreen = button_pressed
+
+
+func _on_Quit_pressed():
+	get_tree().quit()

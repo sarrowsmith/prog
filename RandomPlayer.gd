@@ -234,11 +234,11 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var time = (chunk.bar - 1) * bar_length + 1
 
 	if track == Structure.DRUMS:
-		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:-" % track})
+		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:0" % track})
 		events.append(SMF.MIDIEventChunk.new(time - 1, track, chunk_start))
 	else:
 		var program = chunk.program[track]
-		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:%s:%d:%d" % [track, Structure.instrument_name(program), mode, key]})
+		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:%d:%d:%d" % [track, program, mode, key]})
 		events.append(SMF.MIDIEventChunk.new(time - 1, track, chunk_start))
 		if not program:
 			return events

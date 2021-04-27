@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -9,6 +9,40 @@
 [ext_resource path="res://Volume.gd" type="Script" id=7]
 [ext_resource path="res://Visualiser.tscn" type="PackedScene" id=8]
 [ext_resource path="res://visualiser_world.tres" type="World" id=9]
+
+[sub_resource type="InputEventKey" id=7]
+control = true
+command = true
+scancode = 70
+
+[sub_resource type="ShortCut" id=8]
+shortcut = SubResource( 7 )
+
+[sub_resource type="InputEventKey" id=9]
+control = true
+command = true
+scancode = 81
+
+[sub_resource type="ShortCut" id=10]
+shortcut = SubResource( 9 )
+
+[sub_resource type="InputEventKey" id=5]
+scancode = 16777221
+
+[sub_resource type="ShortCut" id=6]
+shortcut = SubResource( 5 )
+
+[sub_resource type="InputEventKey" id=3]
+scancode = 16777217
+
+[sub_resource type="ShortCut" id=4]
+shortcut = SubResource( 3 )
+
+[sub_resource type="InputEventKey" id=1]
+scancode = 16777254
+
+[sub_resource type="ShortCut" id=2]
+shortcut = SubResource( 1 )
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -64,7 +98,7 @@ __meta__ = {
 }
 
 [node name="Configure" type="MarginContainer" parent="."]
-margin_right = 320.0
+margin_right = 280.0
 margin_bottom = 720.0
 size_flags_vertical = 7
 theme = ExtResource( 1 )
@@ -74,7 +108,7 @@ __meta__ = {
 
 [node name="Panel" type="Panel" parent="Configure"]
 show_behind_parent = true
-margin_right = 320.0
+margin_right = 280.0
 margin_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -84,7 +118,7 @@ __meta__ = {
 }
 
 [node name="Menu" type="VBoxContainer" parent="Configure"]
-margin_right = 320.0
+margin_right = 280.0
 margin_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -93,104 +127,108 @@ __meta__ = {
 }
 
 [node name="GridContainer2" type="GridContainer" parent="Configure/Menu"]
-margin_right = 320.0
-margin_bottom = 124.0
+margin_right = 280.0
+margin_bottom = 116.0
 columns = 2
 
 [node name="Tracks" type="SpinBox" parent="Configure/Menu/GridContainer2"]
-margin_right = 158.0
-margin_bottom = 28.0
+margin_right = 138.0
+margin_bottom = 26.0
+hint_tooltip = "Maximum number of voices to use"
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 16.0
 value = 16.0
-suffix = "tracks"
+suffix = "voices"
 
 [node name="Style" type="OptionButton" parent="Configure/Menu/GridContainer2"]
-margin_left = 162.0
-margin_right = 320.0
-margin_bottom = 28.0
+margin_left = 142.0
+margin_right = 280.0
+margin_bottom = 26.0
+hint_tooltip = "Instrumentation style"
 size_flags_horizontal = 3
 text = "Style"
 
 [node name="Mode" type="OptionButton" parent="Configure/Menu/GridContainer2"]
-margin_top = 32.0
-margin_right = 158.0
-margin_bottom = 60.0
+margin_top = 30.0
+margin_right = 138.0
+margin_bottom = 56.0
+hint_tooltip = "Mode"
 size_flags_horizontal = 3
 text = "Mode"
 
 [node name="Key" type="OptionButton" parent="Configure/Menu/GridContainer2"]
-margin_left = 162.0
-margin_top = 32.0
-margin_right = 320.0
-margin_bottom = 60.0
+margin_left = 142.0
+margin_top = 30.0
+margin_right = 280.0
+margin_bottom = 56.0
+hint_tooltip = "Key"
 size_flags_horizontal = 3
 text = "C"
 items = [ "F", null, false, 0, null, "F#", null, false, 1, null, "G", null, false, 2, null, "G#", null, false, 3, null, "A", null, false, 4, null, "A#", null, false, 5, null, "B", null, false, 6, null, "C", null, false, 7, null, "C#", null, false, 8, null, "D", null, false, 9, null, "D#", null, false, 10, null, "E", null, false, 11, null ]
 selected = 7
 
 [node name="Label5" type="Label" parent="Configure/Menu/GridContainer2"]
-margin_top = 64.0
-margin_right = 158.0
-margin_bottom = 92.0
+margin_top = 60.0
+margin_right = 138.0
+margin_bottom = 86.0
 text = "Random seed:"
 
 [node name="Seed" type="LineEdit" parent="Configure/Menu/GridContainer2"]
-margin_left = 162.0
-margin_top = 64.0
-margin_right = 320.0
-margin_bottom = 92.0
+margin_left = 142.0
+margin_top = 60.0
+margin_right = 280.0
+margin_bottom = 86.0
 size_flags_horizontal = 3
 placeholder_text = "seed"
 caret_blink = true
 caret_blink_speed = 0.5
 
 [node name="Label2" type="Label" parent="Configure/Menu/GridContainer2"]
-margin_top = 96.0
-margin_right = 158.0
-margin_bottom = 124.0
+margin_top = 90.0
+margin_right = 138.0
+margin_bottom = 116.0
 text = "Intricacy:"
 
 [node name="Intricacy" type="SpinBox" parent="Configure/Menu/GridContainer2"]
-margin_left = 162.0
-margin_top = 96.0
-margin_right = 320.0
-margin_bottom = 124.0
+margin_left = 142.0
+margin_top = 90.0
+margin_right = 280.0
+margin_bottom = 116.0
 size_flags_horizontal = 3
 max_value = 4.0
 value = 2.0
 rounded = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Configure/Menu"]
-margin_top = 128.0
-margin_right = 320.0
-margin_bottom = 280.0
+margin_top = 120.0
+margin_right = 280.0
+margin_bottom = 266.0
 size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Configure/Menu/VBoxContainer"]
-margin_right = 320.0
-margin_bottom = 28.0
+margin_right = 280.0
+margin_bottom = 26.0
 
 [node name="Label" type="Label" parent="Configure/Menu/VBoxContainer/HBoxContainer"]
-margin_right = 158.0
-margin_bottom = 28.0
+margin_right = 138.0
+margin_bottom = 26.0
 size_flags_horizontal = 3
 text = "Density:"
 
 [node name="Density2" type="SpinBox" parent="Configure/Menu/VBoxContainer/HBoxContainer"]
-margin_left = 162.0
-margin_right = 320.0
-margin_bottom = 28.0
+margin_left = 142.0
+margin_right = 280.0
+margin_bottom = 26.0
 size_flags_horizontal = 3
 value = 50.0
 rounded = true
 suffix = "%"
 
 [node name="Density" type="HSlider" parent="Configure/Menu/VBoxContainer"]
-margin_top = 32.0
-margin_right = 320.0
-margin_bottom = 48.0
+margin_top = 30.0
+margin_right = 280.0
+margin_bottom = 46.0
 size_flags_horizontal = 3
 value = 50.0
 rounded = true
@@ -198,20 +236,20 @@ tick_count = 9
 ticks_on_borders = true
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Configure/Menu/VBoxContainer"]
-margin_top = 52.0
-margin_right = 320.0
-margin_bottom = 80.0
+margin_top = 50.0
+margin_right = 280.0
+margin_bottom = 76.0
 
 [node name="Label3" type="Label" parent="Configure/Menu/VBoxContainer/HBoxContainer2"]
-margin_right = 158.0
-margin_bottom = 28.0
+margin_right = 138.0
+margin_bottom = 26.0
 size_flags_horizontal = 3
 text = "Tempo:"
 
 [node name="Tempo2" type="SpinBox" parent="Configure/Menu/VBoxContainer/HBoxContainer2"]
-margin_left = 162.0
-margin_right = 320.0
-margin_bottom = 28.0
+margin_left = 142.0
+margin_right = 280.0
+margin_bottom = 26.0
 size_flags_horizontal = 3
 min_value = 60.0
 max_value = 210.0
@@ -222,9 +260,9 @@ __meta__ = {
 }
 
 [node name="Tempo" type="HSlider" parent="Configure/Menu/VBoxContainer"]
-margin_top = 84.0
-margin_right = 320.0
-margin_bottom = 100.0
+margin_top = 80.0
+margin_right = 280.0
+margin_bottom = 96.0
 size_flags_horizontal = 3
 min_value = 60.0
 max_value = 210.0
@@ -233,20 +271,20 @@ tick_count = 16
 ticks_on_borders = true
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Configure/Menu/VBoxContainer"]
-margin_top = 104.0
-margin_right = 320.0
-margin_bottom = 132.0
+margin_top = 100.0
+margin_right = 280.0
+margin_bottom = 126.0
 
 [node name="Label4" type="Label" parent="Configure/Menu/VBoxContainer/HBoxContainer3"]
-margin_right = 158.0
-margin_bottom = 28.0
+margin_right = 138.0
+margin_bottom = 26.0
 size_flags_horizontal = 3
 text = "Target length:"
 
 [node name="Length2" type="SpinBox" parent="Configure/Menu/VBoxContainer/HBoxContainer3"]
-margin_left = 162.0
-margin_right = 320.0
-margin_bottom = 28.0
+margin_left = 142.0
+margin_right = 280.0
+margin_bottom = 26.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 1024.0
@@ -254,9 +292,9 @@ value = 1.0
 suffix = "bars"
 
 [node name="Length" type="HSlider" parent="Configure/Menu/VBoxContainer"]
-margin_top = 136.0
-margin_right = 320.0
-margin_bottom = 152.0
+margin_top = 130.0
+margin_right = 280.0
+margin_bottom = 146.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 1024.0
@@ -265,10 +303,25 @@ tick_count = 17
 ticks_on_borders = true
 
 [node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
-margin_top = 284.0
-margin_right = 320.0
-margin_bottom = 312.0
+margin_top = 270.0
+margin_right = 280.0
+margin_bottom = 296.0
+hint_tooltip = "Load a soundfont"
+shortcut = SubResource( 8 )
 text = "Soundfont"
+
+[node name="OpenSoundfont2" type="Label" parent="Configure/Menu"]
+margin_top = 300.0
+margin_right = 280.0
+margin_bottom = 326.0
+
+[node name="Quit" type="Button" parent="Configure/Menu"]
+margin_top = 330.0
+margin_right = 280.0
+margin_bottom = 356.0
+hint_tooltip = "Quit the application"
+shortcut = SubResource( 10 )
+text = "Quit"
 
 [node name="Controls" type="MarginContainer" parent="."]
 anchor_top = 1.0
@@ -299,32 +352,39 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Play" type="Button" parent="Controls/Menu"]
-margin_right = 49.0
+margin_right = 44.0
 margin_bottom = 28.0
+hint_tooltip = "Start/stop playback"
 size_flags_vertical = 3
 toggle_mode = true
+shortcut = SubResource( 6 )
 text = "Play!"
 
 [node name="Pause" type="Button" parent="Controls/Menu"]
-margin_left = 53.0
-margin_right = 109.0
-margin_bottom = 28.0
+margin_left = 48.0
+margin_top = 1.0
+margin_right = 99.0
+margin_bottom = 27.0
+hint_tooltip = "Pause playback"
 size_flags_vertical = 4
 disabled = true
 toggle_mode = true
+shortcut = SubResource( 4 )
 text = "Pause"
 
 [node name="Label5" type="Label" parent="Controls/Menu"]
-margin_left = 113.0
-margin_right = 181.0
-margin_bottom = 28.0
+margin_left = 103.0
+margin_top = 1.0
+margin_right = 163.0
+margin_bottom = 27.0
 text = "Volume:"
 
 [node name="Volume" type="HSlider" parent="Controls/Menu"]
-margin_left = 185.0
+margin_left = 167.0
 margin_top = 6.0
-margin_right = 683.0
+margin_right = 679.0
 margin_bottom = 22.0
+hint_tooltip = "Adjust playback volume"
 size_flags_horizontal = 3
 size_flags_vertical = 4
 max_value = 1.0
@@ -332,10 +392,11 @@ step = 0.05
 script = ExtResource( 7 )
 
 [node name="Progress" type="ProgressBar" parent="Controls/Menu"]
-margin_left = 687.0
+margin_left = 683.0
 margin_top = 13.0
-margin_right = 1186.0
+margin_right = 1196.0
 margin_bottom = 15.0
+hint_tooltip = "Progress of current track"
 size_flags_horizontal = 3
 size_flags_vertical = 4
 max_value = 1024.0
@@ -343,12 +404,14 @@ step = 1.0
 percent_visible = false
 
 [node name="Fullscreen" type="Button" parent="Controls/Menu"]
-margin_left = 1190.0
+margin_left = 1200.0
+margin_top = 1.0
 margin_right = 1280.0
-margin_bottom = 28.0
+margin_bottom = 27.0
+hint_tooltip = "Toggle fullscreen mode"
 size_flags_vertical = 4
-disabled = true
 toggle_mode = true
+shortcut = SubResource( 2 )
 text = "Fullscreen"
 
 [node name="SoundfontDialog" type="FileDialog" parent="."]
@@ -370,6 +433,7 @@ soundfont = "res://resources/default-GM.sf2"
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 
 [connection signal="pressed" from="Configure/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
+[connection signal="pressed" from="Configure/Menu/Quit" to="." method="_on_Quit_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
 [connection signal="toggled" from="Controls/Menu/Pause" to="." method="_on_Pause_toggled"]
 [connection signal="mouse_exited" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="release_focus"]
