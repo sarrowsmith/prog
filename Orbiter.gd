@@ -9,6 +9,9 @@ export(float) var epiperiod = 1.0
 var rng: RandomNumberGenerator
 var bodies = []
 var next = 0
+var material: SpatialMaterial
+var tint = Color.white
+var base_tint = Color.white
 var inclination = Vector3.DOWN
 var form = ""
 var track = 0
@@ -47,9 +50,16 @@ func start():
 		var body = epicycle.get_node(form)
 		if body:
 			body.visible = true
+			var a = body.get_node("A")
+			var b = body.get_node("B")
+			material = a.get_surface_material(0).duplicate()
+			base_tint = material.albedo_color
+			a.set_surface_material(0, material)
 			if track < Structure.DRUMS:
-				body.get_node("B").visible = false
-				body.get_node("A").scale = Vector3.ONE * track / 4.0
+				b.visible = false
+				a.scale = Vector3.ONE * track / 4.0
+			else:
+				b.set_surface_material(0, material)
 			bodies.append(body)
 	visible = true
 
@@ -58,7 +68,14 @@ func respond(visualiser: Visualiser, note: Array):
 	if bodies:
 		next = (next + 1) % len(bodies)
 		thing = bodies[next]
-		.respond(visualiser, note)
+		match form:
+			"Glass":
+				$Pulser.pulse_tint(material, base_tint, tint, note[RandomPlayer.DURATION], visualiser.timescale)
+			"Mirror":
+				$Pulser.pulse_tint(material, tint, base_tint, note[RandomPlayer.DURATION], visualiser.timescale)
+				continue
+			_:
+				.respond(visualiser, note)
 
 
 func set_instrument(instrumentation: Array):
@@ -67,16 +84,14 @@ func set_instrument(instrumentation: Array):
 	for body in bodies:
 		for thing in body.get_children():
 			if thing.visible:
-				var colour = Color.white
 				match form:
 					"Rough":
 						var intensity = 1 - 0.1 * instrumentation[1]
-						colour = Color.from_hsv(fmod(1 + instrumentation[2] / 12 + instrument, 1), 0.5 * (1 + intensity), intensity)
+						tint = Color.from_hsv(fmod(1 + instrumentation[2] / 12 + instrument, 1), 0.5 * (1 + intensity), intensity)
+						pulse = 1.5
 					"Glass":
-						colour = Color.black
+						tint = tint.linear_interpolate(Color(0.5, 1, 0.83, 0.5), instrument * instrument)
 					_:
-						colour = colour.linear_interpolate(Color.orange, instrument * instrument)
-				if colour:
-					var mat = thing.get_surface_material(0).duplicate()
-					mat.albedo_color = colour
-					thing.set_surface_material(0, mat)
+						tint = tint.linear_interpolate(Color.orange, instrument * instrument)
+				if form != "Glass":
+					material.albedo_color = tint

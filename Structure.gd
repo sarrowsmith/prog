@@ -66,6 +66,7 @@ const Loops = [
 	[1, 3, 7, 2],
 	[1, 9, 5, 4],
 	[1, 4, 5, 9],
+	[1, 6, 4, 5],
 ]
 
 static func styles() -> Array:

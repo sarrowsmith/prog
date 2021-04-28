@@ -7,7 +7,7 @@ export(float) var pulse = 1.25
 
 var speed = 0
 var axis = Vector3.UP
-var thing: Spatial
+var thing: Spatial = null
 
 
 func _process(delta):
@@ -18,5 +18,5 @@ func respond(visualiser: Visualiser, note: Array):
 	$Pulser.pulse_thing(thing, pulse, note[RandomPlayer.DURATION], visualiser.timescale)
 
 
-func set_instrument(instrumentation: Array):
+func set_instrument(_instrumentation: Array):
 	pass

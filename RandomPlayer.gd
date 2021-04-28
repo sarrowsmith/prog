@@ -300,7 +300,11 @@ func create_track(track: int, structure: Array) -> Array:
 func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
+	# local_seed ensures that a piece always starts the same no matter how long it is
+	var local_seed = rng.randi()
+	rng.seed = local_seed
 	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, final, rng)
+	rng.seed = local_seed
 	while track < parameters.Tracks:
 		tracks.append(SMF.MIDITrack.new(track, create_track(track, structure)))
 		track += 1
