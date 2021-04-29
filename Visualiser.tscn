@@ -43,7 +43,6 @@ height = 0.5
 [sub_resource type="ParticlesMaterial" id=6]
 lifetime_randomness = 0.13
 trail_divisor = 4
-trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
 spread = 30.0
 gravity = Vector3( 0, -4.9, 8.487 )
@@ -65,7 +64,6 @@ height = 0.5
 [sub_resource type="ParticlesMaterial" id=9]
 lifetime_randomness = 0.13
 trail_divisor = 4
-trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
 spread = 30.0
 gravity = Vector3( 0, -4.9, 8.487 )
@@ -87,7 +85,6 @@ height = 0.5
 [sub_resource type="ParticlesMaterial" id=12]
 lifetime_randomness = 0.13
 trail_divisor = 4
-trail_size_modifier = SubResource( 2 )
 direction = Vector3( 0, -1, 0 )
 spread = 30.0
 gravity = Vector3( 0, -4.9, 8.487 )
