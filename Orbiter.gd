@@ -55,11 +55,15 @@ func start():
 			material = a.get_surface_material(0).duplicate()
 			base_tint = material.albedo_color
 			a.set_surface_material(0, material)
-			if track < Structure.DRUMS:
-				b.visible = false
-				a.scale = Vector3.ONE * track / 4.0
-			else:
-				b.set_surface_material(0, material)
+			match track:
+				Structure.PERCUSSION, Structure.COUNTER, Structure.DESCANT:
+					a.scale = Vector3.ONE * 0.5
+					b.scale = Vector3.ONE * 0.5
+					b.set_surface_material(0, material)
+				_:
+					b.visible = false
+					var x = (track - Structure.DRUMS) * 0.5
+					a.scale = Vector3.ONE * 0.25 * (1 + (Structure.DRUMS - x * x))
 			bodies.append(body)
 	visible = true
 

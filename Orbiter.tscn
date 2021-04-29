@@ -7,10 +7,6 @@
 [ext_resource path="res://resources/mirror_mat.tres" type="Material" id=5]
 [ext_resource path="res://resources/glass_mat.tres" type="Material" id=6]
 
-[sub_resource type="SphereMesh" id=5]
-radius = 0.75
-height = 1.5
-
 [sub_resource type="SphereMesh" id=1]
 radius = 0.75
 height = 1.5
@@ -20,6 +16,10 @@ radius = 0.75
 height = 1.5
 
 [sub_resource type="SphereMesh" id=3]
+radius = 0.75
+height = 1.5
+
+[sub_resource type="SphereMesh" id=4]
 radius = 0.75
 height = 1.5
 
@@ -37,12 +37,12 @@ visible = false
 
 [node name="A" type="MeshInstance" parent="Epicycle/Rough"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 0, 0 )
-mesh = SubResource( 5 )
+mesh = SubResource( 1 )
 material/0 = ExtResource( 4 )
 
 [node name="B" type="MeshInstance" parent="Epicycle/Rough"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0, 0 )
-mesh = SubResource( 5 )
+mesh = SubResource( 1 )
 material/0 = ExtResource( 4 )
 
 [node name="Metal" type="Spatial" parent="Epicycle"]
@@ -50,12 +50,12 @@ visible = false
 
 [node name="A" type="MeshInstance" parent="Epicycle/Metal"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 0, 0 )
-mesh = SubResource( 1 )
+mesh = SubResource( 2 )
 material/0 = ExtResource( 3 )
 
 [node name="B" type="MeshInstance" parent="Epicycle/Metal"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0, 0 )
-mesh = SubResource( 1 )
+mesh = SubResource( 2 )
 material/0 = ExtResource( 3 )
 
 [node name="Mirror" type="Spatial" parent="Epicycle"]
@@ -63,12 +63,12 @@ visible = false
 
 [node name="A" type="MeshInstance" parent="Epicycle/Mirror"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 0, 0 )
-mesh = SubResource( 2 )
+mesh = SubResource( 3 )
 material/0 = ExtResource( 5 )
 
 [node name="B" type="MeshInstance" parent="Epicycle/Mirror"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0, 0 )
-mesh = SubResource( 2 )
+mesh = SubResource( 3 )
 material/0 = ExtResource( 5 )
 
 [node name="Glass" type="Spatial" parent="Epicycle"]
@@ -76,10 +76,10 @@ visible = false
 
 [node name="A" type="MeshInstance" parent="Epicycle/Glass"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 0, 0 )
-mesh = SubResource( 3 )
+mesh = SubResource( 4 )
 material/0 = ExtResource( 6 )
 
 [node name="B" type="MeshInstance" parent="Epicycle/Glass"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 0, 0 )
-mesh = SubResource( 3 )
+mesh = SubResource( 4 )
 material/0 = ExtResource( 6 )
