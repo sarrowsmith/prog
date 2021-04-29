@@ -152,14 +152,17 @@ func create_bar(track: int, chunk: Dictionary, iteration: int, root: int, time: 
 	var notes = create_drums(chunk, iteration) if track == Structure.DRUMS else []
 	var down_beat = true
 	var skip = 0
-	for beat in signature if chunk.repeats else 1:
+	for beat in signature if chunk.repeats > 1 else 1:
 		if skip:
 			skip -= 1
 			continue
-		var note_length = 1.0 if chunk.repeats else signature
-		if signature - beat > 1 and rng.randf() > chunk.density:
-			note_length = rng.randi_range(2, signature - beat)
-			skip = note_length - 1
+		var note_length = signature
+		if chunk.repeats > 1:
+			if signature - beat > 1 and rng.randf() > chunk.density:
+				note_length = rng.randi_range(2, signature - beat)
+				skip = note_length - 1
+			else:
+				note_length = 1.0
 		for note in create_note(track, down_beat, chord, root, note_length, chunk):
 			notes.append([beat, note])
 		down_beat = false
@@ -248,7 +251,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	for i in max(chunk.repeats, 1):
 		rng.seed = reseed
 		notes += create_loop(track, chunk, i)
-	if chunk.repeats:
+	if chunk.repeats > 1:
 		var iterations = 0
 		match track:
 			Structure.DRONE, Structure.DRUMS:

@@ -123,11 +123,12 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 	var chunks = []
 	var bars = 1
 	var top = HARMONY
+	var program = null
 	while bars < length:
 # warning-ignore:integer_division
 		var repeats = 1 + rng.randi_range(1, 1 + base_intricacy / 2)
 		var chords = choose(Loops, rng)
-		var program = programs.duplicate()
+		program = programs.duplicate()
 		var chunk = len(chunks)
 		top = max(0, 2 * (chunk - 1)) + HARMONY
 		if top > DRUMS and bars + repeats < length and rng.randf() <= base_density:
@@ -137,12 +138,12 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		var density = base_density + (1 - base_density) / (2 + chunk)
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars += repeats * len(chords)
+	chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
 	if final:
-		chunks.append({program = programs, repeats = 0, bar = bars, density = base_density, chords = [1]})
-		for p in range(top, 16):
-			programs[p] = 0
-		chunks.append({program = programs, repeats = 0, bar = bars, density = base_density, chords = [1]})
-		for p in range(0, min(top,16)):
-			programs[p] = 0
-		chunks.append({program = programs, repeats = 0, bar = bars + 1, density = base_density, chords = [1]})
+		for p in range(HARMONY, 16):
+			program[p] = 0
+		chunks.append({program = program, repeats = 1, bar = bars + 1, density = base_density, chords = [1]})
+		for p in range(0, HARMONY):
+			program[p] = 0
+		chunks.append({program = program, repeats = 0, bar = bars + 2, density = base_density, chords = [1]})
 	return chunks
