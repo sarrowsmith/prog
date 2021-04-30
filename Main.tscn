@@ -57,6 +57,8 @@ __meta__ = {
 [node name="Fader" type="Tween" parent="."]
 pause_mode = 2
 
+[node name="Progress" type="Tween" parent="."]
+
 [node name="ViewportContainer" type="ViewportContainer" parent="."]
 modulate = Color( 1, 1, 1, 0 )
 anchor_right = 1.0
@@ -408,9 +410,9 @@ text = "-/-"
 
 [node name="Progress" type="ProgressBar" parent="Controls/Menu"]
 margin_left = 1033.0
-margin_top = 14.0
+margin_top = 4.0
 margin_right = 1819.0
-margin_bottom = 16.0
+margin_bottom = 27.0
 hint_tooltip = "Progress of current track"
 size_flags_horizontal = 3
 size_flags_vertical = 4
