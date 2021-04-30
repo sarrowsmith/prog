@@ -121,7 +121,7 @@ static func create_programs(style: String, rng: RandomNumberGenerator) -> Array:
 # the repeated loops *do not need to be generated identical*
 static func create_structure(programs: Array, length: int, base_density: float, base_intricacy: int, final: bool, rng: RandomNumberGenerator) -> Array:
 	var chunks = []
-	var bars = 1
+	var bars = 0
 	var top = HARMONY
 	var program = null
 	while bars < length:
@@ -131,10 +131,9 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		program = programs.duplicate()
 		var chunk = len(chunks)
 		top = max(0, 2 * (chunk - 1)) + HARMONY
-		if top > DRUMS and bars + repeats < length and rng.randf() <= base_density:
-			top = rng.randi_range(OTHER + 1, 15)
 		for p in range(top, 16):
-			program[p] = 0
+			if top < DRUMS or (bars + repeats < length and rng.randf() > sqrt(base_density)):
+				program[p] = 0
 		var density = base_density + (1 - base_density) / (2 + chunk)
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars += repeats * len(chords)
