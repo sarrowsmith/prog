@@ -145,5 +145,9 @@ func _on_AutoSection_toggled(button_pressed):
 	parameters.AutoMovements = button_pressed
 
 
-func _on_RandomPlayer_new_movement(remaining, total):
-	$Controls.find_node("Queue").text = "%d/%d" % [total - remaining, total]
+func _on_RandomPlayer_new_movement(length, movement, total):
+	var progress = $Controls.find_node("Progress")
+	$Fader.remove(progress)
+	$Fader.interpolate_property(progress, "value", progress.min_value, progress.max_value, length)
+	$Fader.start()
+	$Controls.find_node("Queue").text = "%d/%d" % [movement, total]

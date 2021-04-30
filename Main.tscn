@@ -414,9 +414,6 @@ margin_bottom = 16.0
 hint_tooltip = "Progress of current track"
 size_flags_horizontal = 3
 size_flags_vertical = 4
-max_value = 1024.0
-step = 1.0
-percent_visible = false
 
 [node name="Fullscreen" type="Button" parent="Controls/Menu"]
 margin_left = 1823.0

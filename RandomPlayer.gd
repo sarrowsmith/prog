@@ -3,7 +3,7 @@ extends Node
 
 
 signal finished
-signal new_movement(remaining, total)
+signal new_movement(length, movement, total)
 
 var SMF = preload("res://addons/midi/SMF.gd").new()
 
@@ -45,10 +45,10 @@ var programs = []
 var movements = 0
 var adjustments = [
 	{},
-	{Length = 3.0},
+	{Length = 4.0},
 	{Mode =-1, Length = 6.0, Tempo = 0.8, Density = -1, Intricacy = -1},
 	{Mode = +1, Length = 4.0, Tempo = 1.2, Density = +1},
-	{Mode = +2, Length = 4.0, Density = +1, Intricacy = +1},
+	{Mode = +2, Length = 3.0, Density = +1, Intricacy = +1},
 ]
 var queue = []
 var position = -1.0
@@ -289,7 +289,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	return events
 
 
-func create_track(track: int, structure: Array) -> Array:
+func create_track(track: int, structure: Array) -> Dictionary:
 	var events = []
 	var endtime = timebase
 	for chunk in structure:
@@ -298,7 +298,10 @@ func create_track(track: int, structure: Array) -> Array:
 		endtime = events.back().time + 1
 		var eot = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.end_of_track})
 		events.append(SMF.MIDIEventChunk.new(endtime, track, eot))
-	return events
+	return {
+		events = events,
+		endtime = endtime,
+	}
 
 
 func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
@@ -309,10 +312,16 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 	rng.seed = local_seed
 	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, final, rng)
 	rng.seed = local_seed
+	var endtime = 0
 	while track < parameters.Tracks:
-		tracks.append(SMF.MIDITrack.new(track, create_track(track, structure)))
+		var events = create_track(track, structure)
+		tracks.append(SMF.MIDITrack.new(track, events.events))
+		endtime = max(endtime, events.endtime)
 		track += 1
-	return SMF.SMFData.new(0, parameters.Tracks, timebase, tracks)
+	return {
+		smf = SMF.SMFData.new(0, parameters.Tracks, timebase, tracks),
+		endtime = endtime,
+	}
 
 
 func play(rng_seed: int, parameters: Dictionary):
@@ -350,9 +359,15 @@ func play(rng_seed: int, parameters: Dictionary):
 						parameters.Length = int((4 * parameters.Length) / (movements * adjustment.Length))
 					_:
 						parameters[parameter] *= adjustment[parameter]
-			queue.push_back([create_smf(parameters, i + 1 == movements), parameters.Tempo])
+			var entry = create_smf(parameters, i + 1 == movements)
+			entry.tempo = parameters.Tempo
+			entry.movement = i + 1
+			queue.push_back(entry)
 	else:
-		queue.push_back([create_smf(parameters, true), parameters.Tempo])
+		var entry = create_smf(parameters, true)
+		entry.tempo = parameters.Tempo
+		entry.movement = 1
+		queue.push_back(entry)
 # warning-ignore:return_value_discarded
 	play_next()
 
@@ -361,10 +376,10 @@ func play_next() -> bool:
 	var entry = queue.pop_front()
 	if not entry:
 		return false
-	$MidiPlayer.smf_data = entry[0]
-	$MidiPlayer.tempo = entry[1]
+	$MidiPlayer.smf_data = entry.smf
+	$MidiPlayer.tempo = entry.tempo
 	$MidiPlayer.play()
-	emit_signal("new_movement", len(queue), max(movements, 1))
+	emit_signal("new_movement", 60.0 * entry.endtime / (entry.tempo * timebase), entry.movement, max(movements, 1))
 	return true
 
 
