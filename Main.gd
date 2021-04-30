@@ -94,7 +94,7 @@ func _on_Play_toggled(button_pressed):
 		var rng_seed = $Configure.find_node("Seed").text.hash()
 		$ViewportContainer/Viewport/Visualiser.start(rng_seed)
 		$RandomPlayer.play(rng_seed, parameters)
-		fade(1.0, 0, 0.5 * bar_length)
+		fade(1.0, 0.0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
 		fade(0.0, 1.0, 0.5 * bar_length)
@@ -123,7 +123,11 @@ func _on_MidiPlayer_changed_tempo(tempo):
 
 func _on_Pause_toggled(button_pressed):
 	$RandomPlayer.pause(button_pressed)
-	$ViewportContainer/Viewport/Visualiser.set_process(not button_pressed)
+	if button_pressed:
+		fade(0.0, 1.0, 0.2)
+	else:
+		fade(1.0, 0.0, 0.6)
+	get_tree().paused = button_pressed
 
 
 func _on_Fullscreen_toggled(button_pressed):
