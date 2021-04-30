@@ -4,7 +4,7 @@ extends Responder
 
 const forms = ["Rough", "Metal", "Mirror", "Glass"]
 
-export(float) var epiperiod = 1.0
+export(float) var epispeed = 1.0
 
 var rng: RandomNumberGenerator
 var bodies = []
@@ -29,8 +29,8 @@ func spawn(track: int, rng: RandomNumberGenerator) -> Responder:
 	# won't be until created enters the scene tree. So we set up the parameters
 	# & defer construction to start(). Similarly with initial positions.
 	form = forms[rng.randi_range(0, len(forms) - 1)]
-	period = sqrt(track * track * track)
-	epiperiod = abs(rng.randfn(1.0 if track < Structure.OTHER else 256.0 / track))
+	var inverse_track = Structure.DRUMS / float(track)
+	speed = 0.25 * sqrt(inverse_track * inverse_track * inverse_track)
 	return self
 
 
@@ -39,7 +39,7 @@ func _ready():
 
 
 func _process(delta):
-	epicycle.rotate_y(-delta * speed / epiperiod)
+	epicycle.rotate_y(-delta * rate * epispeed)
 	._process(delta)
 
 
@@ -60,10 +60,14 @@ func start():
 					a.scale = Vector3.ONE * 0.5
 					b.scale = Vector3.ONE * 0.5
 					b.set_surface_material(0, material)
+					epispeed = -abs(rng.randfn(track))
 				_:
 					b.visible = false
 					var x = (track - Structure.DRUMS) * 0.5
-					a.scale = Vector3.ONE * 0.25 * (1 + (Structure.DRUMS - x * x))
+					var y = 0.25 * (1 + (Structure.DRUMS - x * x))
+					a.scale = Vector3.ONE * y
+					a.translation *= 1 / y
+					epispeed = rng.randfn(16.0 / track)
 			bodies.append(body)
 	visible = true
 

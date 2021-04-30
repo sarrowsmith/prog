@@ -2,16 +2,16 @@ class_name Responder
 extends Spatial
 
 
-export(float) var period = 1
+export(float) var speed = 1
 export(float) var pulse = 1.25
 
-var speed = 0
+var rate = 0
 var axis = Vector3.UP
 var thing: Spatial = null
 
 
 func _process(delta):
-	rotate_object_local(axis, delta * speed / period)
+	rotate_object_local(axis, delta * speed * rate)
 
 
 func respond(visualiser: Visualiser, note: Array):

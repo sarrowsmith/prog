@@ -4,11 +4,10 @@ extends Spatial
 
 var orbiter_prototype = load("res://Orbiter.tscn")
 
-# centi-rotations per bar
-export(float) var rate = 3.125
+export(float) var speed = 2
 
-# radians per second per bar
-var speed = 0.0
+# tempo-adjusted radians per second
+var rate = 0.0
 var instruments = {}
 var timescale = 1.0
 var rng = RandomNumberGenerator.new()
@@ -57,9 +56,9 @@ func scale_thing(thing: Spatial, to: float, time: float):
 
 
 func set_bar_length(bar_length: float):
-	speed = TAU * bar_length * 0.01
+	rate = TAU * bar_length * 0.01
 	for k in responders:
-		responders[k].speed = speed
+		responders[k].rate = rate
 
 
 func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
@@ -71,7 +70,7 @@ func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 		if parts[0]:
 			responders[track].set_instrument(parts)
 			target = 1.0
-		scale_thing(responders[track], target, 100 * speed / TAU)
+		scale_thing(responders[track], target, 100 * rate / TAU)
 
 
 func _on_MidiPlayer_appeared_cue_point(cue_point):

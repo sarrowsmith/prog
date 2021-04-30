@@ -234,18 +234,18 @@ func create_insertion(notes: Array, n: int, iteration: int, chunk: Dictionary, t
 func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
 	var bar_length = timebase * signature
-	var time = (chunk.bar - 1) * bar_length + 1
+	var time = chunk.bar * bar_length
 
 	if track == Structure.DRUMS:
 		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:0" % track})
-		events.append(SMF.MIDIEventChunk.new(time - 1, track, chunk_start))
+		events.append(SMF.MIDIEventChunk.new(time - timebase, track, chunk_start))
 	else:
 		var program = chunk.program[track]
 		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:%d:%d:%d" % [track, program, mode, key]})
-		events.append(SMF.MIDIEventChunk.new(time - 1, track, chunk_start))
+		events.append(SMF.MIDIEventChunk.new(time - timebase, track, chunk_start))
 		if not program:
 			return events
-		events.append(SMF.MIDIEventChunk.new(time - 1, track, SMF.MIDIEventProgramChange.new(program)))
+		events.append(SMF.MIDIEventChunk.new(time - timebase, track, SMF.MIDIEventProgramChange.new(program)))
 	var notes = []
 	var reseed = rng.randi()
 	for i in max(chunk.repeats, 1):

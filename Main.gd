@@ -92,8 +92,8 @@ func _on_Play_toggled(button_pressed):
 			if value:
 				parameters[parameter] = value
 		var rng_seed = $Configure.find_node("Seed").text.hash()
-		$RandomPlayer.play(rng_seed, parameters)
 		$ViewportContainer/Viewport/Visualiser.start(rng_seed)
+		$RandomPlayer.play(rng_seed, parameters)
 		fade(1.0, 0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()

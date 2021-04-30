@@ -215,7 +215,6 @@ material/0 = null
 [node name="Stellation" type="Spatial" parent="Objects"]
 transform = Transform( 1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0 )
 script = ExtResource( 8 )
-period = 0.5
 pulse = 1.77
 
 [node name="Pulser" type="Tween" parent="Objects/Stellation"]
