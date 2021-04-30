@@ -3,6 +3,7 @@ extends Node
 
 
 signal finished
+signal new_movement(remaining, total)
 
 var SMF = preload("res://addons/midi/SMF.gd").new()
 
@@ -317,7 +318,6 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 func play(rng_seed: int, parameters: Dictionary):
 	rng.seed = rng_seed
 	programs = Structure.create_programs(parameters.Style, rng)
-	movements = min(int(parameters.Length / movement), 4)
 	adjustments[0] = parameters
 	if parameters.has("Soundfont") and parameters.Soundfont != soundfont:
 		soundfont = parameters.Soundfont
@@ -333,6 +333,9 @@ func play(rng_seed: int, parameters: Dictionary):
 		tempo = parameters.Tempo
 	else:
 		parameters.Tempo = tempo
+	movements = 0
+	if parameters.has("AutoMovements") and parameters.AutoMovements:
+		movements = min(int(parameters.Length / movement), 4)
 	if movements:
 		adjustments[0] = parameters.duplicate()
 		for i in movements:
@@ -361,6 +364,7 @@ func play_next() -> bool:
 	$MidiPlayer.smf_data = entry[0]
 	$MidiPlayer.tempo = entry[1]
 	$MidiPlayer.play()
+	emit_signal("new_movement", len(queue), max(movements, 1))
 	return true
 
 

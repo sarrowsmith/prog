@@ -303,23 +303,32 @@ value = 512.0
 tick_count = 17
 ticks_on_borders = true
 
-[node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
+[node name="AutoSection" type="Button" parent="Configure/Menu"]
 margin_top = 305.0
 margin_right = 280.0
 margin_bottom = 336.0
+hint_tooltip = "Automatically divide longer pieces up into sections"
+toggle_mode = true
+shortcut = SubResource( 2 )
+text = "Auto-section"
+
+[node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
+margin_top = 340.0
+margin_right = 280.0
+margin_bottom = 371.0
 hint_tooltip = "Load a soundfont"
 shortcut = SubResource( 2 )
 text = "Soundfont"
 
-[node name="OpenSoundfont2" type="Label" parent="Configure/Menu"]
-margin_top = 340.0
-margin_right = 280.0
-margin_bottom = 371.0
-
-[node name="Quit" type="Button" parent="Configure/Menu"]
+[node name="Gap" type="Label" parent="Configure/Menu"]
 margin_top = 375.0
 margin_right = 280.0
 margin_bottom = 406.0
+
+[node name="Quit" type="Button" parent="Configure/Menu"]
+margin_top = 410.0
+margin_right = 280.0
+margin_bottom = 441.0
 hint_tooltip = "Quit the application"
 shortcut = SubResource( 4 )
 text = "Quit"
@@ -382,7 +391,7 @@ text = "Volume:"
 [node name="Volume" type="HSlider" parent="Controls/Menu"]
 margin_left = 200.0
 margin_top = 7.0
-margin_right = 1007.0
+margin_right = 986.0
 margin_bottom = 23.0
 hint_tooltip = "Adjust playback volume"
 size_flags_horizontal = 3
@@ -391,8 +400,14 @@ max_value = 1.0
 step = 0.05
 script = ExtResource( 7 )
 
+[node name="Queue" type="Label" parent="Controls/Menu"]
+margin_left = 990.0
+margin_right = 1029.0
+margin_bottom = 31.0
+text = "-/-"
+
 [node name="Progress" type="ProgressBar" parent="Controls/Menu"]
-margin_left = 1011.0
+margin_left = 1033.0
 margin_top = 14.0
 margin_right = 1819.0
 margin_bottom = 16.0
@@ -431,6 +446,7 @@ soundfont = "res://resources/default-GM.sf2"
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 
+[connection signal="toggled" from="Configure/Menu/AutoSection" to="." method="_on_AutoSection_toggled"]
 [connection signal="pressed" from="Configure/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
 [connection signal="pressed" from="Configure/Menu/Quit" to="." method="_on_Quit_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
@@ -440,6 +456,7 @@ soundfont = "res://resources/default-GM.sf2"
 [connection signal="toggled" from="Controls/Menu/Fullscreen" to="." method="_on_Fullscreen_toggled"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
 [connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]
+[connection signal="new_movement" from="RandomPlayer" to="." method="_on_RandomPlayer_new_movement"]
 [connection signal="appeared_cue_point" from="RandomPlayer/MidiPlayer" to="ViewportContainer/Viewport/Visualiser" method="_on_MidiPlayer_appeared_cue_point"]
 [connection signal="appeared_instrument_name" from="RandomPlayer/MidiPlayer" to="ViewportContainer/Viewport/Visualiser" method="_on_MidiPlayer_appeared_instrument_name"]
 [connection signal="changed_tempo" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_changed_tempo"]

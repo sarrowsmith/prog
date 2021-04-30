@@ -14,6 +14,7 @@ var parameters = {
 	Intricacy = 50,
 	Tempo = 130,
 	Length = 41,
+	AutoMovements = false,
 }
 
 
@@ -34,6 +35,7 @@ func _ready():
 		if control:
 			control.share($Configure.find_node(parameter))
 			control.value = parameters[parameter]
+	$Configure.find_node("AutoSection").pressed = false
 	$Controls.find_node("Play").grab_focus()
 	$Fader.interpolate_property($ViewportContainer, "modulate", Color(1.0, 1.0, 1.0, 0.0), Color(1.0, 1.0, 1.0, 1.0), 2.0)
 	fade_image(1.0, 0.5, 1.5)
@@ -99,6 +101,7 @@ func _on_Play_toggled(button_pressed):
 		$RandomPlayer.stop()
 		fade(0.0, 1.0, 0.5 * bar_length)
 		$ViewportContainer/Viewport/Visualiser.stop()
+		$Controls.find_node("Queue").text = "-/-"
 	enable_Configure(not button_pressed)
 	$Controls.find_node("Play").text = "Stop" if button_pressed else "Play!"
 	$Controls.find_node("Pause").disabled = not button_pressed
@@ -136,3 +139,11 @@ func _on_Fullscreen_toggled(button_pressed):
 
 func _on_Quit_pressed():
 	get_tree().quit()
+
+
+func _on_AutoSection_toggled(button_pressed):
+	parameters.AutoMovements = button_pressed
+
+
+func _on_RandomPlayer_new_movement(remaining, total):
+	$Controls.find_node("Queue").text = "%d/%d" % [total - remaining, total]
