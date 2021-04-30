@@ -249,7 +249,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 		events.append(SMF.MIDIEventChunk.new(time - timebase, track, SMF.MIDIEventProgramChange.new(program)))
 	var notes = []
 	var reseed = rng.randi()
-	for i in max(chunk.repeats, 1):
+	for i in chunk.repeats:
 		rng.seed = reseed
 		notes += create_loop(track, chunk, i)
 	if chunk.repeats > 1:

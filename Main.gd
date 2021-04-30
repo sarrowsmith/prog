@@ -99,7 +99,7 @@ func _on_Play_toggled(button_pressed):
 		fade(1.0, 0.0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
-		fade(0.0, 1.0, 0.5 * bar_length)
+		fade(0.0, 1.0, 2 * bar_length)
 		$ViewportContainer/Viewport/Visualiser.stop()
 		$Controls.find_node("Queue").text = "-/-"
 	enable_Configure(not button_pressed)

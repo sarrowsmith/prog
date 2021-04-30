@@ -131,9 +131,14 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		program = programs.duplicate()
 		var chunk = len(chunks)
 		top = max(0, 2 * (chunk - 1)) + HARMONY
-		for p in range(top, 16):
-			if top < DRUMS or (bars + repeats < length and rng.randf() > sqrt(base_density)):
+		if top < 16:
+			for p in range(top, 16):
 				program[p] = 0
+		elif bars + repeats < length:
+			for p in range(HARMONY, 16):
+				if rng.randf() > sqrt(base_density):
+					program[p] = 0
+
 		var density = base_density + (1 - base_density) / (2 + chunk)
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars += repeats * len(chords)
@@ -141,14 +146,15 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		program = programs.duplicate()
 		for p in range(top, 16):
 			program[p] = 0
-	chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
 	if final:
+		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
+		program = program.duplicate()
+		for p in range(0, 16):
+			program[p] = 0
+		chunks.append({program = program, repeats = 0, bar = bars + 1, density = base_density, chords = [1]})
+	else:
 		program = programs.duplicate()
 		for p in range(HARMONY, 16):
 			program[p] = 0
-		chunks.append({program = program, repeats = 1, bar = bars + 1, density = base_density, chords = [1]})
-		program = program.duplicate()
-		for p in range(0, HARMONY):
-			program[p] = 0
-		chunks.append({program = program, repeats = 0, bar = bars + 2, density = base_density, chords = [1]})
+		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
 	return chunks
