@@ -12,7 +12,7 @@ var next = 0
 var material: SpatialMaterial
 var tint = Color.white
 var base_tint = Color.white
-var inclination = Vector3.DOWN
+var inclination = Vector3.UP
 var form = ""
 var track = 0
 
@@ -39,7 +39,7 @@ func _ready():
 
 
 func _process(delta):
-	epicycle.rotate_y(-delta * rate * epispeed)
+	epicycle.rotate_object_local(inclination, delta * rate * epispeed)
 	._process(delta)
 
 
@@ -57,16 +57,16 @@ func start():
 			a.set_surface_material(0, material)
 			match track:
 				Structure.PERCUSSION, Structure.COUNTER, Structure.DESCANT:
-					a.scale = Vector3.ONE * 0.5
-					b.scale = Vector3.ONE * 0.5
+					epicycle.scale = Vector3.ONE * 0.5
 					b.set_surface_material(0, material)
 					epispeed = -abs(rng.randfn(track))
+					inclination = (Vector3.UP + Vector3.LEFT * rng.randfn() / sqrt(3.0) + Vector3.BACK * rng.randfn() / sqrt(3.0)).normalized()
 				_:
 					b.visible = false
 					var x = (track - Structure.DRUMS) * 0.5
 					var y = 0.25 * (1 + (Structure.DRUMS - x * x))
-					a.scale = Vector3.ONE * y
-					a.translation *= 1 / y
+					epicycle.scale = Vector3.ONE * y
+					a.translation *= 1 / (y * y)
 					epispeed = rng.randfn(16.0 / track)
 			bodies.append(body)
 	visible = true
@@ -75,7 +75,6 @@ func start():
 func respond(visualiser: Visualiser, note: Array):
 	if bodies:
 		next = (next + 1) % len(bodies)
-		thing = bodies[next]
 		match form:
 			"Glass":
 				$Pulser.pulse_tint(material, base_tint, tint, note[RandomPlayer.DURATION], visualiser.timescale)
@@ -83,18 +82,23 @@ func respond(visualiser: Visualiser, note: Array):
 				$Pulser.pulse_tint(material, tint, base_tint, note[RandomPlayer.DURATION], visualiser.timescale)
 				continue
 			_:
-				.respond(visualiser, note)
+				for child in bodies[next].get_children():
+					if child.visible:
+						thing = child
+						.respond(visualiser, note)
 
 
 func set_instrument(instrumentation: Array):
 	# instrumentation = [instrument, mode, key] as floats
+	var intensity = 1 - 0.1 * instrumentation[1]
+	if rng:
+		axis = (Vector3.UP + rng.randf_range(0.0, (1 - intensity)/sqrt(3.0)) * Vector3.LEFT + rng.randf_range(0.0, (1 - intensity)/sqrt(3.0)) * Vector3.BACK).normalized()
 	var instrument = instrumentation[0] / 128
 	for body in bodies:
 		for thing in body.get_children():
 			if thing.visible:
 				match form:
 					"Rough":
-						var intensity = 1 - 0.1 * instrumentation[1]
 						tint = Color.from_hsv(fmod(1 + instrumentation[2] / 12 + instrument, 1), 0.5 * (1 + intensity), intensity)
 						pulse = 1.5
 					"Glass":
@@ -103,3 +107,4 @@ func set_instrument(instrumentation: Array):
 						tint = tint.linear_interpolate(Color.orange, instrument * instrument)
 				if form != "Glass":
 					material.albedo_color = tint
+
