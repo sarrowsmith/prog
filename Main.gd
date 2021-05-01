@@ -156,4 +156,5 @@ func _on_About_pressed():
 
 
 func _on_RichTextLabel_meta_clicked(meta):
+# warning-ignore:return_value_discarded
 	OS.shell_open(meta)
