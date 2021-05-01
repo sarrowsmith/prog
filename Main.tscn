@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -10,11 +10,27 @@
 [ext_resource path="res://Visualiser.tscn" type="PackedScene" id=8]
 [ext_resource path="res://visualiser_world.tres" type="World" id=9]
 
-[sub_resource type="InputEventKey" id=1]
+[sub_resource type="InputEventKey" id=14]
 scancode = 83
 
-[sub_resource type="ShortCut" id=2]
-shortcut = SubResource( 1 )
+[sub_resource type="ShortCut" id=11]
+shortcut = SubResource( 14 )
+
+[sub_resource type="InputEventKey" id=15]
+control = true
+command = true
+scancode = 70
+
+[sub_resource type="ShortCut" id=12]
+shortcut = SubResource( 15 )
+
+[sub_resource type="InputEventKey" id=16]
+control = true
+command = true
+scancode = 72
+
+[sub_resource type="ShortCut" id=13]
+shortcut = SubResource( 16 )
 
 [sub_resource type="InputEventKey" id=3]
 control = true
@@ -309,7 +325,7 @@ margin_right = 280.0
 margin_bottom = 336.0
 hint_tooltip = "Automatically divide longer pieces up into sections"
 toggle_mode = true
-shortcut = SubResource( 2 )
+shortcut = SubResource( 11 )
 text = "Auto-section"
 
 [node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
@@ -317,7 +333,7 @@ margin_top = 340.0
 margin_right = 280.0
 margin_bottom = 371.0
 hint_tooltip = "Load a soundfont"
-shortcut = SubResource( 2 )
+shortcut = SubResource( 12 )
 text = "Soundfont"
 
 [node name="Gap" type="Label" parent="Configure/Menu"]
@@ -325,10 +341,18 @@ margin_top = 375.0
 margin_right = 280.0
 margin_bottom = 406.0
 
-[node name="Quit" type="Button" parent="Configure/Menu"]
+[node name="About" type="Button" parent="Configure/Menu"]
 margin_top = 410.0
 margin_right = 280.0
 margin_bottom = 441.0
+hint_tooltip = "Load a soundfont"
+shortcut = SubResource( 13 )
+text = "About"
+
+[node name="Quit" type="Button" parent="Configure/Menu"]
+margin_top = 445.0
+margin_right = 280.0
+margin_bottom = 476.0
 hint_tooltip = "Quit the application"
 shortcut = SubResource( 4 )
 text = "Quit"
@@ -437,6 +461,61 @@ filters = PoolStringArray( "*.sf2; Soundfont 2" )
 current_dir = "/usr/share/sounds/sf2"
 current_path = "/usr/share/sounds/sf2/"
 
+[node name="AboutDialog" type="AcceptDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -228.0
+margin_top = -179.5
+margin_right = 228.0
+margin_bottom = 179.5
+theme = ExtResource( 5 )
+window_title = "About Prog"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="AboutDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -47.0
+size_flags_horizontal = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="AboutDialog/MarginContainer"]
+margin_right = 440.0
+margin_bottom = 304.0
+focus_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+bbcode_text = "[center][b][color=red]Prog[/color][/b], by S Arrowsmith
+[color=blue][url]https://sarrowsmith.itch.io/prog[/url][/color]
+
+Godot Midi Player:
+[color=blue][url]https://godotengine.org/asset-library/asset/240[/url][/color]
+
+AllSkyFree:
+[color=blue][url]https://godotengine.org/asset-library/asset/579[/url][/color]
+
+General User Soundfont::
+[color=blue][url]http://www.schristiancollins.com/generaluser.php[/url][/color][/center]"
+text = "Prog, by S Arrowsmith
+https://sarrowsmith.itch.io/prog
+
+Godot Midi Player:
+https://godotengine.org/asset-library/asset/240
+
+AllSkyFree:
+https://godotengine.org/asset-library/asset/579
+
+General User Soundfont::
+http://www.schristiancollins.com/generaluser.php"
+fit_content_height = true
+selection_enabled = true
+
 [node name="RandomPlayer" type="Node" parent="."]
 script = ExtResource( 4 )
 soundfont = "res://resources/default-GM.sf2"
@@ -445,6 +524,7 @@ soundfont = "res://resources/default-GM.sf2"
 
 [connection signal="toggled" from="Configure/Menu/AutoSection" to="." method="_on_AutoSection_toggled"]
 [connection signal="pressed" from="Configure/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
+[connection signal="pressed" from="Configure/Menu/About" to="." method="_on_About_pressed"]
 [connection signal="pressed" from="Configure/Menu/Quit" to="." method="_on_Quit_pressed"]
 [connection signal="toggled" from="Controls/Menu/Play" to="." method="_on_Play_toggled"]
 [connection signal="toggled" from="Controls/Menu/Pause" to="." method="_on_Pause_toggled"]
@@ -452,6 +532,7 @@ soundfont = "res://resources/default-GM.sf2"
 [connection signal="value_changed" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="_on_Volume_value_changed"]
 [connection signal="toggled" from="Controls/Menu/Fullscreen" to="." method="_on_Fullscreen_toggled"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
+[connection signal="meta_clicked" from="AboutDialog/MarginContainer/RichTextLabel" to="." method="_on_RichTextLabel_meta_clicked"]
 [connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]
 [connection signal="new_movement" from="RandomPlayer" to="." method="_on_RandomPlayer_new_movement"]
 [connection signal="appeared_cue_point" from="RandomPlayer/MidiPlayer" to="ViewportContainer/Viewport/Visualiser" method="_on_MidiPlayer_appeared_cue_point"]

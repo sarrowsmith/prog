@@ -150,3 +150,11 @@ func _on_RandomPlayer_new_movement(length, movement, total):
 	$Progress.interpolate_property(progress, "value", progress.min_value, progress.max_value, length)
 	$Progress.start()
 	$Controls.find_node("Queue").text = "%d/%d" % [movement, total]
+
+
+func _on_About_pressed():
+	$AboutDialog.popup_centered()
+
+
+func _on_RichTextLabel_meta_clicked(meta):
+	OS.shell_open(meta)
