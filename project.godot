@@ -101,7 +101,7 @@ window/size/height=1080
 window/size/test_width=1280
 window/size/test_height=720
 window/vsync/use_vsync=false
-window/stretch/mode="viewport"
+window/stretch/mode="2d"
 window/stretch/aspect="expand"
 
 [editor]
@@ -227,5 +227,4 @@ vram_compression/import_etc=true
 vram_compression/import_etc2=false
 environment/default_clear_color=Color( 0.0235294, 0.0627451, 0.0666667, 1 )
 environment/default_environment="res://default_env.tres"
-quality/dynamic_fonts/use_oversampling=false
 quality/2d/use_pixel_snap=true

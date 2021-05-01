@@ -12,53 +12,53 @@
 [ext_resource path="res://PickMode.gd" type="Script" id=10]
 [ext_resource path="res://PickKey.gd" type="Script" id=11]
 
-[sub_resource type="InputEventKey" id=14]
+[sub_resource type="InputEventKey" id=1]
 scancode = 83
 
-[sub_resource type="ShortCut" id=11]
-shortcut = SubResource( 14 )
-
-[sub_resource type="InputEventKey" id=15]
-control = true
-command = true
-scancode = 70
-
-[sub_resource type="ShortCut" id=12]
-shortcut = SubResource( 15 )
-
-[sub_resource type="InputEventKey" id=16]
-control = true
-command = true
-scancode = 72
-
-[sub_resource type="ShortCut" id=13]
-shortcut = SubResource( 16 )
+[sub_resource type="ShortCut" id=2]
+shortcut = SubResource( 1 )
 
 [sub_resource type="InputEventKey" id=3]
 control = true
 command = true
-scancode = 81
+scancode = 70
 
 [sub_resource type="ShortCut" id=4]
 shortcut = SubResource( 3 )
 
 [sub_resource type="InputEventKey" id=5]
-scancode = 16777220
+control = true
+command = true
+scancode = 72
 
 [sub_resource type="ShortCut" id=6]
 shortcut = SubResource( 5 )
 
 [sub_resource type="InputEventKey" id=7]
-scancode = 16777217
+control = true
+command = true
+scancode = 81
 
 [sub_resource type="ShortCut" id=8]
 shortcut = SubResource( 7 )
 
 [sub_resource type="InputEventKey" id=9]
-scancode = 16777254
+scancode = 16777220
 
 [sub_resource type="ShortCut" id=10]
 shortcut = SubResource( 9 )
+
+[sub_resource type="InputEventKey" id=11]
+scancode = 16777217
+
+[sub_resource type="ShortCut" id=12]
+shortcut = SubResource( 11 )
+
+[sub_resource type="InputEventKey" id=13]
+scancode = 16777254
+
+[sub_resource type="ShortCut" id=14]
+shortcut = SubResource( 13 )
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -329,7 +329,7 @@ margin_right = 280.0
 margin_bottom = 336.0
 hint_tooltip = "Automatically divide longer pieces up into sections"
 toggle_mode = true
-shortcut = SubResource( 11 )
+shortcut = SubResource( 2 )
 text = "Auto-section"
 
 [node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
@@ -337,7 +337,7 @@ margin_top = 340.0
 margin_right = 280.0
 margin_bottom = 371.0
 hint_tooltip = "Load a soundfont"
-shortcut = SubResource( 12 )
+shortcut = SubResource( 4 )
 text = "Soundfont"
 
 [node name="Gap" type="Label" parent="Configure/Menu"]
@@ -350,7 +350,7 @@ margin_top = 410.0
 margin_right = 280.0
 margin_bottom = 441.0
 hint_tooltip = "Load a soundfont"
-shortcut = SubResource( 13 )
+shortcut = SubResource( 6 )
 text = "About"
 
 [node name="Quit" type="Button" parent="Configure/Menu"]
@@ -358,7 +358,7 @@ margin_top = 445.0
 margin_right = 280.0
 margin_bottom = 476.0
 hint_tooltip = "Quit the application"
-shortcut = SubResource( 4 )
+shortcut = SubResource( 8 )
 text = "Quit"
 
 [node name="Controls" type="MarginContainer" parent="."]
@@ -396,7 +396,7 @@ margin_bottom = 31.0
 hint_tooltip = "Start/stop playback"
 size_flags_vertical = 3
 toggle_mode = true
-shortcut = SubResource( 6 )
+shortcut = SubResource( 10 )
 text = "Play!"
 
 [node name="Pause" type="Button" parent="Controls/Menu"]
@@ -407,7 +407,7 @@ hint_tooltip = "Pause playback"
 size_flags_vertical = 4
 disabled = true
 toggle_mode = true
-shortcut = SubResource( 8 )
+shortcut = SubResource( 12 )
 text = "Pause"
 
 [node name="Label5" type="Label" parent="Controls/Menu"]
@@ -450,7 +450,7 @@ margin_bottom = 31.0
 hint_tooltip = "Toggle fullscreen mode"
 size_flags_vertical = 4
 toggle_mode = true
-shortcut = SubResource( 10 )
+shortcut = SubResource( 14 )
 text = "Fullscreen"
 
 [node name="SoundfontDialog" type="FileDialog" parent="."]
