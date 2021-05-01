@@ -146,15 +146,14 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		program = programs.duplicate()
 		for p in range(top, 16):
 			program[p] = 0
+	chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
 	if final:
-		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
-		program = program.duplicate()
-		for p in range(0, 16):
-			program[p] = 0
-		chunks.append({program = program, repeats = 0, bar = bars + 1, density = base_density, chords = [1]})
-	else:
 		program = programs.duplicate()
 		for p in range(HARMONY, 16):
 			program[p] = 0
-		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
+		chunks.append({program = program, repeats = 1, bar = bars + 1, density = base_density, chords = [1]})
+		program = program.duplicate()
+		for p in range(0, 16):
+			program[p] = 0
+		chunks.append({program = program, repeats = 0, bar = bars + 2, density = base_density, chords = [1]})
 	return chunks
