@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -9,6 +9,8 @@
 [ext_resource path="res://Volume.gd" type="Script" id=7]
 [ext_resource path="res://Visualiser.tscn" type="PackedScene" id=8]
 [ext_resource path="res://visualiser_world.tres" type="World" id=9]
+[ext_resource path="res://PickMode.gd" type="Script" id=10]
+[ext_resource path="res://PickKey.gd" type="Script" id=11]
 
 [sub_resource type="InputEventKey" id=14]
 scancode = 83
@@ -170,20 +172,22 @@ text = "Style"
 margin_top = 35.0
 margin_right = 138.0
 margin_bottom = 66.0
-hint_tooltip = "Key"
+hint_tooltip = "Key. Select with A--G +shift for sharps"
 size_flags_horizontal = 3
 text = "C"
-items = [ "F", null, false, 0, null, "F#", null, false, 1, null, "G", null, false, 2, null, "G#", null, false, 3, null, "A", null, false, 4, null, "A#", null, false, 5, null, "B", null, false, 6, null, "C", null, false, 7, null, "C#", null, false, 8, null, "D", null, false, 9, null, "D#", null, false, 10, null, "E", null, false, 11, null ]
+items = [ "F", null, false, 5, null, "F#", null, false, 13, null, "G", null, false, 6, null, "G#", null, false, 14, null, "A", null, false, 0, null, "A#", null, false, 8, null, "B", null, false, 1, null, "C", null, false, 2, null, "C#", null, false, 10, null, "D", null, false, 3, null, "D#", null, false, 11, null, "E", null, false, 4, null ]
 selected = 7
+script = ExtResource( 11 )
 
 [node name="Mode" type="OptionButton" parent="Configure/Menu/GridContainer2"]
 margin_left = 142.0
 margin_top = 35.0
 margin_right = 280.0
 margin_bottom = 66.0
-hint_tooltip = "Mode"
+hint_tooltip = "Mode. Select with 1--7"
 size_flags_horizontal = 3
 text = "Mode"
+script = ExtResource( 10 )
 
 [node name="Label5" type="Label" parent="Configure/Menu/GridContainer2"]
 margin_top = 70.0

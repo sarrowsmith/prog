@@ -17,15 +17,14 @@ var parameters = {
 	AutoMovements = false,
 }
 
+onready var pick_mode = $Configure.find_node("Mode")
+onready var pick_key = $Configure.find_node("Key")
+
 
 func _ready():
 	time_begin = OS.get_ticks_usec()
 	time_delay = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
-	modes = $Configure.find_node("Mode")
-	modes.clear()
-	for mode in RandomPlayer.Modes:
-		modes.add_item(mode)
-	modes.select(parameters.Mode)
+	pick_mode.set_mode(parameters.Mode)
 	styles = $Configure.find_node("Style")
 	styles.clear()
 	for style in Structure.styles():
