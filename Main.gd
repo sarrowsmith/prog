@@ -4,7 +4,6 @@ extends Control
 var time_begin
 var time_delay
 var modes
-var styles
 var parameters = {
 	Tracks = 16,
 	Style = "Random",
@@ -19,16 +18,13 @@ var parameters = {
 
 onready var pick_mode = $Configure.find_node("Mode")
 onready var pick_key = $Configure.find_node("Key")
+onready var pick_style = $Configure.find_node("Style")
 
 
 func _ready():
 	time_begin = OS.get_ticks_usec()
 	time_delay = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
 	pick_mode.set_mode(parameters.Mode)
-	styles = $Configure.find_node("Style")
-	styles.clear()
-	for style in Structure.styles():
-		styles.add_item(style)
 	for parameter in parameters:
 		var control = $Configure.find_node(parameter + "2")
 		if control:
@@ -81,7 +77,7 @@ func get_value(name: String):
 		"Mode", "Key":
 			return control.selected
 		"Style":
-			return control.get_item_text(control.selected)
+			return pick_style.get_selected_value()
 	return control.value
 
 
@@ -158,3 +154,13 @@ func _on_About_pressed():
 func _on_RichTextLabel_meta_clicked(meta):
 # warning-ignore:return_value_discarded
 	OS.shell_open(meta)
+
+
+func _on_SaveInstrumentation_pressed():
+	$InstrumentationDialog.popup_centered()
+
+
+func _on_InstrumentationDialog_file_selected(path):
+	print("%d %s" % [$InstrumentationDialog.mode, path])
+
+

@@ -17,7 +17,7 @@ export(int) var movement = 30 # minimum length in bars
 
 enum {PITCH, DURATION, VOLUME}
 
-const Intervals = {
+const INTERVALS = {
 	Chromatic = [1,1,1,1,1,1,1,1,1,1,1], # (random, atonal: all twelve notes)
 	Major = [2,2,1,2,2,2,1], # (classic, happy)
 	HarmonicMinor = [2,1,2,2,1,3,1], # (haunting, creepy)
@@ -34,22 +34,22 @@ const Intervals = {
 	Phrygian = [1,2,2,2,1,2,2],
 	Locrian = [1,2,2,1,2,2,2],
 }
-const Modes = ["Lydian", "Major", "Mixolydian", "Dorian", "Minor", "Phrygian", "Locrian"]
+const MODES = ["Lydian", "Major", "Mixolydian", "Dorian", "Minor", "Phrygian", "Locrian"]
 const C = 0
 const REST = 0
 const DEFAULT = 127
-var Scales = {} # const, but it's calculated on ready
-
-var style = "Random"
-var programs = []
-var movements = 0
-var adjustments = [
+var SCALES = {} # const, but it's calculated on ready
+var Adjustments = [ # mostly const, but [0] is set for reference
 	{},
 	{Length = 4.0},
 	{Mode =-1, Length = 6.0, Tempo = 0.8, Density = -1, Intricacy = -1},
 	{Mode = +1, Length = 4.0, Tempo = 1.2, Density = +1},
 	{Mode = +2, Length = 3.0, Density = +1, Intricacy = +1},
 ]
+
+var style = "Random"
+var programs = []
+var movements = 0
 var queue = []
 var position = -1.0
 
@@ -58,11 +58,11 @@ onready var rng = RandomNumberGenerator.new()
 
 func _ready():
 	$MidiPlayer.soundfont = soundfont
-	for k in Modes:
-		var intervals = Intervals[k]
-		Scales[k] = [0]
+	for k in MODES:
+		var intervals = INTERVALS[k]
+		SCALES[k] = [0]
 		for interval in intervals:
-			Scales[k].append(Scales[k][-1] + interval)
+			SCALES[k].append(SCALES[k][-1] + interval)
 
 
 # We don't really care about these, but they make life easier for others
@@ -92,6 +92,7 @@ func make_note(pitch: int, duration: float, volume: int) -> Array:
 
 func generate_chord(root: int) -> Array:
 	var chord = []
+# warning-ignore:integer_division
 	var seventh = root / 8
 	root = root % 8
 	for i in 3:
@@ -143,7 +144,7 @@ func create_note(track: int, down_beat: bool, chord: Array, root: int, note_leng
 			continue
 		_:
 			if rng.randf() < chunk.density:
-				notes.append(make_note(Structure.choose(chord, rng), note_length, volume))
+				notes.append(make_note(Banks.choose(chord, rng), note_length, volume))
 	return notes
 
 
@@ -246,7 +247,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 		events.append(SMF.MIDIEventChunk.new(time - timebase, track, chunk_start))
 		if not program:
 			return events
-		events.append(SMF.MIDIEventChunk.new(time - timebase, track, SMF.MIDIEventProgramChange.new(program)))
+		events.append(SMF.MIDIEventChunk.new(time - timebase, track, SMF.MIDIEventProgramChange.new(program - 1)))
 	var notes = []
 	var reseed = rng.randi()
 	for i in chunk.repeats:
@@ -275,7 +276,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 					notes = notes.slice(0, n) + note + notes.slice(n + 1, len(notes) - 1)
 				n += len(note) + 1
 	var octave = Structure.get_octave(style, track)
-	var scale = Scales[Modes[mode]]
+	var scale = SCALES[MODES[mode]]
 	for event in notes:
 		var note = event[1]
 		var note_number = get_note_number(scale, octave, note[PITCH])
@@ -326,8 +327,8 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 
 func play(rng_seed: int, parameters: Dictionary):
 	rng.seed = rng_seed
-	programs = Structure.create_programs(parameters.Style, rng)
-	adjustments[0] = parameters
+	programs = Banks.create_programs(parameters.Style, rng)
+	Adjustments[0] = parameters
 	if parameters.has("Soundfont") and parameters.Soundfont != soundfont:
 		soundfont = parameters.Soundfont
 		$MidiPlayer.soundfont = soundfont
@@ -346,11 +347,11 @@ func play(rng_seed: int, parameters: Dictionary):
 	if parameters.has("AutoMovements") and parameters.AutoMovements:
 		movements = min(int(parameters.Length / movement), 4)
 	if movements:
-		adjustments[0] = parameters.duplicate()
+		Adjustments[0] = parameters.duplicate()
 		for i in movements:
 			if i:
-				parameters = adjustments[0].duplicate()
-			var adjustment = adjustments[i+1]
+				parameters = Adjustments[0].duplicate()
+			var adjustment = Adjustments[i+1]
 			for parameter in adjustment:
 				match parameter:
 					"Mode", "Intricacy":

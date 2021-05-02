@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://InstrumentPicker.gd" type="Script" id=1]
+
+[node name="InstrumentPicker" type="PopupMenu"]
+margin_right = 16.0
+margin_bottom = 16.0
+hide_on_checkable_item_selection = false
+script = ExtResource( 1 )
+
+[connection signal="index_pressed" from="." to="." method="_on_InstrumentPicker_index_pressed"]

@@ -67,7 +67,7 @@ func start():
 					var y = 0.25 * (1 + (Structure.DRUMS - x * x))
 					epicycle.scale = Vector3.ONE * y
 					a.translation *= 1 / (y * y)
-					epispeed = rng.randfn(16.0 / track)
+					epispeed = rng.randfn(4.0 / track)
 			bodies.append(body)
 	visible = true
 
