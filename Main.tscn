@@ -186,12 +186,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Randomise" type="Button" parent="Configure/Menu"]
+[node name="Randomize" type="Button" parent="Configure/Menu"]
 margin_right = 280.0
 margin_bottom = 31.0
 hint_tooltip = "Set random parameters"
 shortcut = SubResource( 19 )
-text = "Randomise"
+text = "Randomize"
 
 [node name="GridContainer2" type="GridContainer" parent="Configure/Menu"]
 margin_top = 35.0
@@ -642,7 +642,7 @@ soundfont = "res://resources/default-GM.sf2"
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 
-[connection signal="pressed" from="Configure/Menu/Randomise" to="." method="_on_Randomise_pressed"]
+[connection signal="pressed" from="Configure/Menu/Randomize" to="." method="_on_Randomise_pressed"]
 [connection signal="about_to_show" from="Configure/Menu/GridContainer2/Style" to="Configure/Menu/GridContainer2/Style" method="_on_Style_about_to_show"]
 [connection signal="pressed" from="Configure/Menu/GridContainer2/SaveInstrumentation" to="." method="_on_SaveInstrumentation_pressed"]
 [connection signal="toggled" from="Configure/Menu/AutoSection" to="." method="_on_AutoSection_toggled"]

@@ -13,7 +13,7 @@ var parameters = {
 	Mode = 3,
 	Key = 7,
 	Density = 50,
-	Intricacy = 50,
+	Intricacy = 2,
 	Tempo = 130,
 	Length = 41,
 	AutoMovements = false,
@@ -111,7 +111,7 @@ func get_seed() -> int:
 func create() -> int:
 	for parameter in parameters:
 		var value = get_value(parameter)
-		if value:
+		if value != null:
 			parameters[parameter] = value
 	var rng_seed = get_seed()
 	$RandomPlayer.create(rng_seed, parameters)
