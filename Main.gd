@@ -81,12 +81,19 @@ func get_value(name: String):
 	return control.value
 
 
+func get_seed() -> int:
+	var text = $Configure.find_node("Seed").text
+	if text.is_valid_integer():
+		return text.to_int()
+	return text.hash()
+
+
 func create() -> int:
 	for parameter in parameters:
 		var value = get_value(parameter)
 		if value:
 			parameters[parameter] = value
-	var rng_seed = $Configure.find_node("Seed").text.hash()
+	var rng_seed = get_seed()
 	$RandomPlayer.create(rng_seed, parameters)
 	return rng_seed
 
