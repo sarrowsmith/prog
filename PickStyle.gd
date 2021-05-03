@@ -25,6 +25,16 @@ func _ready():
 			sub_menu.add_submenu_item("Track %d: %s" % [track + 1, Structure.track_name(track)], bank_picker.name)
 	remove_child(sub_menu)
 	main_menu.add_child(sub_menu)
+	fill_menu()
+
+
+func get_ids() -> Array:
+	var ids = []
+	for idx in main_menu.get_item_count():
+		if main_menu.is_item_radio_checkable(idx):
+			ids.append(main_menu.get_item_id(idx))
+	return ids
+
 
 
 func set_selected_id(id: int):
@@ -99,6 +109,10 @@ func on_customised():
 
 
 func _on_Style_about_to_show():
+	fill_menu()
+
+
+func fill_menu():
 	var selected = get_selected_id()
 	main_menu.clear()
 	var id = 0

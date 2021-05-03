@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=37 format=2]
 
 [ext_resource path="res://default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -12,6 +12,14 @@
 [ext_resource path="res://PickMode.gd" type="Script" id=10]
 [ext_resource path="res://PickKey.gd" type="Script" id=11]
 [ext_resource path="res://PickStyle.gd" type="Script" id=12]
+
+[sub_resource type="InputEventKey" id=9]
+control = true
+command = true
+scancode = 82
+
+[sub_resource type="ShortCut" id=19]
+shortcut = SubResource( 9 )
 
 [sub_resource type="InputEventKey" id=1]
 control = true
@@ -38,10 +46,26 @@ shortcut = SubResource( 17 )
 [sub_resource type="InputEventKey" id=5]
 control = true
 command = true
+scancode = 79
+
+[sub_resource type="ShortCut" id=20]
+shortcut = SubResource( 5 )
+
+[sub_resource type="InputEventKey" id=21]
+control = true
+command = true
+scancode = 83
+
+[sub_resource type="ShortCut" id=22]
+shortcut = SubResource( 21 )
+
+[sub_resource type="InputEventKey" id=23]
+control = true
+command = true
 scancode = 69
 
 [sub_resource type="ShortCut" id=18]
-shortcut = SubResource( 5 )
+shortcut = SubResource( 23 )
 
 [sub_resource type="InputEventKey" id=7]
 control = true
@@ -51,13 +75,13 @@ scancode = 72
 [sub_resource type="ShortCut" id=8]
 shortcut = SubResource( 7 )
 
-[sub_resource type="InputEventKey" id=9]
+[sub_resource type="InputEventKey" id=24]
 control = true
 command = true
 scancode = 81
 
 [sub_resource type="ShortCut" id=10]
-shortcut = SubResource( 9 )
+shortcut = SubResource( 24 )
 
 [sub_resource type="InputEventKey" id=11]
 scancode = 16777220
@@ -162,9 +186,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridContainer2" type="GridContainer" parent="Configure/Menu"]
+[node name="Randomise" type="Button" parent="Configure/Menu"]
 margin_right = 280.0
-margin_bottom = 136.0
+margin_bottom = 31.0
+hint_tooltip = "Set random parameters"
+shortcut = SubResource( 19 )
+text = "Randomise"
+
+[node name="GridContainer2" type="GridContainer" parent="Configure/Menu"]
+margin_top = 35.0
+margin_right = 280.0
+margin_bottom = 171.0
 columns = 2
 
 [node name="Style" type="MenuButton" parent="Configure/Menu/GridContainer2"]
@@ -241,9 +273,9 @@ value = 2.0
 rounded = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Configure/Menu"]
-margin_top = 140.0
+margin_top = 175.0
 margin_right = 280.0
-margin_bottom = 301.0
+margin_bottom = 336.0
 size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Configure/Menu/VBoxContainer"]
@@ -343,47 +375,63 @@ tick_count = 17
 ticks_on_borders = true
 
 [node name="AutoSection" type="Button" parent="Configure/Menu"]
-margin_top = 305.0
+margin_top = 340.0
 margin_right = 280.0
-margin_bottom = 336.0
+margin_bottom = 371.0
 hint_tooltip = "Automatically divide longer pieces up into sections"
 toggle_mode = true
 shortcut = SubResource( 4 )
 text = "Auto-section"
 
 [node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
-margin_top = 340.0
+margin_top = 375.0
 margin_right = 280.0
-margin_bottom = 371.0
+margin_bottom = 406.0
 hint_tooltip = "Load a soundfont"
 shortcut = SubResource( 6 )
 text = "Soundfont"
 
 [node name="Gap" type="Label" parent="Configure/Menu"]
-margin_top = 375.0
-margin_right = 280.0
-margin_bottom = 406.0
-
-[node name="OpenExport" type="Button" parent="Configure/Menu"]
 margin_top = 410.0
 margin_right = 280.0
 margin_bottom = 441.0
+
+[node name="Load" type="Button" parent="Configure/Menu"]
+margin_top = 445.0
+margin_right = 280.0
+margin_bottom = 476.0
+hint_tooltip = "Load a previously saved set of parameters"
+shortcut = SubResource( 20 )
+text = "Open"
+
+[node name="Save" type="Button" parent="Configure/Menu"]
+margin_top = 480.0
+margin_right = 280.0
+margin_bottom = 511.0
+hint_tooltip = "Save the current parameters"
+shortcut = SubResource( 22 )
+text = "Save"
+
+[node name="OpenExport" type="Button" parent="Configure/Menu"]
+margin_top = 515.0
+margin_right = 280.0
+margin_bottom = 546.0
 hint_tooltip = "Export an unsectioned track as a .mid file"
 shortcut = SubResource( 18 )
 text = "Export"
 
 [node name="About" type="Button" parent="Configure/Menu"]
-margin_top = 445.0
+margin_top = 550.0
 margin_right = 280.0
-margin_bottom = 476.0
+margin_bottom = 581.0
 hint_tooltip = "Load a soundfont"
 shortcut = SubResource( 8 )
 text = "About"
 
 [node name="Quit" type="Button" parent="Configure/Menu"]
-margin_top = 480.0
+margin_top = 585.0
 margin_right = 280.0
-margin_bottom = 511.0
+margin_bottom = 616.0
 hint_tooltip = "Quit the application"
 shortcut = SubResource( 10 )
 text = "Quit"
@@ -508,6 +556,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="LoadSaveDialog" type="FileDialog" parent="."]
+margin_right = 640.0
+margin_bottom = 320.0
+theme = ExtResource( 5 )
+access = 1
+filters = PoolStringArray( "*.progp; Prog parameters" )
+current_dir = "user://"
+current_path = "user://"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="ExportDialog" type="FileDialog" parent="."]
 margin_right = 640.0
 margin_bottom = 320.0
@@ -582,10 +642,13 @@ soundfont = "res://resources/default-GM.sf2"
 
 [node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
 
+[connection signal="pressed" from="Configure/Menu/Randomise" to="." method="_on_Randomise_pressed"]
 [connection signal="about_to_show" from="Configure/Menu/GridContainer2/Style" to="Configure/Menu/GridContainer2/Style" method="_on_Style_about_to_show"]
 [connection signal="pressed" from="Configure/Menu/GridContainer2/SaveInstrumentation" to="." method="_on_SaveInstrumentation_pressed"]
 [connection signal="toggled" from="Configure/Menu/AutoSection" to="." method="_on_AutoSection_toggled"]
 [connection signal="pressed" from="Configure/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
+[connection signal="pressed" from="Configure/Menu/Load" to="." method="_on_Load_pressed"]
+[connection signal="pressed" from="Configure/Menu/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="Configure/Menu/OpenExport" to="." method="_on_OpenExport_pressed"]
 [connection signal="pressed" from="Configure/Menu/About" to="." method="_on_About_pressed"]
 [connection signal="pressed" from="Configure/Menu/Quit" to="." method="_on_Quit_pressed"]
@@ -596,6 +659,7 @@ soundfont = "res://resources/default-GM.sf2"
 [connection signal="toggled" from="Controls/Menu/Fullscreen" to="." method="_on_Fullscreen_toggled"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
 [connection signal="file_selected" from="InstrumentationDialog" to="Configure/Menu/GridContainer2/Style" method="_on_InstrumentationDialog_file_selected"]
+[connection signal="file_selected" from="LoadSaveDialog" to="." method="_on_LoadSaveDialog_file_selected"]
 [connection signal="file_selected" from="ExportDialog" to="." method="_on_ExportDialog_file_selected"]
 [connection signal="meta_clicked" from="AboutDialog/MarginContainer/RichTextLabel" to="." method="_on_RichTextLabel_meta_clicked"]
 [connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]

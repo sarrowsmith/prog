@@ -1,11 +1,14 @@
 extends Control
 
 
+const RANDOM = ["Seed", "Style", "Mode", "Key", "Density", "Intricacy", "Tempo"]
+
 var time_begin
 var time_delay
 var modes
 var parameters = {
 	Tracks = 16,
+	Seed = "",
 	Style = "Random",
 	Mode = 3,
 	Key = 7,
@@ -69,6 +72,21 @@ func enable_Configure(on: bool):
 	set_active("Feed", on)
 
 
+func set_value(name: String, value):
+	var control = $Configure.find_node(name)
+	if not control:
+		return
+	match name:
+		"Mode", "Key":
+			control.selected = value
+		"Style":
+			control.set_selected_id(value)
+		"Seed":
+			control.text = String(value)
+		_:
+			control.value = value
+
+
 func get_value(name: String):
 	var control = $Configure.find_node(name)
 	if not control:
@@ -78,11 +96,13 @@ func get_value(name: String):
 			return control.selected
 		"Style":
 			return pick_style.get_selected_value()
+		"Seed":
+			return control.text
 	return control.value
 
 
 func get_seed() -> int:
-	var text = $Configure.find_node("Seed").text
+	var text = parameters.Seed
 	if text.is_valid_integer():
 		return text.to_int()
 	return text.hash()
@@ -107,8 +127,9 @@ func _on_Play_toggled(button_pressed):
 		fade(1.0, 0.0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
-		fade(0.0, 1.0, 2 * bar_length)
 		$ViewportContainer/Viewport/Visualiser.stop()
+		yield(get_tree().create_timer(0.5 * bar_length), "timeout")
+		fade(0.0, 1.0, 2 * bar_length)
 		$Controls.find_node("Queue").text = "-/-"
 	enable_Configure(not button_pressed)
 	$Controls.find_node("Play").text = "Stop" if button_pressed else "Play!"
@@ -188,3 +209,39 @@ func _on_ExportDialog_file_selected(path):
 		create()
 		save_file.store_buffer($RandomPlayer.write())
 		save_file.close()
+
+
+func _on_Randomise_pressed():
+	var rng = $RandomPlayer.rng
+	rng.randomize()
+	for parameter in RANDOM:
+		var control = $Configure.find_node(parameter)
+		if not control:
+			continue
+		match parameter:
+			"Mode", "Key":
+				control.selected = rng.randi_range(0, control.get_item_count() - 1)
+			"Style":
+				control.set_selected_id(Banks.choose(control.get_ids(), rng))
+			"Seed":
+				control.text = String(rng.randi())
+			_:
+				control.value = rng.randi_range(control.min_value, control.max_value)
+
+
+func _on_LoadSaveDialog_file_selected(path):
+	pass
+
+
+func open_load_save(how):
+	$LoadSaveDialog.mode = how
+	$LoadSaveDialog.current_file = ".progp"
+	$LoadSaveDialog.popup_centered()
+
+
+func _on_Load_pressed():
+	open_load_save(FileDialog.MODE_OPEN_FILE)
+
+
+func _on_Save_pressed():
+	open_load_save(FileDialog.MODE_SAVE_FILE)
