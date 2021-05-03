@@ -327,7 +327,7 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 
 func play(rng_seed: int, parameters: Dictionary):
 	rng.seed = rng_seed
-	programs = Banks.create_programs(parameters.Style, rng)
+	programs = Banks.create_programs(parameters, rng)
 	Adjustments[0] = parameters
 	if parameters.has("Soundfont") and parameters.Soundfont != soundfont:
 		soundfont = parameters.Soundfont

@@ -19,10 +19,20 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/midi/Bank.gd"
 }, {
+"base": "PopupMenu",
+"class": "BankPicker",
+"language": "GDScript",
+"path": "res://BankPicker.gd"
+}, {
 "base": "Reference",
 "class": "Banks",
 "language": "GDScript",
 "path": "res://Banks.gd"
+}, {
+"base": "PopupMenu",
+"class": "InstrumentPicker",
+"language": "GDScript",
+"path": "res://InstrumentPicker.gd"
 }, {
 "base": "Node",
 "class": "MidiPlayer",
@@ -77,7 +87,9 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "AudioStreamPlayerADSR": "",
 "Bank": "",
+"BankPicker": "",
 "Banks": "",
+"InstrumentPicker": "",
 "MidiPlayer": "",
 "Orbiter": "",
 "ParticleLight": "",

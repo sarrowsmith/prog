@@ -134,6 +134,7 @@ const PRESETS = {
 static func instrument_name(program: int) -> String:
 	if program:
 		program -= 1
+# warning-ignore:integer_division
 		var bank = program / 8
 		return "%s: %s" % [GM_BANKS[bank], GM_INSTRUMENTS[bank][program % 8]]
 	return ""
@@ -143,22 +144,30 @@ static func choose(from: Array, rng: RandomNumberGenerator):
 	return from[rng.randi_range(0, len(from) - 1)]
 
 
-static func create_programs(style: String, rng: RandomNumberGenerator) -> Array:
+static func pick_programs(bank: Array, rng: RandomNumberGenerator) -> Array:
 	var programs = []
+	for track in bank:
+		programs.append(choose(track, rng))
+	var track = bank.back()
+	while len(programs) < 16:
+		programs.append(choose(track, rng))
+	return programs
+
+
+static func create_programs(parameters: Dictionary, rng: RandomNumberGenerator) -> Array:
+	var style = parameters.Style
+	if style is Array:
+		return pick_programs(style, rng)
 	if PRESETS.has(style):
-		for track in PRESETS[style]:
-			programs.append(choose(track, rng))
-		var track = PRESETS[style].back()
-		while len(programs) < 16:
-			programs.append(choose(track, rng))
-	else:
-		for track in 16:
-			match style:
-				"Random":
-					programs.append(rng.randi_range(track * 8 + 1, track * 8 + 8))
-				"Mixed":
-					var bank = PRESETS[choose(PRESETS.keys(), rng)]
-					programs.append(choose(bank[min(track, len(bank) - 1)], rng))
-				_:
-					programs.append(rng.randi_range(1, 128))
+		return pick_programs(PRESETS[style], rng)
+	var programs = []
+	for track in 16:
+		match style:
+			"Random":
+				programs.append(rng.randi_range(track * 8 + 1, track * 8 + 8))
+			"Mixed":
+				var bank = PRESETS[choose(PRESETS.keys(), rng)]
+				programs.append(choose(bank[min(track, len(bank) - 1)], rng))
+			_:
+				programs.append(rng.randi_range(1, 128))
 	return programs

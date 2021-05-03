@@ -1,3 +1,4 @@
+class_name BankPicker
 extends PopupMenu
 
 
@@ -12,8 +13,14 @@ func _ready():
 
 
 func set_programs(programs: Array):
-	pass
+	for child in get_children():
+		if child is InstrumentPicker:
+			child.set_selected(programs)
 
 
 func get_programs() -> Array:
-	return Banks.Blank.duplicate()
+	var value = []
+	for child in get_children():
+		if child is InstrumentPicker:
+			value += child.get_selected()
+	return value
