@@ -368,7 +368,7 @@ margin_bottom = 406.0
 margin_top = 410.0
 margin_right = 280.0
 margin_bottom = 441.0
-hint_tooltip = "Export an unsectioned track as a .mid file. Note that this does not include tempo information"
+hint_tooltip = "Export an unsectioned track as a .mid file"
 shortcut = SubResource( 18 )
 text = "Export"
 

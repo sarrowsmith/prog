@@ -54,6 +54,7 @@ var queue = []
 var position = -1.0
 
 onready var rng = RandomNumberGenerator.new()
+onready var tempo_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.set_tempo, "bpm": int(60000000 / tempo)})
 
 
 func _ready():
@@ -291,7 +292,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 
 
 func create_track(track: int, structure: Array) -> Dictionary:
-	var events = []
+	var events = [SMF.MIDIEventChunk.new(1, track, tempo_event)]
 	var endtime = timebase
 	for chunk in structure:
 		events += create_chunk(track, chunk)
@@ -314,6 +315,7 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, final, rng)
 	rng.seed = local_seed
 	var endtime = 0
+	tempo_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.set_tempo, "bpm": int(60000000 / parameters.Tempo)})
 	while track < parameters.Tracks:
 		var events = create_track(track, structure)
 		tracks.append(SMF.MIDITrack.new(track, events.events))

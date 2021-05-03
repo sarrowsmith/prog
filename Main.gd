@@ -177,6 +177,7 @@ func _on_OpenExport_pressed():
 func _on_ExportDialog_file_selected(path):
 	var save_file = File.new()
 	if save_file.open(path, File.WRITE) == OK:
+# warning-ignore:return_value_discarded
 		create()
 		save_file.store_buffer($RandomPlayer.write())
 		save_file.close()
