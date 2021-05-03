@@ -36,12 +36,17 @@ func get_ids() -> Array:
 	return ids
 
 
-
 func set_selected_id(id: int):
 	for idx in main_menu.get_item_count():
 		if main_menu.is_item_radio_checkable(idx):
 			main_menu.set_item_checked(idx, main_menu.get_item_id(idx) == id)
 	set_custom(id)
+
+
+func set_selected_style(style: String):
+	for idx in main_menu.get_item_count():
+		if main_menu.is_item_radio_checkable(idx):
+			main_menu.set_item_checked(idx, main_menu.get_item_text(idx) == style)
 
 
 func get_selected_index() -> int:

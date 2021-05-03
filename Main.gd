@@ -72,15 +72,17 @@ func enable_Configure(on: bool):
 	set_active("Feed", on)
 
 
-func set_value(name: String, value):
+func set_value(name: String, value=null):
 	var control = $Configure.find_node(name)
 	if not control:
 		return
+	if value == null:
+		value = parameters[name]
 	match name:
 		"Mode", "Key":
 			control.selected = value
 		"Style":
-			control.set_selected_id(value)
+			control.set_selected_style(value)
 		"Seed":
 			control.text = String(value)
 		_:
@@ -108,11 +110,32 @@ func get_seed() -> int:
 	return text.hash()
 
 
-func create() -> int:
+func save_parameters(path: String):
+	var save_file = File.new()
+	if save_file.open(path, File.WRITE) == OK:
+		get_parameters()
+		save_file.store_var(parameters)
+		save_file.close()
+
+
+func load_parameters(path: String):
+	var save_file = File.new()
+	if save_file.open(path, File.READ) == OK:
+		parameters = save_file.get_var()
+		save_file.close()
+		for parameter in parameters:
+			set_value(parameter)
+
+
+func get_parameters():
 	for parameter in parameters:
 		var value = get_value(parameter)
 		if value != null:
 			parameters[parameter] = value
+
+
+func create() -> int:
+	get_parameters()
 	var rng_seed = get_seed()
 	$RandomPlayer.create(rng_seed, parameters)
 	return rng_seed
@@ -230,7 +253,10 @@ func _on_Randomise_pressed():
 
 
 func _on_LoadSaveDialog_file_selected(path):
-	pass
+	if $LoadSaveDialog.mode == FileDialog.MODE_SAVE_FILE:
+		save_parameters(path)
+	else:
+		load_parameters(path)
 
 
 func open_load_save(how):
