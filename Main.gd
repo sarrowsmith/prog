@@ -157,10 +157,5 @@ func _on_RichTextLabel_meta_clicked(meta):
 
 
 func _on_SaveInstrumentation_pressed():
+	$InstrumentationDialog.current_file = ".progi"
 	$InstrumentationDialog.popup_centered()
-
-
-func _on_InstrumentationDialog_file_selected(path):
-	print("%d %s" % [$InstrumentationDialog.mode, path])
-
-

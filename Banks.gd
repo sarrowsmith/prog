@@ -35,6 +35,11 @@ const BLANK = [
 	[0], # DESCANT
 	[0], # DRUMS
 	[0], # OTHER
+	[0], # track 12
+	[0], # track 13
+	[0], # track 14
+	[0], # track 15
+	[0], # track 16
 ]
 const PRESETS = {
 	Orchestral = [

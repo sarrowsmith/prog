@@ -3,11 +3,13 @@ extends MenuButton
 
 var separator_id = -1
 var custom_id = -1
-var custom = []
+var custom_program = []
+var custom_name = ""
 var bank_picker_prototype = preload("res://BankPicker.tscn")
 
 onready var main_menu = get_popup()
 onready var sub_menu = $TrackSelector
+onready var save_button = get_parent().get_node("SaveInstrumentation")
 
 
 func _ready():
@@ -68,7 +70,7 @@ func get_custom() -> Array:
 		if child is BankPicker:
 			var programs = child.get_programs()
 			if programs:
-				value[child.track] = programs
+				value[min(child.track, len(value) - 1)] = programs
 	return value
 
 
@@ -78,7 +80,7 @@ func get_value(id: int):
 	var name = main_menu.get_item_text(main_menu.get_item_index(id))
 	if id < separator_id:
 		return name
-	# TODO: from file
+	return load_style(name)
 
 
 func get_selected_value():
@@ -89,10 +91,11 @@ func get_selected_value():
 
 
 func on_customised():
-	if not custom:
+	if not custom_program:
 		main_menu.add_radio_check_item("(unsaved)", custom_id)
+		save_button.disabled = false
 	set_selected_id(custom_id)
-	custom = get_custom()
+	custom_program = get_custom()
 
 
 func _on_Style_about_to_show():
@@ -105,9 +108,60 @@ func _on_Style_about_to_show():
 	separator_id = id
 	main_menu.add_separator("Custom", separator_id)
 	id += 1
-	# TODO: from files
+	for style in list_styles():
+		main_menu.add_radio_check_item(style, id)
+		if custom_name == style:
+			selected = id
+			custom_name = ""
+		id += 1
 	custom_id = id
 	main_menu.add_submenu_item("new", "TrackSelector")
-	if custom:
+	if custom_program:
 		main_menu.add_radio_check_item("(unsaved)", custom_id)
+		save_button.disabled = false
+	else:
+		save_button.disabled = true
 	set_selected_id(selected)
+
+
+func list_styles() -> Array:
+	var dir = Directory.new()
+	if dir.open("user://"):
+		return []
+	var styles = []
+	dir.list_dir_begin(true, true)
+	var file_name = dir.get_next()
+	while file_name != "":
+		if not dir.current_is_dir() and file_name.get_extension() == "progi":
+			styles.append(file_name.get_basename())
+		file_name = dir.get_next()
+	dir.list_dir_end()
+	return styles
+
+
+func save_name(name: String) -> String:
+	return "user://%s.progi" % name
+
+
+func load_style(name: String) -> Array:
+	var save_file = File.new()
+	var programs = []
+	if save_file.open(save_name(name), File.READ) == OK:
+		programs = save_file.get_var()
+		save_file.close()
+	return programs
+
+
+func save_style(path: String):
+	var save_file = File.new()
+	if save_file.open(path, File.WRITE) == OK:
+		save_file.store_var(custom_program)
+		save_file.close()
+		save_button.disabled = true
+		main_menu.remove_item(main_menu.get_item_index(custom_id))
+		custom_name = path.get_basename().substr(len(path.get_base_dir()))
+		custom_program = []
+
+func _on_InstrumentationDialog_file_selected(path):
+	save_style(path)
+

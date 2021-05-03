@@ -175,6 +175,7 @@ margin_bottom = 16.0
 margin_left = 142.0
 margin_right = 280.0
 margin_bottom = 31.0
+disabled = true
 shortcut = SubResource( 2 )
 text = "Save"
 
@@ -564,7 +565,7 @@ soundfont = "res://resources/default-GM.sf2"
 [connection signal="value_changed" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="_on_Volume_value_changed"]
 [connection signal="toggled" from="Controls/Menu/Fullscreen" to="." method="_on_Fullscreen_toggled"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
-[connection signal="file_selected" from="InstrumentationDialog" to="." method="_on_InstrumentationDialog_file_selected"]
+[connection signal="file_selected" from="InstrumentationDialog" to="Configure/Menu/GridContainer2/Style" method="_on_InstrumentationDialog_file_selected"]
 [connection signal="meta_clicked" from="AboutDialog/MarginContainer/RichTextLabel" to="." method="_on_RichTextLabel_meta_clicked"]
 [connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]
 [connection signal="new_movement" from="RandomPlayer" to="." method="_on_RandomPlayer_new_movement"]
