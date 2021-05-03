@@ -81,16 +81,22 @@ func get_value(name: String):
 	return control.value
 
 
+func create() -> int:
+	for parameter in parameters:
+		var value = get_value(parameter)
+		if value:
+			parameters[parameter] = value
+	var rng_seed = $Configure.find_node("Seed").text.hash()
+	$RandomPlayer.create(rng_seed, parameters)
+	return rng_seed
+
+
 func _on_Play_toggled(button_pressed):
 	var bar_length = $RandomPlayer.bar_time()
 	if button_pressed:
-		for parameter in parameters:
-			var value = get_value(parameter)
-			if value:
-				parameters[parameter] = value
-		var rng_seed = $Configure.find_node("Seed").text.hash()
+		var rng_seed = create();
 		$ViewportContainer/Viewport/Visualiser.start(rng_seed)
-		$RandomPlayer.play(rng_seed, parameters)
+		$RandomPlayer.play_next()
 		fade(1.0, 0.0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
@@ -138,6 +144,7 @@ func _on_Quit_pressed():
 
 func _on_AutoSection_toggled(button_pressed):
 	parameters.AutoMovements = button_pressed
+	$Configure.find_node("OpenExport").disabled = button_pressed
 
 
 func _on_RandomPlayer_new_movement(length, movement, total):
@@ -159,3 +166,17 @@ func _on_RichTextLabel_meta_clicked(meta):
 func _on_SaveInstrumentation_pressed():
 	$InstrumentationDialog.current_file = ".progi"
 	$InstrumentationDialog.popup_centered()
+
+
+func _on_OpenExport_pressed():
+	$ExportDialog.current_dir = "."
+	$ExportDialog.current_file = ".mid"
+	$ExportDialog.popup_centered()
+
+
+func _on_ExportDialog_file_selected(path):
+	var save_file = File.new()
+	if save_file.open(path, File.WRITE) == OK:
+		create()
+		save_file.store_buffer($RandomPlayer.write())
+		save_file.close()

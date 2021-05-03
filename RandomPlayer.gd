@@ -320,12 +320,12 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 		endtime = max(endtime, events.endtime)
 		track += 1
 	return {
-		smf = SMF.SMFData.new(0, parameters.Tracks, timebase, tracks),
+		smf = SMF.SMFData.new(1, parameters.Tracks, timebase, tracks),
 		endtime = endtime,
 	}
 
 
-func play(rng_seed: int, parameters: Dictionary):
+func create(rng_seed: int, parameters: Dictionary):
 	rng.seed = rng_seed
 	programs = Banks.create_programs(parameters, rng)
 	Adjustments[0] = parameters
@@ -369,8 +369,13 @@ func play(rng_seed: int, parameters: Dictionary):
 		entry.tempo = parameters.Tempo
 		entry.movement = 1
 		queue.push_back(entry)
-# warning-ignore:return_value_discarded
-	play_next()
+
+
+func write() -> PoolByteArray:
+	var entry = queue.front()
+	if entry:
+		return SMF.write(entry.smf)
+	return PoolByteArray()
 
 
 func play_next() -> bool:
