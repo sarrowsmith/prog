@@ -24,17 +24,17 @@ const GM_INSTRUMENTS = [
 	["Guitar Fret Noise", "Breath Noise", "Seashore", "Bird Tweet", "Telephone Ring", "Helicopter", "Applause", "Gunshot"],
 ]
 const BLANK = [
-	[], # CHORDS
-	[], # DRONE
-	[], # BASS
-	[], # MELODY
-	[], # HARMONY
-	[], # RHYTHM
-	[], # PERCUSSION
-	[], # COUNTER
-	[], # DESCANT
-	[], # DRUMS
-	[], # OTHER
+	[0], # CHORDS
+	[0], # DRONE
+	[0], # BASS
+	[0], # MELODY
+	[0], # HARMONY
+	[0], # RHYTHM
+	[0], # PERCUSSION
+	[0], # COUNTER
+	[0], # DESCANT
+	[0], # DRUMS
+	[0], # OTHER
 ]
 const PRESETS = {
 	Orchestral = [
