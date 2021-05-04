@@ -104,10 +104,7 @@ func get_value(name: String):
 
 
 func get_seed() -> int:
-	var text = parameters.Seed
-	if text.is_valid_integer():
-		return text.to_int()
-	return text.hash()
+	return parameters.Seed.hash()
 
 
 func save_parameters(path: String):
