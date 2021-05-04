@@ -1,11 +1,11 @@
 class_name Banks
 
 
-const GM_BANKS = [
+const GMBanks = [
 	"Piano", "Chromatic Percussion", "Organ", "Guitar", "Bass", "Strings", "Ensemble", "Brass",
 	"Reed", "Pipe", "Synth Lead", "Synth Pad", "Synth Effects", "Ethnic", "Percussive", "Sound Effects",
 ]
-const GM_INSTRUMENTS = [
+const GMInstruments = [
 	["Acoustic Grand Piano", "Bright Acoustic Piano", "Electric Grand Piano", "Honky-tonk Piano", "Electric Piano 1", "Electric Piano 2", "Harpsichord", "Clavichord"],
 	["Celesta", "Glockenspiel", "Music Box", "Vibraphone", "Marimba", "Xylophone", "Tubular Bells", "Dulcimer"],
 	["Drawbar Organ", "Percussive Organ", "Rock Organ", "Church Organ", "Reed Organ", "Accordion", "Harmonica", "Tango Accordion"],
@@ -23,7 +23,7 @@ const GM_INSTRUMENTS = [
 	["Tinkle Bell", " Agogô", "Steel Drums", "Woodblock", "Taiko Drum", "Melodic Tom", "Synth Drum", "Reverse Cymbal"],
 	["Guitar Fret Noise", "Breath Noise", "Seashore", "Bird Tweet", "Telephone Ring", "Helicopter", "Applause", "Gunshot"],
 ]
-const BLANK = [
+const Blank = [
 	[0], # CHORDS
 	[0], # DRONE
 	[0], # BASS
@@ -41,7 +41,7 @@ const BLANK = [
 	[0], # track 15
 	[0], # track 16
 ]
-const PRESETS = {
+const Presets = {
 	Orchestral = [
 		[1, 2, 20, 41, 47, 49, 50, 62], # CHORDS
 		[42, 43, 49, 50, 62], # DRONE
@@ -141,7 +141,7 @@ static func instrument_name(program: int) -> String:
 		program -= 1
 # warning-ignore:integer_division
 		var bank = program / 8
-		return "%s: %s" % [GM_BANKS[bank], GM_INSTRUMENTS[bank][program % 8]]
+		return "%s: %s" % [GMBanks[bank], GMInstruments[bank][program % 8]]
 	return ""
 
 
@@ -163,15 +163,15 @@ static func create_programs(parameters: Dictionary, rng: RandomNumberGenerator) 
 	var style = parameters.Style
 	if style is Array:
 		return pick_programs(style, rng)
-	if PRESETS.has(style):
-		return pick_programs(PRESETS[style], rng)
+	if Presets.has(style):
+		return pick_programs(Presets[style], rng)
 	var programs = []
 	for track in 16:
 		match style:
 			"Random":
 				programs.append(rng.randi_range(track * 8 + 1, track * 8 + 8))
 			"Mixed":
-				var bank = PRESETS[choose(PRESETS.keys(), rng)]
+				var bank = Presets[choose(Presets.keys(), rng)]
 				programs.append(choose(bank[min(track, len(bank) - 1)], rng))
 			_:
 				programs.append(rng.randi_range(1, 128))

@@ -1,7 +1,7 @@
 extends Control
 
 
-const RANDOM = ["Seed", "Style", "Mode", "Key", "Density", "Intricacy", "Tempo"]
+const Randomizable = ["Seed", "Style", "Mode", "Key", "Density", "Intricacy", "Tempo"]
 
 var time_begin
 var time_delay
@@ -237,7 +237,7 @@ func _on_ExportDialog_file_selected(path):
 func _on_Randomise_pressed():
 	var rng = $RandomPlayer.rng
 	rng.randomize()
-	for parameter in RANDOM:
+	for parameter in Randomizable:
 		var control = $Configure.find_node(parameter)
 		if not control:
 			continue

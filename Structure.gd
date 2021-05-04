@@ -3,11 +3,11 @@ class_name Structure
 
 # track to octave, using tracks for:
 enum {CHORDS, DRONE, BASS, MELODY, HARMONY, RHYTHM, PERCUSSION, COUNTER, DESCANT, DRUMS, OTHER}
-const TRACKS = ["Chords", "Drone", "Bass", "Melody", "Harmony", "Rhythm", "Percussion", "Alto", "Descant", "Drums"]
-const OCTAVES = [4, 3, 3, 5, 5, 4, 5, 6, 7, 5, 5]
-const OVERRIDES = {BASS: 4, COUNTER: 5, DESCANT: 6}
+const Tracks = ["Chords", "Drone", "Bass", "Melody", "Harmony", "Rhythm", "Percussion", "Alto", "Descant", "Drums"]
+const Octaves = [4, 3, 3, 5, 5, 4, 5, 6, 7, 5, 5]
+const Overrides = {BASS: 4, COUNTER: 5, DESCANT: 6}
 
-const LOOPS = [
+const Loops = [
 	[1, 3, 5, 4],
 	[1, 5, 4, 6],
 	[1, 3, 7, 2],
@@ -17,21 +17,20 @@ const LOOPS = [
 ]
 
 static func styles() -> Array:
-	return ["Random", "Mixed", "Chaotic"] + Banks.PRESETS.keys()
+	return ["Random", "Mixed", "Chaotic"] + Banks.Presets.keys()
 
 
 static func track_name(track: int) -> String:
 	if track < OTHER:
-		return TRACKS[track]
+		return Tracks[track]
 	return "Additional %d" % (track + 1 - OTHER)
 
 
 static func get_octave(style: String, track: int) -> int:
-	var octave = OCTAVES[min(track, DRUMS)]
+	var octave = Octaves[min(track, DRUMS)]
 	match style:
 		"Orchestral", "Band", "Strings", "Acoustic", "Chamber":
-			if OVERRIDES.has(track):
-				octave = OVERRIDES[track]
+			octave = Overrides.get(track, octave)
 	return octave
 
 
@@ -48,7 +47,7 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 	while bars < length:
 # warning-ignore:integer_division
 		var repeats = 1 + rng.randi_range(1, 1 + base_intricacy / 2)
-		var chords = Banks.choose(LOOPS, rng)
+		var chords = Banks.choose(Loops, rng)
 		program = programs.duplicate()
 		var chunk = len(chunks)
 		top = max(0, 2 * (chunk - 1)) + HARMONY

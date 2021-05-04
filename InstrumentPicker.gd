@@ -7,7 +7,7 @@ onready var bank = get_index() - 1
 
 func _ready():
 	for i in 8:
-		add_check_item(Banks.GM_INSTRUMENTS[bank][i], bank * 8 + i + 1)
+		add_check_item(Banks.GMInstruments[bank][i], bank * 8 + i + 1)
 
 
 func set_selected(ids: Array):

@@ -3,13 +3,14 @@ extends PopupMenu
 
 signal program_changed()
 
-var instrument_picker_prototype = preload("res://InstrumentPicker.tscn")
+const InstrumentPickerPrototype = preload("res://InstrumentPicker.tscn")
+
 var track
 
 
 func _ready():
-	for bank in Banks.GM_BANKS:
-		var instrument_picker = instrument_picker_prototype.instance()
+	for bank in Banks.GMBanks:
+		var instrument_picker = InstrumentPickerPrototype.instance()
 		instrument_picker.connect("index_pressed", self, "on_program_change")
 		add_child(instrument_picker, true)
 		add_submenu_item(bank, instrument_picker.name)

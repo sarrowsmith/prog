@@ -9,6 +9,6 @@ func _unhandled_input(event):
 
 func set_mode(idx: int):
 	clear()
-	for mode in RandomPlayer.MODES:
+	for mode in RandomPlayer.Modes:
 		add_item(mode)
 	select(idx)

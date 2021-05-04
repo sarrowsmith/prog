@@ -2,7 +2,7 @@ class_name Orbiter
 extends Responder
 
 
-const forms = ["Rough", "Metal", "Mirror", "Glass"]
+const Forms = ["Rough", "Metal", "Mirror", "Glass"]
 
 export(float) var epispeed = 1.0
 
@@ -28,7 +28,7 @@ func spawn(track: int, rng: RandomNumberGenerator) -> Responder:
 	# Populating bodies requires created.epicycle to be available, which it
 	# won't be until created enters the scene tree. So we set up the parameters
 	# & defer construction to start(). Similarly with initial positions.
-	form = forms[rng.randi_range(0, len(forms) - 1)]
+	form = Banks.choose(Forms, rng)
 	var inverse_track = Structure.DRUMS / float(track)
 	speed = 0.25 * sqrt(inverse_track * inverse_track * inverse_track)
 	return self

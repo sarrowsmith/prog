@@ -1,11 +1,12 @@
 extends MenuButton
 
 
+const BankPickerPrototype = preload("res://BankPicker.tscn")
+
 var separator_id = -1
 var custom_id = -1
 var custom_program = []
 var custom_name = ""
-var bank_picker_prototype = preload("res://BankPicker.tscn")
 
 onready var main_menu = get_popup()
 onready var sub_menu = $TrackSelector
@@ -18,7 +19,7 @@ func _ready():
 		if track == Structure.DRUMS:
 			sub_menu.add_separator("Drums")
 		else:
-			var bank_picker = bank_picker_prototype.instance()
+			var bank_picker = BankPickerPrototype.instance()
 			bank_picker.track = track
 			bank_picker.connect("program_changed", self, "on_customised")
 			sub_menu.add_child(bank_picker, true)
@@ -69,9 +70,9 @@ func set_custom(id):
 		return
 	var value = get_value(id)
 	if value is String:
-		if not Banks.PRESETS.has(value):
+		if not Banks.Presets.has(value):
 			return
-		value = Banks.PRESETS[value]
+		value = Banks.Presets[value]
 	if not value:
 		return
 	for child in sub_menu.get_children():
