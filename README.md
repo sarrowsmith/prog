@@ -22,4 +22,12 @@
 
 ### Parameters
 
+TODO: let me know if you get this far
+
 ### Signals
+
+`RandomPlayer` emits `finished` when it's finished playing. It sets up its `midi_player` to emit `appeared_instrument` for each instrument it uses and to signal key changes, and `appeared_cue_point` on each note. Both of these signals from `midi_player` send a string which consists of four `:`-separated integers, the first of which is the track number (0--15) and the rest are:
+
+`appeared_instrument`: instrument (0--128, 0 = track silenced), mode (0--6, an index into `RandomPlayer.Modes`), key (0--11 = C--B)
+
+`appeard_cue_point`: pitch, duration, volume (MIDI values)
