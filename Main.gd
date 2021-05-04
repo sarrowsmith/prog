@@ -3,8 +3,6 @@ extends Control
 
 const Randomizable = ["Seed", "Style", "Mode", "Key", "Density", "Intricacy", "Tempo"]
 
-var time_begin
-var time_delay
 var modes
 var parameters = {
 	Tracks = 16,
@@ -18,15 +16,15 @@ var parameters = {
 	Length = 41,
 	AutoMovements = false,
 }
+var capture
 
 onready var pick_mode = $Configure.find_node("Mode")
 onready var pick_key = $Configure.find_node("Key")
 onready var pick_style = $Configure.find_node("Style")
+onready var recorder = AudioServer.get_bus_effect(AudioServer.get_bus_index("Recorder"), 0)
 
 
 func _ready():
-	time_begin = OS.get_ticks_usec()
-	time_delay = AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()
 	pick_mode.set_mode(parameters.Mode)
 	for parameter in parameters:
 		var control = $Configure.find_node(parameter + "2")
@@ -38,6 +36,8 @@ func _ready():
 	$Fader.interpolate_property($ViewportContainer, "modulate", Color(1.0, 1.0, 1.0, 0.0), Color(1.0, 1.0, 1.0, 1.0), 2.0)
 	fade_image(1.0, 0.5, 1.5)
 	$ViewportContainer/Viewport/Visualiser.timescale = $RandomPlayer.timescale()
+	recorder.set_recording_active(false)
+	capture = false
 
 
 func fade_image(from: float, to: float, time: float):
@@ -143,12 +143,18 @@ func _on_Play_toggled(button_pressed):
 	if button_pressed:
 		var rng_seed = create();
 		$ViewportContainer/Viewport/Visualiser.start(rng_seed)
+		recorder.set_recording_active(capture)
 		$RandomPlayer.play_next()
 		fade(1.0, 0.0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
 		$ViewportContainer/Viewport/Visualiser.stop()
 		yield(get_tree().create_timer(0.5 * bar_length), "timeout")
+		if capture:
+			recorder.set_recording_active(false)
+			$SaveCaptureDialog.current_dir = "."
+			$SaveCaptureDialog.current_file = ".wav"
+			$SaveCaptureDialog.popup_centered()
 		fade(0.0, 1.0, 2 * bar_length)
 		$Controls.find_node("Queue").text = "-/-"
 	enable_Configure(not button_pressed)
@@ -268,3 +274,11 @@ func _on_Load_pressed():
 
 func _on_Save_pressed():
 	open_load_save(FileDialog.MODE_SAVE_FILE)
+
+
+func _on_Capture_toggled(button_pressed):
+	capture = button_pressed
+
+
+func _on_SaveCaptureDialog_file_selected(path):
+	recorder.get_recording().save_to_wav(path)
