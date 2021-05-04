@@ -20,10 +20,6 @@
  4. Instance a `RandomPlayer` node and give it a soundfont
  5. Use `Main.gd` as a guide for how to drive it. Basically, call `create(rng_seed: int, parameters: Dictionary)` to create a track, then `play_next()` to play and `stop()` to stop.
 
-### Parameters
-
-TODO: let me know if you get this far
-
 ### Signals
 
 `RandomPlayer` emits `finished` when it's finished playing. It sets up its `midi_player` to emit `appeared_instrument` for each instrument it uses and to signal key changes, and `appeared_cue_point` on each note. Both of these signals from `midi_player` send a string which consists of four `:`-separated integers, the first of which is the track number (0--15) and the rest are:
@@ -31,3 +27,8 @@ TODO: let me know if you get this far
 `appeared_instrument`: instrument (0--128, 0 = track silenced), mode (0--6, an index into `RandomPlayer.Modes`), key (0--11 = C--B)
 
 `appeard_cue_point`: pitch, duration, volume (MIDI values)
+
+### Parameters
+
+TODO: let me know if you get this far
+
