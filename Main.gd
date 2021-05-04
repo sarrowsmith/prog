@@ -22,6 +22,7 @@ onready var pick_mode = $Configure.find_node("Mode")
 onready var pick_key = $Configure.find_node("Key")
 onready var pick_style = $Configure.find_node("Style")
 onready var recorder = AudioServer.get_bus_effect(AudioServer.get_bus_index("Recorder"), 0)
+onready var visualiser = $ViewportContainer/Viewport/Visualiser
 
 
 func _ready():
@@ -35,7 +36,10 @@ func _ready():
 	$Controls.find_node("Play").grab_focus()
 	$Fader.interpolate_property($ViewportContainer, "modulate", Color(1.0, 1.0, 1.0, 0.0), Color(1.0, 1.0, 1.0, 1.0), 2.0)
 	fade_image(1.0, 0.5, 1.5)
-	$ViewportContainer/Viewport/Visualiser.timescale = $RandomPlayer.timescale()
+	$RandomPlayer.midi_player.connect("changed_tempo", self, "_on_MidiPlayer_changed_tempo")
+	$RandomPlayer.midi_player.connect("appeared_cue_point", visualiser, "_on_MidiPlayer_appeared_cue_point")
+	$RandomPlayer.midi_player.connect("appeared_instrument_name", visualiser, "_on_MidiPlayer_appeared_instrument_name")
+	visualiser.timescale = $RandomPlayer.timescale()
 	recorder.set_recording_active(false)
 	capture = false
 
@@ -142,7 +146,7 @@ func _on_Play_toggled(button_pressed):
 	var bar_length = $RandomPlayer.bar_time()
 	if button_pressed:
 		var rng_seed = create();
-		$ViewportContainer/Viewport/Visualiser.start(rng_seed)
+		visualiser.start(rng_seed)
 		if recorder.is_recording_active():
 			recorder.set_recording_active(false)
 		recorder.set_recording_active(capture)
@@ -150,7 +154,7 @@ func _on_Play_toggled(button_pressed):
 		fade(1.0, 0.0, 0.5 * bar_length)
 	else:
 		$RandomPlayer.stop()
-		$ViewportContainer/Viewport/Visualiser.stop()
+		visualiser.stop()
 		yield(get_tree().create_timer(0.5 * bar_length), "timeout")
 		if capture:
 			recorder.set_recording_active(false)
@@ -178,7 +182,7 @@ func _on_RandomPlayer_finished():
 
 func _on_MidiPlayer_changed_tempo(tempo):
 	$Configure.find_node("Tempo").value = tempo
-	$ViewportContainer/Viewport/Visualiser.set_bar_length($RandomPlayer.bar_time())
+	visualiser.set_bar_length($RandomPlayer.bar_time())
 
 
 func _on_Pause_toggled(button_pressed):

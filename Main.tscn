@@ -1,17 +1,16 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=38 format=2]
 
-[ext_resource path="res://default_theme.tres" type="Theme" id=1]
+[ext_resource path="res://resources/default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
-[ext_resource path="res://addons/midi/MidiPlayer.tscn" type="PackedScene" id=3]
-[ext_resource path="res://RandomPlayer.gd" type="Script" id=4]
-[ext_resource path="res://dialog_theme.tres" type="Theme" id=5]
+[ext_resource path="res://ProgPlayer/RandomPlayer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resources/dialog_theme.tres" type="Theme" id=5]
 [ext_resource path="res://resources/prog.png" type="Texture" id=6]
-[ext_resource path="res://Volume.gd" type="Script" id=7]
-[ext_resource path="res://Visualiser.tscn" type="PackedScene" id=8]
-[ext_resource path="res://visualiser_world.tres" type="World" id=9]
-[ext_resource path="res://PickMode.gd" type="Script" id=10]
-[ext_resource path="res://PickKey.gd" type="Script" id=11]
-[ext_resource path="res://PickStyle.gd" type="Script" id=12]
+[ext_resource path="res://UI/Volume.gd" type="Script" id=7]
+[ext_resource path="res://Visualiser/Visualiser.tscn" type="PackedScene" id=8]
+[ext_resource path="res://resources/visualiser_world.tres" type="World" id=9]
+[ext_resource path="res://UI/PickMode.gd" type="Script" id=10]
+[ext_resource path="res://UI/PickKey.gd" type="Script" id=11]
+[ext_resource path="res://UI/PickStyle.gd" type="Script" id=12]
 
 [sub_resource type="InputEventKey" id=1]
 control = true
@@ -29,11 +28,11 @@ scancode = 70
 [sub_resource type="ShortCut" id=4]
 shortcut = SubResource( 3 )
 
-[sub_resource type="InputEventKey" id=28]
+[sub_resource type="InputEventKey" id=5]
 scancode = 83
 
-[sub_resource type="ShortCut" id=26]
-shortcut = SubResource( 28 )
+[sub_resource type="ShortCut" id=6]
+shortcut = SubResource( 5 )
 
 [sub_resource type="InputEventKey" id=7]
 control = true
@@ -59,18 +58,10 @@ scancode = 83
 [sub_resource type="ShortCut" id=12]
 shortcut = SubResource( 11 )
 
-[sub_resource type="InputEventKey" id=25]
-control = true
-command = true
-scancode = 67
-
-[sub_resource type="ShortCut" id=27]
-shortcut = SubResource( 25 )
-
 [sub_resource type="InputEventKey" id=13]
 control = true
 command = true
-scancode = 69
+scancode = 67
 
 [sub_resource type="ShortCut" id=14]
 shortcut = SubResource( 13 )
@@ -78,7 +69,7 @@ shortcut = SubResource( 13 )
 [sub_resource type="InputEventKey" id=15]
 control = true
 command = true
-scancode = 72
+scancode = 69
 
 [sub_resource type="ShortCut" id=16]
 shortcut = SubResource( 15 )
@@ -86,28 +77,36 @@ shortcut = SubResource( 15 )
 [sub_resource type="InputEventKey" id=17]
 control = true
 command = true
-scancode = 81
+scancode = 72
 
 [sub_resource type="ShortCut" id=18]
 shortcut = SubResource( 17 )
 
 [sub_resource type="InputEventKey" id=19]
-scancode = 16777220
+control = true
+command = true
+scancode = 81
 
 [sub_resource type="ShortCut" id=20]
 shortcut = SubResource( 19 )
 
 [sub_resource type="InputEventKey" id=21]
-scancode = 16777217
+scancode = 16777220
 
 [sub_resource type="ShortCut" id=22]
 shortcut = SubResource( 21 )
 
 [sub_resource type="InputEventKey" id=23]
-scancode = 16777254
+scancode = 16777217
 
 [sub_resource type="ShortCut" id=24]
 shortcut = SubResource( 23 )
+
+[sub_resource type="InputEventKey" id=25]
+scancode = 16777254
+
+[sub_resource type="ShortCut" id=26]
+shortcut = SubResource( 25 )
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -388,7 +387,7 @@ margin_right = 280.0
 margin_bottom = 371.0
 hint_tooltip = "Automatically divide longer pieces up into sections"
 toggle_mode = true
-shortcut = SubResource( 26 )
+shortcut = SubResource( 6 )
 text = "Auto-section"
 
 [node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
@@ -426,7 +425,7 @@ margin_right = 280.0
 margin_bottom = 546.0
 hint_tooltip = "Capture audio on play"
 toggle_mode = true
-shortcut = SubResource( 27 )
+shortcut = SubResource( 14 )
 text = "Capture"
 
 [node name="OpenExport" type="Button" parent="Configure/Menu"]
@@ -434,7 +433,7 @@ margin_top = 550.0
 margin_right = 280.0
 margin_bottom = 581.0
 hint_tooltip = "Export an unsectioned track as a .mid file"
-shortcut = SubResource( 14 )
+shortcut = SubResource( 16 )
 text = "Export"
 
 [node name="About" type="Button" parent="Configure/Menu"]
@@ -442,7 +441,7 @@ margin_top = 585.0
 margin_right = 280.0
 margin_bottom = 616.0
 hint_tooltip = "Load a soundfont"
-shortcut = SubResource( 16 )
+shortcut = SubResource( 18 )
 text = "About"
 
 [node name="Quit" type="Button" parent="Configure/Menu"]
@@ -450,7 +449,7 @@ margin_top = 620.0
 margin_right = 280.0
 margin_bottom = 651.0
 hint_tooltip = "Quit the application"
-shortcut = SubResource( 18 )
+shortcut = SubResource( 20 )
 text = "Quit"
 
 [node name="Controls" type="MarginContainer" parent="."]
@@ -488,7 +487,7 @@ margin_bottom = 31.0
 hint_tooltip = "Start/stop playback"
 size_flags_vertical = 3
 toggle_mode = true
-shortcut = SubResource( 20 )
+shortcut = SubResource( 22 )
 text = "Play!"
 
 [node name="Pause" type="Button" parent="Controls/Menu"]
@@ -499,7 +498,7 @@ hint_tooltip = "Pause playback"
 size_flags_vertical = 4
 disabled = true
 toggle_mode = true
-shortcut = SubResource( 22 )
+shortcut = SubResource( 24 )
 text = "Pause"
 
 [node name="Label5" type="Label" parent="Controls/Menu"]
@@ -542,7 +541,7 @@ margin_bottom = 31.0
 hint_tooltip = "Toggle fullscreen mode"
 size_flags_vertical = 4
 toggle_mode = true
-shortcut = SubResource( 24 )
+shortcut = SubResource( 26 )
 text = "Fullscreen"
 
 [node name="SoundfontDialog" type="FileDialog" parent="."]
@@ -666,12 +665,8 @@ http://www.schristiancollins.com/generaluser.php"
 fit_content_height = true
 selection_enabled = true
 
-[node name="RandomPlayer" type="Node" parent="."]
-script = ExtResource( 4 )
+[node name="RandomPlayer" parent="." instance=ExtResource( 3 )]
 soundfont = "res://resources/default-GM.sf2"
-
-[node name="MidiPlayer" parent="RandomPlayer" instance=ExtResource( 3 )]
-bus = "MIDI"
 
 [connection signal="pressed" from="Configure/Menu/Randomize" to="." method="_on_Randomise_pressed"]
 [connection signal="about_to_show" from="Configure/Menu/GridContainer2/Style" to="Configure/Menu/GridContainer2/Style" method="_on_Style_about_to_show"]
@@ -697,7 +692,3 @@ bus = "MIDI"
 [connection signal="meta_clicked" from="AboutDialog/MarginContainer/RichTextLabel" to="." method="_on_RichTextLabel_meta_clicked"]
 [connection signal="finished" from="RandomPlayer" to="." method="_on_RandomPlayer_finished"]
 [connection signal="new_movement" from="RandomPlayer" to="." method="_on_RandomPlayer_new_movement"]
-[connection signal="appeared_cue_point" from="RandomPlayer/MidiPlayer" to="ViewportContainer/Viewport/Visualiser" method="_on_MidiPlayer_appeared_cue_point"]
-[connection signal="appeared_instrument_name" from="RandomPlayer/MidiPlayer" to="ViewportContainer/Viewport/Visualiser" method="_on_MidiPlayer_appeared_instrument_name"]
-[connection signal="changed_tempo" from="RandomPlayer/MidiPlayer" to="." method="_on_MidiPlayer_changed_tempo"]
-[connection signal="finished" from="RandomPlayer/MidiPlayer" to="RandomPlayer" method="_on_MidiPlayer_finished"]

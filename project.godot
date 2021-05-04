@@ -22,17 +22,17 @@ _global_script_classes=[ {
 "base": "PopupMenu",
 "class": "BankPicker",
 "language": "GDScript",
-"path": "res://BankPicker.gd"
+"path": "res://UI/BankPicker.gd"
 }, {
 "base": "Reference",
 "class": "Banks",
 "language": "GDScript",
-"path": "res://Banks.gd"
+"path": "res://ProgPlayer/Banks.gd"
 }, {
 "base": "PopupMenu",
 "class": "InstrumentPicker",
 "language": "GDScript",
-"path": "res://InstrumentPicker.gd"
+"path": "res://UI/InstrumentPicker.gd"
 }, {
 "base": "Node",
 "class": "MidiPlayer",
@@ -42,22 +42,22 @@ _global_script_classes=[ {
 "base": "Responder",
 "class": "Orbiter",
 "language": "GDScript",
-"path": "res://Orbiter.gd"
+"path": "res://Visualiser/Orbiter.gd"
 }, {
 "base": "Responder",
 "class": "ParticleLight",
 "language": "GDScript",
-"path": "res://ParticleLight.gd"
+"path": "res://Visualiser/ParticleLight.gd"
 }, {
 "base": "Node",
 "class": "RandomPlayer",
 "language": "GDScript",
-"path": "res://RandomPlayer.gd"
+"path": "res://ProgPlayer/RandomPlayer.gd"
 }, {
 "base": "Spatial",
 "class": "Responder",
 "language": "GDScript",
-"path": "res://Responder.gd"
+"path": "res://Visualiser/Responder.gd"
 }, {
 "base": "Reference",
 "class": "SMF",
@@ -72,17 +72,17 @@ _global_script_classes=[ {
 "base": "Responder",
 "class": "Stellation",
 "language": "GDScript",
-"path": "res://Stellation.gd"
+"path": "res://Visualiser/Stellation.gd"
 }, {
 "base": "Reference",
 "class": "Structure",
 "language": "GDScript",
-"path": "res://Structure.gd"
+"path": "res://ProgPlayer/Structure.gd"
 }, {
 "base": "Spatial",
 "class": "Visualiser",
 "language": "GDScript",
-"path": "res://Visualiser.gd"
+"path": "res://Visualiser/Visualiser.gd"
 } ]
 _global_script_class_icons={
 "AudioStreamPlayerADSR": "",
@@ -111,6 +111,10 @@ boot_splash/image="res://resources/prog.png"
 boot_splash/bg_color=Color( 0.141176, 0.141176, 0.141176, 1 )
 config/icon="res://icon.png"
 config/windows_native_icon="res://icon.ico"
+
+[audio]
+
+default_bus_layout="res://resources/default_bus_layout.tres"
 
 [display]
 
@@ -244,5 +248,5 @@ quality/intended_usage/framebuffer_allocation.mobile=2
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
 environment/default_clear_color=Color( 0.0235294, 0.0627451, 0.0666667, 1 )
-environment/default_environment="res://default_env.tres"
+environment/default_environment="res://resources/default_env.tres"
 quality/2d/use_pixel_snap=true

@@ -5,7 +5,10 @@ extends Node
 signal finished()
 signal new_movement(length, movement, total)
 
+const MidiPlayer = preload("res://addons/midi/MidiPlayer.tscn")
+
 var SMF = preload("res://addons/midi/SMF.gd").new()
+var midi_player
 
 export(String, FILE, "*.sf2; Soundfont 2") var soundfont
 export(int) var key = 0
@@ -58,7 +61,10 @@ onready var tempo_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEv
 
 
 func _ready():
-	$MidiPlayer.soundfont = soundfont
+	midi_player = MidiPlayer.instance()
+	add_child(midi_player)
+	midi_player.connect("finished", self, "_on_MidiPlayer_finished")
+	midi_player.soundfont = soundfont
 	for k in Modes:
 		var intervals = Intervals[k]
 		Scales[k] = [0]
@@ -333,7 +339,7 @@ func create(rng_seed: int, parameters: Dictionary):
 	Adjustments[0] = parameters
 	if parameters.has("Soundfont") and parameters.Soundfont != soundfont:
 		soundfont = parameters.Soundfont
-		$MidiPlayer.soundfont = soundfont
+		midi_player.soundfont = soundfont
 	queue.clear()
 	if parameters.has("Key"):
 		key = parameters.Key - 7 # Not an octave 7, but C - F
@@ -384,29 +390,29 @@ func play_next() -> bool:
 	var entry = queue.pop_front()
 	if not entry:
 		return false
-	$MidiPlayer.smf_data = entry.smf
-	$MidiPlayer.tempo = entry.tempo
-	$MidiPlayer.play()
+	midi_player.smf_data = entry.smf
+	midi_player.tempo = entry.tempo
+	midi_player.play()
 	emit_signal("new_movement", 60.0 * entry.endtime / (entry.tempo * timebase), entry.movement, max(movements, 1))
 	return true
 
 
 func stop():
-	$MidiPlayer.stop()
+	midi_player.stop()
 
 
 func pause(pause: bool):
 	if pause:
-		if $MidiPlayer.playing:
-			position = $MidiPlayer.position
-			$MidiPlayer.stop()
+		if midi_player.playing:
+			position = midi_player.position
+			midi_player.stop()
 	else:
 		if position > 0:
-			$MidiPlayer.play()
-			$MidiPlayer.position = position
+			midi_player.play()
+			midi_player.position = position
 
 
 func _on_MidiPlayer_finished():
 	if not play_next():
-		$MidiPlayer.tempo = tempo
+		midi_player.tempo = tempo
 		emit_signal("finished")

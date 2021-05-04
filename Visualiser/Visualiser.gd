@@ -2,7 +2,8 @@ class_name Visualiser
 extends Spatial
 
 
-var orbiter_prototype = load("res://Orbiter.tscn")
+# Can't preload as const because it creates cyclic references in Orbiter
+var OrbiterPrototype = load("res://Visualiser/Orbiter.tscn")
 
 export(float) var speed = 2
 
@@ -44,7 +45,7 @@ func start(rng_seed: int):
 	rng.seed = rng_seed
 	for track in 16:
 		if not responders.has(track):
-			var orbiter = orbiter_prototype.instance().spawn(track, rng)
+			var orbiter = OrbiterPrototype.instance().spawn(track, rng)
 			responders[track] = orbiter
 			$Objects.add_child(orbiter)
 	set_process(true)

@@ -1,7 +1,7 @@
 extends MenuButton
 
 
-const BankPickerPrototype = preload("res://BankPicker.tscn")
+const BankPickerPrototype = preload("res://UI/BankPicker.tscn")
 
 var separator_id = -1
 var custom_id = -1

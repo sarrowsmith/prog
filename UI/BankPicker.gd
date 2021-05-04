@@ -3,7 +3,7 @@ extends PopupMenu
 
 signal program_changed()
 
-const InstrumentPickerPrototype = preload("res://InstrumentPicker.tscn")
+const InstrumentPickerPrototype = preload("res://UI/InstrumentPicker.tscn")
 
 var track
 
