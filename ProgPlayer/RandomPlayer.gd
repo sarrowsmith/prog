@@ -343,10 +343,8 @@ func create(rng_seed: int, parameters: Dictionary):
 	queue.clear()
 	if parameters.has("Key"):
 		key = parameters.Key - 7 # Not an octave 7, but C - F
-	if parameters.has("Mode"):
-		mode = parameters.Mode
-	if parameters.has("Signature"):
-		signature = parameters.Signature
+	mode = parameters.get("Mode", mode)
+	signature = parameters.get("Signature", signature)
 	if parameters.has("Tempo"):
 		tempo = parameters.Tempo
 	else:

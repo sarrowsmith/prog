@@ -70,9 +70,7 @@ func set_custom(id):
 		return
 	var value = get_value(id)
 	if value is String:
-		if not Banks.Presets.has(value):
-			return
-		value = Banks.Presets[value]
+		value = Banks.Presets.get(value)
 	if not value:
 		return
 	for child in sub_menu.get_children():
