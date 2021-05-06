@@ -1,5 +1,5 @@
 # Prog
-**Pro**cedural music **g**eneration
+**Pro**cedural music **g**eneration. This is the source code repository; to download the app go to https://sarrowsmith.itch.io/prog
 
 ## Basic Requirements
 
