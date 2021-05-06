@@ -11,6 +11,7 @@ var SMF = preload("res://addons/midi/SMF.gd").new()
 var midi_player
 
 export(String, FILE, "*.sf2; Soundfont 2") var soundfont
+export(String) var bus
 export(int) var key = 0
 export(int) var timebase = 48
 export(int) var mode = 3
@@ -62,9 +63,10 @@ onready var tempo_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEv
 
 func _ready():
 	midi_player = MidiPlayer.instance()
+	midi_player.soundfont = soundfont
+	midi_player.bus = bus
 	add_child(midi_player)
 	midi_player.connect("finished", self, "_on_MidiPlayer_finished")
-	midi_player.soundfont = soundfont
 	for k in Modes:
 		var intervals = Intervals[k]
 		Scales[k] = [0]

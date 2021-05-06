@@ -667,6 +667,7 @@ selection_enabled = true
 
 [node name="RandomPlayer" parent="." instance=ExtResource( 3 )]
 soundfont = "res://resources/default-GM.sf2"
+bus = "MIDI"
 
 [connection signal="pressed" from="Configure/Menu/Randomize" to="." method="_on_Randomise_pressed"]
 [connection signal="about_to_show" from="Configure/Menu/GridContainer2/Style" to="Configure/Menu/GridContainer2/Style" method="_on_Style_about_to_show"]
