@@ -3,7 +3,7 @@ extends Node
 
 
 signal finished()
-signal new_movement(length, movement, total)
+signal new_movement(length, section, total)
 
 const MidiPlayer = preload("res://addons/midi/MidiPlayer.tscn")
 
@@ -54,10 +54,12 @@ var Adjustments = [ # mostly const, but [0] is set for reference
 var style = "Random"
 var programs = []
 var movements = 0
+var section = 0
 var queue = []
 var position = -1.0
 
 onready var rng = RandomNumberGenerator.new()
+onready var worker = Thread.new()
 onready var tempo_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.set_tempo, "bpm": int(60000000 / tempo)})
 
 
@@ -72,6 +74,11 @@ func _ready():
 		Scales[k] = [0]
 		for interval in intervals:
 			Scales[k].append(Scales[k][-1] + interval)
+
+
+func _exit_tree():
+	if worker.is_active():
+		worker.wait_to_finish()
 
 
 # We don't really care about these, but they make life easier for others
@@ -244,20 +251,19 @@ func create_insertion(notes: Array, n: int, iteration: int, chunk: Dictionary, t
 
 func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
-	var bar_length = timebase * signature
-	var time = chunk.bar * bar_length
+	var time = ((chunk.bar - 1) * signature + 1) * timebase
 	var rng_state = rng.state
 
 	if track == Structure.DRUMS:
 		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:0" % track})
-		events.append(SMF.MIDIEventChunk.new(time - timebase, track, chunk_start))
+		events.append(SMF.MIDIEventChunk.new(time, track, chunk_start))
 	else:
 		var program = chunk.program[track]
 		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:%d:%d:%d" % [track, program, mode, key]})
-		events.append(SMF.MIDIEventChunk.new(time - timebase, track, chunk_start))
+		events.append(SMF.MIDIEventChunk.new(time, track, chunk_start))
 		if not program:
 			return events
-		events.append(SMF.MIDIEventChunk.new(time - timebase, track, SMF.MIDIEventProgramChange.new(program - 1)))
+		events.append(SMF.MIDIEventChunk.new(time, track, SMF.MIDIEventProgramChange.new(program - 1)))
 	var notes = []
 	for i in chunk.repeats:
 		# Each loop of the chunk has the same basic structure ...
@@ -337,6 +343,42 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 	}
 
 
+func create_adjusted() -> Dictionary:
+	var t0 = OS.get_ticks_usec()
+	var parameters = Adjustments[0].duplicate()
+	var adjustment = Adjustments[section]
+	for parameter in adjustment:
+		match parameter:
+			"Mode", "Intricacy":
+				parameters.Mode = max(0, min(parameters[parameter] + adjustment[parameter], 6))
+			"Length":
+				parameters.Length = int((4 * parameters.Length) / (movements * adjustment.Length))
+			_:
+				parameters[parameter] *= adjustment[parameter]
+	var entry = create_smf(parameters, section == movements)
+	entry.tempo = parameters.Tempo
+	entry.section = section
+	print(OS.get_ticks_usec() - t0)
+	return entry
+
+
+func create_on_thread(_parameters):
+	call_deferred("enqueue", create_adjusted())
+
+
+func enqueue(entry: Dictionary):
+	queue.push_back(entry)
+	if worker.is_active():
+		worker.wait_to_finish()
+
+
+func enqueue_adjusted(immediate: bool):
+	if immediate:
+		enqueue(create_adjusted())
+		return
+	worker.start(self, "create_on_thread")
+
+
 func create(rng_seed: int, parameters: Dictionary):
 	rng.seed = rng_seed
 	var rng_state = rng.state
@@ -360,27 +402,13 @@ func create(rng_seed: int, parameters: Dictionary):
 		movements = min(int(parameters.Length / movement), 4)
 	if movements:
 		Adjustments[0] = parameters.duplicate()
-		for i in movements:
-			if i:
-				parameters = Adjustments[0].duplicate()
-			var adjustment = Adjustments[i+1]
-			for parameter in adjustment:
-				match parameter:
-					"Mode", "Intricacy":
-						parameters.Mode = max(0, min(parameters[parameter] + adjustment[parameter], 6))
-					"Length":
-						parameters.Length = int((4 * parameters.Length) / (movements * adjustment.Length))
-					_:
-						parameters[parameter] *= adjustment[parameter]
-			var entry = create_smf(parameters, i + 1 == movements)
-			entry.tempo = parameters.Tempo
-			entry.movement = i + 1
-			queue.push_back(entry)
+		section = 1
+		enqueue_adjusted(true)
 	else:
 		var entry = create_smf(parameters, true)
 		entry.tempo = parameters.Tempo
-		entry.movement = 1
-		queue.push_back(entry)
+		entry.section = 1
+		enqueue(entry)
 
 
 func write() -> PoolByteArray:
@@ -391,13 +419,18 @@ func write() -> PoolByteArray:
 
 
 func play_next() -> bool:
+	if 0 < section and section < movements:
+		section += 1
+		enqueue_adjusted(false)
+	elif section < 0:
+		pass # enqueue_random
 	var entry = queue.pop_front()
 	if not entry:
 		return false
 	midi_player.smf_data = entry.smf
 	midi_player.tempo = entry.tempo
 	midi_player.play()
-	emit_signal("new_movement", 60.0 * entry.endtime / (entry.tempo * timebase), entry.movement, max(movements, 1))
+	emit_signal("new_movement", 60.0 * entry.endtime / (entry.tempo * timebase), entry.section, max(movements, 1))
 	return true
 
 

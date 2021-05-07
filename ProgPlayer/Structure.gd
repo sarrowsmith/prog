@@ -51,7 +51,7 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		var next = bars + repeats * len(chords)
 		program = programs.duplicate()
 		var chunk = len(chunks)
-		top = (max(0, 2 * (chunk - 1)) if next < length else 0) + HARMONY
+		top = (int(max(0, 2 * (chunk - 1))) if (final or next < length) else 0) + HARMONY
 		if top < 16:
 			for p in range(top, 16):
 				program[p] = 0
