@@ -9,8 +9,12 @@
 
 ## Additional Requiremts For The Prog App
 
- * [AllSkyFree](https://godotengine.org/asset-library/asset/579) I've pulled out Epic Glorious Pink `res://resources/AllSkyFree/Epic_GloriousPink.png` and put the rest under a `.gitignore`.
+ * [AllSkyFree](https://godotengine.org/asset-library/asset/579) I've pulled out selected ones (see below), renamed them and put the rest under a `.gitignore`.
  * [Nova Square](https://fonts.google.com/specimen/Nova+Square) and [Nova Round](https://fonts.google.com/specimen/Nova+Round) fonts (in `res://resources`)
+
+### Sky Selection
+
+The `BackroundPicker` expects to be given a directory which contains the sky assets, which are named according to the convetion that if the name contains no `_` then this is one option with the sky inverted or the first option is the file name up to the first `_` which gives the sky as-is then the remained is an inverted option.
 
 ## Using In Your Own Project
 
