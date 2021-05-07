@@ -321,7 +321,7 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
 	var rng_state = rng.state
-	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, final, rng)
+	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, parameters.get("Endless", false), final, rng)
 	# Put rng in same initial state for note creation no matter how many loops have been structured
 	rng.state = rng_state
 	var endtime = 0

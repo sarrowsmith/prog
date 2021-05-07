@@ -39,7 +39,7 @@ static func get_octave(style: String, track: int) -> int:
 # it is defined by a program, a number of repeats, the bar it starts on,
 # a density and the chords
 # the repeated loops *do not need to be generated identical*
-static func create_structure(programs: Array, length: int, base_density: float, base_intricacy: int, final: bool, rng: RandomNumberGenerator) -> Array:
+static func create_structure(programs: Array, length: int, base_density: float, base_intricacy: int, endless: bool, final: bool, rng: RandomNumberGenerator) -> Array:
 	var chunks = []
 	var bars = 1
 	var top = HARMONY
@@ -48,32 +48,35 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 # warning-ignore:integer_division
 		var repeats = 1 + rng.randi_range(1, 1 + base_intricacy / 2)
 		var chords = Banks.choose(Loops, rng)
+		var next = bars + repeats * len(chords)
 		program = programs.duplicate()
 		var chunk = len(chunks)
-		top = max(0, 2 * (chunk - 1)) + HARMONY
+		top = (max(0, 2 * (chunk - 1)) if next < length else 0) + HARMONY
 		if top < 16:
 			for p in range(top, 16):
 				program[p] = 0
-		elif bars + repeats < length:
+		elif next < length:
 			for p in range(HARMONY, 16):
 				if rng.randf() > sqrt(base_density):
 					program[p] = 0
 
 		var density = base_density + (1 - base_density) / (2 + chunk)
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
-		bars += repeats * len(chords)
+		bars = next
 	if not program:
 		program = programs.duplicate()
 		for p in range(top, 16):
 			program[p] = 0
-	chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
+	if final or not endless:
+		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
+		bars += 1
 	if final:
 		program = programs.duplicate()
 		for p in range(HARMONY, 16):
 			program[p] = 0
-		chunks.append({program = program, repeats = 1, bar = bars + 1, density = base_density, chords = [1]})
+		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
 		program = program.duplicate()
 		for p in range(0, 16):
 			program[p] = 0
-		chunks.append({program = program, repeats = 0, bar = bars + 2, density = base_density, chords = [1]})
+		chunks.append({program = program, repeats = 0, bar = bars + 1, density = base_density, chords = [1]})
 	return chunks
