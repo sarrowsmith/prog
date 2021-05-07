@@ -378,8 +378,8 @@ margin_right = 280.0
 margin_bottom = 31.0
 size_flags_horizontal = 3
 min_value = 1.0
-max_value = 1024.0
-value = 1.0
+max_value = 512.0
+value = 128.0
 suffix = "bars"
 
 [node name="Length" type="HSlider" parent="Configure/Menu/VBoxContainer"]
@@ -388,8 +388,8 @@ margin_right = 280.0
 margin_bottom = 161.0
 size_flags_horizontal = 3
 min_value = 1.0
-max_value = 1024.0
-value = 512.0
+max_value = 512.0
+value = 128.0
 tick_count = 17
 ticks_on_borders = true
 

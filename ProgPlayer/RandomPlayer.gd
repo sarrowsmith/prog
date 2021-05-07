@@ -43,14 +43,25 @@ const Modes = ["Lydian", "Major", "Mixolydian", "Dorian", "Minor", "Phrygian", "
 const C = 0
 const REST = 0
 const DEFAULT = 127
-var Scales = {} # const, but it's calculated on ready
-var Adjustments = [ # mostly const, but [0] is set for reference
+const Randomizable = { # [min, max] for numeric values
+	Seed = null,
+	Style = null,
+	Mode = [0, 6],
+	Key = null,
+	Density = [0, 100],
+	Intricacy = [0, 4],
+	Tempo = [60, 210],
+	Length = [1, 512],
+}
+var Adjustments = [ # mostly const, but [0] is set for reference and [-1] for random
 	{},
 	{Length = 4.0},
-	{Mode =-1, Length = 6.0, Tempo = 0.8, Density = -1, Intricacy = -1},
+	{Mode = -1, Length = 6.0, Tempo = 0.8, Density = -1, Intricacy = -1},
 	{Mode = +1, Length = 4.0, Tempo = 1.2, Density = +1},
 	{Mode = +2, Length = 3.0, Density = +1, Intricacy = +1},
+	{},
 ]
+var Scales = {} # const, but it's calculated on ready
 
 var style = "Random"
 var programs = []
@@ -348,20 +359,24 @@ func create_adjusted() -> Dictionary:
 	var parameters = Adjustments[0].duplicate()
 	var adjustment = Adjustments[section]
 	for parameter in adjustment:
+		var minmax = Randomizable[parameter]
 		match parameter:
 			"Mode", "Intricacy":
-				parameters.Mode = max(0, min(parameters[parameter] + adjustment[parameter], 6))
+				parameters[parameter] = int(clamp(parameters[parameter] + adjustment[parameter], minmax[0], minmax[1]))
+			"Key":
+				parameters.Key = adjustment.Key
 			"Length":
 				parameters.Length = int((4 * parameters.Length) / (max(movements, 1) * adjustment.Length))
 			_:
-				parameters[parameter] *= adjustment[parameter]
+				parameters[parameter] = clamp(parameters[parameter] * adjustment[parameter], minmax[0], minmax[1])
 	var entry = create_smf(parameters, section < 0, section == movements)
 	entry.tempo = parameters.Tempo
-	entry.section = max(section, 1)
+	entry.section = section
+	entry.parameters = parameters
 	return entry
 
 
-func create_on_thread(_parameters):
+func enqueue_on_thread(_parameters):
 	call_deferred("enqueue", create_adjusted())
 
 
@@ -371,15 +386,28 @@ func enqueue(entry: Dictionary):
 		worker.wait_to_finish()
 
 
-func enqueue_adjusted(immediate: bool):
-	if immediate:
-		enqueue(create_adjusted())
-		return
-	worker.start(self, "create_on_thread")
+func enqueue_adjusted():
+	enqueue(create_adjusted())
 
 
 func enqueue_random():
-	worker.start(self, "create_on_thread")
+	var adjustment = {}
+	for parameter in Randomizable:
+		match parameter:
+			"Seed", "Style":
+				pass
+			"Mode", "Intricacy":
+				adjustment[parameter] = rng.randi_range(-1, +1)
+			"Key":
+				if adjustment.Mode == 0:
+					adjustment.Key = rng.randi_range(0, 11)
+			_:
+				adjustment[parameter] = abs(rng.randfn(1))
+	Adjustments[-1] = adjustment
+	var entry = create_adjusted()
+	entry.section = 0
+	Adjustments[0] = entry.parameters
+	call_deferred("enqueue", entry)
 
 
 func create(rng_seed: int, parameters: Dictionary, sections: int):
@@ -400,18 +428,20 @@ func create(rng_seed: int, parameters: Dictionary, sections: int):
 		tempo = parameters.Tempo
 	else:
 		parameters.Tempo = tempo
+	movements = 1
 	section = 0
 	match sections:
 		ENDLESS:
 			Adjustments[0] = parameters.duplicate()
 			section = -1
+			movements = 0
 			continue
 		AUTO:
 			movements = min(int(parameters.Length / movement), 4)
 			if movements > 1:
 				Adjustments[0] = parameters.duplicate()
 				section = 1
-				enqueue_adjusted(true)
+				enqueue_adjusted()
 			else:
 				continue
 		_:
@@ -432,9 +462,9 @@ func write() -> PoolByteArray:
 func play_next() -> bool:
 	if 0 < section and section < movements:
 		section += 1
-		enqueue_adjusted(false)
+		worker.start(self, "enqueue_on_thread")
 	elif section < 0:
-		enqueue_random()
+		worker.start(self, "enqueue_random()")
 	var entry = queue.pop_front()
 	if not entry:
 		return false

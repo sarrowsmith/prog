@@ -1,8 +1,6 @@
 extends Control
 
 
-const Randomizable = ["Seed", "Style", "Mode", "Key", "Density", "Intricacy", "Tempo"]
-
 var modes
 var parameters = {
 	Tracks = 16,
@@ -13,7 +11,7 @@ var parameters = {
 	Density = 50,
 	Intricacy = 2,
 	Tempo = 130,
-	Length = 41,
+	Length = 128,
 }
 var capture
 
@@ -239,7 +237,7 @@ func _on_ExportDialog_file_selected(path):
 func _on_Randomise_pressed():
 	var rng = $RandomPlayer.rng
 	rng.randomize()
-	for parameter in Randomizable:
+	for parameter in $RandomPlayer.Randomizable:
 		var control = $Configure.find_node(parameter)
 		if not control:
 			continue
