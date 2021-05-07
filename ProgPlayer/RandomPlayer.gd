@@ -19,7 +19,7 @@ export(int) var signature = 4
 export(int) var tempo = 130
 export(int) var movement = 30 # minimum length in bars
 
-enum {SINGLE, AUTO, INFINITE}
+enum {SINGLE, AUTO, ENDLESS}
 enum {PITCH, DURATION, VOLUME}
 
 const Intervals = {
@@ -324,11 +324,11 @@ func create_track(track: int, structure: Array) -> Dictionary:
 	}
 
 
-func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
+func create_smf(parameters: Dictionary, endless: bool, final: bool) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
 	var rng_state = rng.state
-	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, parameters.get("Endless", false), final, rng)
+	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, endless, final, rng)
 	# Put rng in same initial state for note creation no matter how many loops have been structured
 	rng.state = rng_state
 	var endtime = 0
@@ -352,12 +352,12 @@ func create_adjusted() -> Dictionary:
 			"Mode", "Intricacy":
 				parameters.Mode = max(0, min(parameters[parameter] + adjustment[parameter], 6))
 			"Length":
-				parameters.Length = int((4 * parameters.Length) / (movements * adjustment.Length))
+				parameters.Length = int((4 * parameters.Length) / (max(movements, 1) * adjustment.Length))
 			_:
 				parameters[parameter] *= adjustment[parameter]
-	var entry = create_smf(parameters, section == movements)
+	var entry = create_smf(parameters, section < 0, section == movements)
 	entry.tempo = parameters.Tempo
-	entry.section = section
+	entry.section = max(section, 1)
 	return entry
 
 
@@ -375,6 +375,10 @@ func enqueue_adjusted(immediate: bool):
 	if immediate:
 		enqueue(create_adjusted())
 		return
+	worker.start(self, "create_on_thread")
+
+
+func enqueue_random():
 	worker.start(self, "create_on_thread")
 
 
@@ -396,8 +400,11 @@ func create(rng_seed: int, parameters: Dictionary, sections: int):
 		tempo = parameters.Tempo
 	else:
 		parameters.Tempo = tempo
+	section = 0
 	match sections:
-		INFINITE:
+		ENDLESS:
+			Adjustments[0] = parameters.duplicate()
+			section = -1
 			continue
 		AUTO:
 			movements = min(int(parameters.Length / movement), 4)
@@ -408,9 +415,10 @@ func create(rng_seed: int, parameters: Dictionary, sections: int):
 			else:
 				continue
 		_:
-			var entry = create_smf(parameters, true)
+			var endless = section < 0
+			var entry = create_smf(parameters, endless, not endless)
 			entry.tempo = parameters.Tempo
-			entry.section = 1
+			entry.section = section + 1
 			enqueue(entry)
 
 
@@ -426,7 +434,7 @@ func play_next() -> bool:
 		section += 1
 		enqueue_adjusted(false)
 	elif section < 0:
-		pass # enqueue_random
+		enqueue_random()
 	var entry = queue.pop_front()
 	if not entry:
 		return false
@@ -434,7 +442,7 @@ func play_next() -> bool:
 	midi_player.smf_data = entry.smf
 	midi_player.tempo = entry.tempo
 	midi_player.play()
-	emit_signal("new_movement", 60.0 * entry.endtime / (entry.tempo * timebase), entry.section, max(movements, 1))
+	emit_signal("new_movement", 60.0 * entry.endtime / (entry.tempo * timebase), entry.section, max(movements, 0))
 	return true
 
 

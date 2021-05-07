@@ -401,7 +401,7 @@ hint_tooltip = "Automatically divide longer pieces up into sections"
 shortcut = SubResource( 6 )
 text = "Single"
 align = 1
-items = [ "Single", null, false, 0, null, "Auto Section", null, false, 1, null, "Infinite", null, false, 2, null ]
+items = [ "Single", null, false, 0, null, "Auto Section", null, false, 1, null, "Endless", null, false, 2, null ]
 selected = 0
 
 [node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
