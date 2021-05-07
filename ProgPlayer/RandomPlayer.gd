@@ -246,6 +246,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
 	var bar_length = timebase * signature
 	var time = chunk.bar * bar_length
+	var rng_state = rng.state
 
 	if track == Structure.DRUMS:
 		var chunk_start = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.instrument_name, "text": "%d:0" % track})
@@ -258,11 +259,13 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 			return events
 		events.append(SMF.MIDIEventChunk.new(time - timebase, track, SMF.MIDIEventProgramChange.new(program - 1)))
 	var notes = []
-	var reseed = rng.randi()
 	for i in chunk.repeats:
-		rng.seed = reseed
+		# Each loop of the chunk has the same basic structure ...
+		rng.state = rng_state
 		notes += create_loop(track, chunk, i)
 	if chunk.repeats > 1:
+		# ... but the details may be different
+		rng.randomize()
 		var iterations = 0
 		match track:
 			Structure.DRONE, Structure.DRUMS:
@@ -317,11 +320,10 @@ func create_track(track: int, structure: Array) -> Dictionary:
 func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
-	# local_seed ensures that a piece always starts the same no matter how long it is
-	var local_seed = rng.randi()
-	rng.seed = local_seed
+	var rng_state = rng.state
 	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, final, rng)
-	rng.seed = local_seed
+	# Put rng in same initial state for note creation no matter how many loops have been structured
+	rng.state = rng_state
 	var endtime = 0
 	tempo_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.set_tempo, "bpm": int(60000000 / parameters.Tempo)})
 	while track < parameters.Tracks:
@@ -337,7 +339,9 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 
 func create(rng_seed: int, parameters: Dictionary):
 	rng.seed = rng_seed
+	var rng_state = rng.state
 	programs = Banks.create_programs(parameters, rng)
+	rng.state = rng_state
 	Adjustments[0] = parameters
 	if parameters.has("Soundfont") and parameters.Soundfont != soundfont:
 		soundfont = parameters.Soundfont
