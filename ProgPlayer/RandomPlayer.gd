@@ -19,6 +19,7 @@ export(int) var signature = 4
 export(int) var tempo = 130
 export(int) var movement = 30 # minimum length in bars
 
+enum {SINGLE, AUTO, INFINITE}
 enum {PITCH, DURATION, VOLUME}
 
 const Intervals = {
@@ -344,7 +345,6 @@ func create_smf(parameters: Dictionary, final: bool) -> Dictionary:
 
 
 func create_adjusted() -> Dictionary:
-	var t0 = OS.get_ticks_usec()
 	var parameters = Adjustments[0].duplicate()
 	var adjustment = Adjustments[section]
 	for parameter in adjustment:
@@ -358,7 +358,6 @@ func create_adjusted() -> Dictionary:
 	var entry = create_smf(parameters, section == movements)
 	entry.tempo = parameters.Tempo
 	entry.section = section
-	print(OS.get_ticks_usec() - t0)
 	return entry
 
 
@@ -379,7 +378,7 @@ func enqueue_adjusted(immediate: bool):
 	worker.start(self, "create_on_thread")
 
 
-func create(rng_seed: int, parameters: Dictionary):
+func create(rng_seed: int, parameters: Dictionary, sections: int):
 	rng.seed = rng_seed
 	var rng_state = rng.state
 	programs = Banks.create_programs(parameters, rng)
@@ -397,18 +396,22 @@ func create(rng_seed: int, parameters: Dictionary):
 		tempo = parameters.Tempo
 	else:
 		parameters.Tempo = tempo
-	movements = 0
-	if parameters.has("AutoMovements") and parameters.AutoMovements:
-		movements = min(int(parameters.Length / movement), 4)
-	if movements:
-		Adjustments[0] = parameters.duplicate()
-		section = 1
-		enqueue_adjusted(true)
-	else:
-		var entry = create_smf(parameters, true)
-		entry.tempo = parameters.Tempo
-		entry.section = 1
-		enqueue(entry)
+	match sections:
+		INFINITE:
+			continue
+		AUTO:
+			movements = min(int(parameters.Length / movement), 4)
+			if movements > 1:
+				Adjustments[0] = parameters.duplicate()
+				section = 1
+				enqueue_adjusted(true)
+			else:
+				continue
+		_:
+			var entry = create_smf(parameters, true)
+			entry.tempo = parameters.Tempo
+			entry.section = 1
+			enqueue(entry)
 
 
 func write() -> PoolByteArray:
@@ -427,6 +430,7 @@ func play_next() -> bool:
 	var entry = queue.pop_front()
 	if not entry:
 		return false
+	tempo = entry.tempo
 	midi_player.smf_data = entry.smf
 	midi_player.tempo = entry.tempo
 	midi_player.play()

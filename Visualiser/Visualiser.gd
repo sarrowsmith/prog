@@ -29,7 +29,6 @@ func _ready():
 
 
 func _process(delta):
-	pass
 	objects[THINGS].rotate_y(delta * speed * rate)
 	objects[CAMERA].rotate_y(-0.125 * delta * speed * rate)
 
@@ -57,7 +56,7 @@ func scale_thing(thing: Spatial, to: float, time: float):
 
 
 func set_bar_length(bar_length: float):
-	rate = TAU * bar_length * 0.01
+	rate = TAU / (bar_length * 16.0)
 	for k in responders:
 		responders[k].rate = rate
 
@@ -71,7 +70,7 @@ func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 		if parts[0]:
 			responders[track].set_instrument(parts)
 			target = 1.0
-		scale_thing(responders[track], target, 100 * rate / TAU)
+		scale_thing(responders[track], target, TAU / (rate * 16.0))
 
 
 func _on_MidiPlayer_appeared_cue_point(cue_point):

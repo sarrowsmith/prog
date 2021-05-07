@@ -14,7 +14,6 @@ var parameters = {
 	Intricacy = 2,
 	Tempo = 130,
 	Length = 41,
-	AutoMovements = false,
 }
 var capture
 
@@ -32,7 +31,6 @@ func _ready():
 		if control:
 			control.share($Configure.find_node(parameter))
 			control.value = parameters[parameter]
-	$Configure.find_node("AutoSection").pressed = false
 	$Controls.find_node("Play").grab_focus()
 	$Fader.interpolate_property($ViewportContainer, "modulate", Color(1.0, 1.0, 1.0, 0.0), Color(1.0, 1.0, 1.0, 1.0), 2.0)
 	fade_image(1.0, 0.5, 1.5)
@@ -138,12 +136,11 @@ func get_parameters():
 func create() -> int:
 	get_parameters()
 	var rng_seed = get_seed()
-	$RandomPlayer.create(rng_seed, parameters)
+	$RandomPlayer.create(rng_seed, parameters, $Configure.find_node("Sections").selected)
 	return rng_seed
 
 
 func _on_Play_toggled(button_pressed):
-	var bar_length = $RandomPlayer.bar_time()
 	if button_pressed:
 		var rng_seed = create();
 		visualiser.start(rng_seed)
@@ -151,8 +148,9 @@ func _on_Play_toggled(button_pressed):
 			recorder.set_recording_active(false)
 		recorder.set_recording_active(capture)
 		$RandomPlayer.play_next()
-		fade(1.0, 0.0, 0.5 * bar_length)
+		fade(1.0, 0.0, 0.5 * $RandomPlayer.bar_time())
 	else:
+		var bar_length = $RandomPlayer.bar_time()
 		$RandomPlayer.stop()
 		visualiser.stop()
 		yield(get_tree().create_timer(0.5 * bar_length), "timeout")
@@ -161,7 +159,7 @@ func _on_Play_toggled(button_pressed):
 			$SaveCaptureDialog.current_dir = "."
 			$SaveCaptureDialog.current_file = ".wav"
 			$SaveCaptureDialog.popup_centered()
-		fade(0.0, 1.0, 2 * bar_length)
+		fade(0.0, 1.0, 0.5 * bar_length)
 		$Controls.find_node("Queue").text = "-/-"
 	enable_Configure(not button_pressed)
 	$Controls.find_node("Play").text = "Stop" if button_pressed else "Play!"
@@ -200,11 +198,6 @@ func _on_Fullscreen_toggled(button_pressed):
 
 func _on_Quit_pressed():
 	get_tree().quit()
-
-
-func _on_AutoSection_toggled(button_pressed):
-	parameters.AutoMovements = button_pressed
-	$Configure.find_node("OpenExport").disabled = button_pressed
 
 
 func _on_RandomPlayer_new_movement(length, movement, total):
@@ -254,7 +247,7 @@ func _on_Randomise_pressed():
 			"Mode", "Key":
 				control.selected = rng.randi_range(0, control.get_item_count() - 1)
 			"Style":
-				control.set_selected_id(Banks.choose(control.get_ids(), rng))
+				control.set_selected_style(Banks.choose(Structure.styles(), rng))
 			"Seed":
 				control.text = String(rng.randi())
 			_:
@@ -288,3 +281,8 @@ func _on_Capture_toggled(button_pressed):
 
 func _on_SaveCaptureDialog_file_selected(path):
 	recorder.get_recording().save_to_wav(path)
+
+
+func _on_Sections_item_selected(index):
+	$Configure.find_node("Capture").disabled = index == RandomPlayer.INFINITE
+	$Configure.find_node("OpenExport").disabled = index != RandomPlayer.SINGLE

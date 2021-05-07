@@ -198,7 +198,7 @@ __meta__ = {
 [node name="Background" type="OptionButton" parent="Configure/Menu"]
 margin_right = 280.0
 margin_bottom = 31.0
-selected = 0
+align = 1
 script = ExtResource( 4 )
 environment = ExtResource( 13 )
 directory = "res://resources/AllSkyFree"
@@ -393,14 +393,16 @@ value = 512.0
 tick_count = 17
 ticks_on_borders = true
 
-[node name="AutoSection" type="Button" parent="Configure/Menu"]
+[node name="Sections" type="OptionButton" parent="Configure/Menu"]
 margin_top = 375.0
 margin_right = 280.0
 margin_bottom = 406.0
 hint_tooltip = "Automatically divide longer pieces up into sections"
-toggle_mode = true
 shortcut = SubResource( 6 )
-text = "Auto-section"
+text = "Single"
+align = 1
+items = [ "Single", null, false, 0, null, "Auto Section", null, false, 1, null, "Infinite", null, false, 2, null ]
+selected = 0
 
 [node name="OpenSoundfont" type="Button" parent="Configure/Menu"]
 margin_top = 410.0
@@ -685,7 +687,7 @@ bus = "MIDI"
 [connection signal="pressed" from="Configure/Menu/Randomize" to="." method="_on_Randomise_pressed"]
 [connection signal="about_to_show" from="Configure/Menu/GridContainer2/Style" to="Configure/Menu/GridContainer2/Style" method="_on_Style_about_to_show"]
 [connection signal="pressed" from="Configure/Menu/GridContainer2/SaveInstrumentation" to="." method="_on_SaveInstrumentation_pressed"]
-[connection signal="toggled" from="Configure/Menu/AutoSection" to="." method="_on_AutoSection_toggled"]
+[connection signal="item_selected" from="Configure/Menu/Sections" to="." method="_on_Sections_item_selected"]
 [connection signal="pressed" from="Configure/Menu/OpenSoundfont" to="." method="_on_OpenSoundfont_pressed"]
 [connection signal="pressed" from="Configure/Menu/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="Configure/Menu/Save" to="." method="_on_Save_pressed"]
