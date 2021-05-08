@@ -16,6 +16,7 @@ const DefaultParameters = {
 	IntroStart = 2,
 	IntroOutro = Structure.PERCUSSION,
 }
+
 var parameters = DefaultParameters.duplicate()
 var modes
 var capture
@@ -25,6 +26,7 @@ onready var pick_key = $Configure.find_node("Key")
 onready var pick_style = $Configure.find_node("Style")
 onready var recorder = AudioServer.get_bus_effect(AudioServer.get_bus_index("Recorder"), 0)
 onready var visualiser = $ViewportContainer/Viewport/Visualiser
+onready var instrument_list = $Controls.find_node("CurrentInstruments")
 
 
 func _ready():
@@ -46,6 +48,7 @@ func _ready():
 	$RandomPlayer.midi_player.connect("changed_tempo", self, "_on_MidiPlayer_changed_tempo")
 	$RandomPlayer.midi_player.connect("appeared_cue_point", visualiser, "_on_MidiPlayer_appeared_cue_point")
 	$RandomPlayer.midi_player.connect("appeared_instrument_name", visualiser, "_on_MidiPlayer_appeared_instrument_name")
+	$RandomPlayer.midi_player.connect("appeared_instrument_name", self, "_on_MidiPlayer_appeared_instrument_name")
 	visualiser.timescale = $RandomPlayer.timescale()
 	recorder.set_recording_active(false)
 	capture = false
@@ -295,3 +298,8 @@ func _on_SaveCaptureDialog_file_selected(path):
 func _on_Sections_item_selected(index):
 	$Configure.find_node("Capture").disabled = index == RandomPlayer.ENDLESS
 	$Configure.find_node("OpenExport").disabled = index != RandomPlayer.SINGLE
+
+
+func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
+	var parts = name.split_floats(":")
+	instrument_list.add_instrument(int(parts[0]), int(parts[1] - 1))

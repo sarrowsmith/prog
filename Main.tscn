@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://resources/default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://UI/PickKey.gd" type="Script" id=11]
 [ext_resource path="res://UI/PickStyle.gd" type="Script" id=12]
 [ext_resource path="res://resources/variable_env.tres" type="Environment" id=13]
+[ext_resource path="res://UI/CurrentInstruments.gd" type="Script" id=14]
 
 [sub_resource type="InputEventKey" id=1]
 control = true
@@ -588,7 +589,7 @@ text = "Volume:"
 [node name="Volume" type="HSlider" parent="Controls/Menu"]
 margin_left = 200.0
 margin_top = 7.0
-margin_right = 986.0
+margin_right = 895.0
 margin_bottom = 23.0
 hint_tooltip = "Adjust playback volume"
 size_flags_horizontal = 3
@@ -597,14 +598,21 @@ max_value = 1.0
 step = 0.05
 script = ExtResource( 7 )
 
+[node name="CurrentInstruments" type="MenuButton" parent="Controls/Menu"]
+margin_left = 899.0
+margin_right = 1077.0
+margin_bottom = 31.0
+text = "Current instruments"
+script = ExtResource( 14 )
+
 [node name="Queue" type="Label" parent="Controls/Menu"]
-margin_left = 990.0
-margin_right = 1029.0
+margin_left = 1081.0
+margin_right = 1120.0
 margin_bottom = 31.0
 text = "-/-"
 
 [node name="Progress" type="ProgressBar" parent="Controls/Menu"]
-margin_left = 1033.0
+margin_left = 1124.0
 margin_top = 4.0
 margin_right = 1819.0
 margin_bottom = 27.0
