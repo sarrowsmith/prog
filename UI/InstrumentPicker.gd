@@ -2,12 +2,15 @@ class_name InstrumentPicker
 extends PopupMenu
 
 
+const Utility = preload("res://addons/midi/Utility.gd")
+
 onready var bank = get_index() - 1
 
 
 func _ready():
 	for i in 8:
-		add_check_item(Banks.GMInstruments[bank][i], bank * 8 + i + 1)
+		var program = bank * 8 + i
+		add_check_item(Utility.program_names[program], program + 1)
 
 
 func set_selected(ids: Array):

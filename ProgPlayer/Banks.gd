@@ -1,27 +1,11 @@
 class_name Banks
 
 
+const Utility = preload("res://addons/midi/Utility.gd")
+
 const GMBanks = [
 	"Piano", "Chromatic Percussion", "Organ", "Guitar", "Bass", "Strings", "Ensemble", "Brass",
 	"Reed", "Pipe", "Synth Lead", "Synth Pad", "Synth Effects", "Ethnic", "Percussive", "Sound Effects",
-]
-const GMInstruments = [
-	["Acoustic Grand Piano", "Bright Acoustic Piano", "Electric Grand Piano", "Honky-tonk Piano", "Electric Piano 1", "Electric Piano 2", "Harpsichord", "Clavichord"],
-	["Celesta", "Glockenspiel", "Music Box", "Vibraphone", "Marimba", "Xylophone", "Tubular Bells", "Dulcimer"],
-	["Drawbar Organ", "Percussive Organ", "Rock Organ", "Church Organ", "Reed Organ", "Accordion", "Harmonica", "Tango Accordion"],
-	["Acoustic Guitar (nylon)", "Acoustic Guitar (steel)", "Electric Guitar (jazz)", "Electric Guitar (clean)", "Electric Guitar (muted)", "Overdriven Guitar", "Distortion Guitar", "Guitar Harmonics"],
-	["Acoustic Bass", "Electric Bass (finger)", "Electric Bass (pick)", "Fretless Bass", "Slap Bass 1", "Slap Bass 2", "Synth Bass 1", "Synth Bass 2"],
-	["Violin", "Viola", "Cello", "Contrabass", "Tremolo Strings", "Pizzicato Strings", "Orchestral Harp", "Timpani"],
-	["String Ensemble 1", "String Ensemble 2", "Synth Strings 1", "Synth Strings 2", "Choir Aahs", "Voice Oohs", "Synth Voice", "Orchestra Hit"],
-	["Trumpet", "Trombone", "Tuba", "Muted Trumpet", "French Horn", "Brass Section", "Synth Brass 1", "Synth Brass 2"],
-	["Soprano Sax", "Alto Sax", "Tenor Sax", "Baritone Sax", "Oboe", "English Horn", "Bassoon", "Clarinet"],
-	["Piccolo", "Flute", "Recorder", "Pan Flute", "Blown bottle", "Shakuhachi", "Whistle", "Ocarina"],
-	["(square)", "(sawtooth)", "(calliope)", "(chiff)", "(charang)", "(voice)", "(fifths)", "(bass + lead)"],
-	["(new age)", "(warm)", "(polysynth)", "(choir)", "(bowed)", "(metallic)", "(halo)", "(sweep)"],
-	["(rain)", "(soundtrack)", "(crystal)", "(atmosphere)", "(brightness)", "(goblins)", "(echoes)", "(sci-fi)"],
-	["Sitar", "Banjo", "Shamisen", "Koto", "Kalimba", "Bagpipe", "Fiddle", "Shanai"],
-	["Tinkle Bell", " Agogô", "Steel Drums", "Woodblock", "Taiko Drum", "Melodic Tom", "Synth Drum", "Reverse Cymbal"],
-	["Guitar Fret Noise", "Breath Noise", "Seashore", "Bird Tweet", "Telephone Ring", "Helicopter", "Applause", "Gunshot"],
 ]
 const Blank = [
 	[0], # CHORDS
@@ -141,7 +125,7 @@ static func instrument_name(program: int) -> String:
 		program -= 1
 # warning-ignore:integer_division
 		var bank = program / 8
-		return "%s: %s" % [GMBanks[bank], GMInstruments[bank][program % 8]]
+		return "%s: %s" % [GMBanks[bank], Utility.program_names[program]]
 	return ""
 
 
