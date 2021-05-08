@@ -55,7 +55,7 @@ const Randomizable = { # [min, max] for numeric values
 	IntroTracks = [Structure.DRONE, Structure.OTHER],
 	IntroRate = [0, 16],
 	IntroStart = [0, 16],
-	OutroTracks = [Structure.DRONE, Structure.OTHER],
+	IntroOutro = [Structure.DRONE, Structure.OTHER],
 }
 var Adjustments = [ # mostly const, but [0] is set for reference and [-1] for random
 	{},

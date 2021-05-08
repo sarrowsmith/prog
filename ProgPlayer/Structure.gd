@@ -43,7 +43,7 @@ static func create_structure(programs: Array, parameters: Dictionary, section: i
 	var length = parameters.Length
 	var base_density = 0.01 * parameters.Density
 	var base_intricacy = parameters.Intricacy
-	var outro_tracks = parameters.OutroTracks
+	var outro_tracks = parameters.IntroOutro
 	var final = section == 1 or section == -1
 	var endless = section == 0
 	var intro_tracks = parameters.IntroTracks

@@ -393,23 +393,16 @@ value = 128.0
 tick_count = 17
 ticks_on_borders = true
 
-[node name="Label" type="Label" parent="Configure/Menu"]
-margin_top = 375.0
-margin_right = 280.0
-margin_bottom = 406.0
-text = "Introduction:"
-
 [node name="Intro" type="GridContainer" parent="Configure/Menu"]
-margin_top = 410.0
+margin_top = 375.0
 margin_right = 280.0
 margin_bottom = 511.0
 columns = 2
 
-[node name="Label" type="Label" parent="Configure/Menu/Intro"]
+[node name="Label4" type="Label" parent="Configure/Menu/Intro"]
 margin_right = 138.0
 margin_bottom = 31.0
-size_flags_horizontal = 3
-text = "Tracks:"
+text = "Introduction:"
 
 [node name="IntroTracks" type="SpinBox" parent="Configure/Menu/Intro"]
 margin_left = 142.0
@@ -417,6 +410,7 @@ margin_right = 280.0
 margin_bottom = 31.0
 size_flags_horizontal = 3
 rounded = true
+suffix = "Tracks"
 
 [node name="Label2" type="Label" parent="Configure/Menu/Intro"]
 margin_top = 35.0
@@ -447,6 +441,21 @@ margin_right = 280.0
 margin_bottom = 101.0
 size_flags_horizontal = 3
 rounded = true
+
+[node name="Label5" type="Label" parent="Configure/Menu/Intro"]
+margin_top = 105.0
+margin_right = 138.0
+margin_bottom = 136.0
+text = "Outro/bridge:"
+
+[node name="IntroOutro" type="SpinBox" parent="Configure/Menu/Intro"]
+margin_left = 142.0
+margin_top = 105.0
+margin_right = 280.0
+margin_bottom = 136.0
+size_flags_horizontal = 3
+rounded = true
+suffix = "Tracks"
 
 [node name="Sections" type="OptionButton" parent="Configure/Menu"]
 margin_top = 515.0

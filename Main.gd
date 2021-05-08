@@ -14,7 +14,7 @@ const DefaultParameters = {
 	IntroTracks = Structure.HARMONY,
 	IntroRate = 2.0,
 	IntroStart = 2,
-	OutroTracks = Structure.PERCUSSION
+	IntroOutro = Structure.PERCUSSION,
 }
 var parameters = DefaultParameters.duplicate()
 var modes
