@@ -47,7 +47,7 @@ const Randomizable = { # [min, max] for numeric values
 	Seed = null,
 	Style = null,
 	Mode = [0, 6],
-	Key = null,
+	Key = [0, 12],
 	Density = [0, 100],
 	Intricacy = [0, 4],
 	Tempo = [60, 210],
@@ -101,6 +101,28 @@ func bar_time() -> float:
 # timescale is seconds per tick
 func timescale() -> float:
 	return 60.0 / float(timebase * tempo)
+
+
+# Not true if in autosection mode
+func get_current_parameters() -> Dictionary:
+	return Adjustments.front()
+
+
+# Randomizes given parameters in place
+func random_parameters(parameters: Dictionary):
+	var rng_state = rng.state
+	rng.randomize()
+	for parameter in Randomizable:
+		var minmax = Randomizable[parameter]
+		match parameter:
+			"Style":
+				parameters.Style = Banks.choose(Structure.styles(), rng)
+			"Seed":
+				parameters.Seed = String(rng.randi())
+			_:
+				if minmax:
+					parameters[parameter] = rng.randi_range(minmax[0], minmax[1])
+	rng.state = rng_state
 
 
 func get_note_number(scale: Array, octave: int, note: int) -> int:
@@ -263,7 +285,7 @@ func create_insertion(notes: Array, n: int, iteration: int, chunk: Dictionary, t
 
 func create_chunk(track: int, chunk: Dictionary) -> Array:
 	var events  = []
-	var time = ((chunk.bar - 1) * signature + 1) * timebase
+	var time = (chunk.bar - 1) * signature  * timebase
 	var rng_state = rng.state
 
 	if track == Structure.DRUMS:
@@ -315,7 +337,8 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 		var note_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.cue_point, "text": "%d:%d:%d:%d" % ([track]+note)})
 		events.append(SMF.MIDIEventChunk.new(time + event[0], track, note_event))
 		# note off ("note on with velocity 0 as note off" not supported in Godot MIDI Player.)
-		events.append(SMF.MIDIEventChunk.new(time + event[0] + note[DURATION], track, SMF.MIDIEventNoteOff.new(note_number, 0)))
+		# cut short to allow eot at exact end
+		events.append(SMF.MIDIEventChunk.new(time + event[0] + note[DURATION] - 1, track, SMF.MIDIEventNoteOff.new(note_number, 0)))
 	events.sort_custom(self, "order_events")
 	return events
 
@@ -390,19 +413,24 @@ func enqueue_adjusted():
 	enqueue(create_adjusted())
 
 
-func enqueue_random():
+func enqueue_random(_parameters):
 	var adjustment = {}
 	for parameter in Randomizable:
 		match parameter:
 			"Seed", "Style":
 				pass
 			"Mode", "Intricacy":
-				adjustment[parameter] = rng.randi_range(-1, +1)
+				var change = rng.randi_range(-1, +1)
+				if Randomizable[parameter].has(Adjustments[0][parameter]):
+					change = abs(change)
+				adjustment[parameter] = change
 			"Key":
 				if adjustment.Mode == 0:
 					adjustment.Key = rng.randi_range(0, 11)
+			"Length":
+				adjustment.Length = clamp(rng.randfn(4.0), 2.0, 6.0)
 			_:
-				adjustment[parameter] = abs(rng.randfn(1))
+				adjustment[parameter] = max(0, rng.randfn(1))
 	Adjustments[-1] = adjustment
 	var entry = create_adjusted()
 	entry.section = 0
@@ -464,7 +492,7 @@ func play_next() -> bool:
 		section += 1
 		worker.start(self, "enqueue_on_thread")
 	elif section < 0:
-		worker.start(self, "enqueue_random()")
+		worker.start(self, "enqueue_random")
 	var entry = queue.pop_front()
 	if not entry:
 		return false

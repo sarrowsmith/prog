@@ -68,8 +68,10 @@ func enable_Configure(on: bool):
 	for parameter in parameters:
 		set_active(parameter, on)
 		set_active(parameter + "2", on)
-	set_active("OpenSoundfont", on)
-	set_active("Feed", on)
+	for button in ["Randomize", "Sections", "OpenSoundfont", "Load", "Capture", "OpenExport"]:
+		set_active(button, on)
+	if on:
+		_on_Sections_item_selected($Configure.find_node("Sections").selected)
 
 
 func set_value(name: String, value=null):
@@ -120,8 +122,12 @@ func load_parameters(path: String):
 	if save_file.open(path, File.READ) == OK:
 		parameters = save_file.get_var()
 		save_file.close()
-		for parameter in parameters:
-			set_value(parameter)
+		set_parameters()
+
+
+func set_parameters():
+	for parameter in parameters:
+		set_value(parameter)
 
 
 func get_parameters():
@@ -203,6 +209,11 @@ func _on_RandomPlayer_new_movement(length, movement, total):
 	$Progress.interpolate_property(progress, "value", progress.min_value, progress.max_value, length)
 	$Progress.start()
 	$Controls.find_node("Queue").text = "%d/%d" % [movement, total]
+	if not total: # endless
+		var new = $RandomPlayer.get_current_parameters()
+		for parameter in new:
+			parameters[parameter] = new[parameter]
+		set_parameters()
 
 
 func _on_About_pressed():
@@ -235,21 +246,8 @@ func _on_ExportDialog_file_selected(path):
 
 
 func _on_Randomise_pressed():
-	var rng = $RandomPlayer.rng
-	rng.randomize()
-	for parameter in $RandomPlayer.Randomizable:
-		var control = $Configure.find_node(parameter)
-		if not control:
-			continue
-		match parameter:
-			"Mode", "Key":
-				control.selected = rng.randi_range(0, control.get_item_count() - 1)
-			"Style":
-				control.set_selected_style(Banks.choose(Structure.styles(), rng))
-			"Seed":
-				control.text = String(rng.randi())
-			_:
-				control.value = rng.randi_range(control.min_value, control.max_value)
+	$RandomPlayer.random_parameters(parameters)
+	set_parameters()
 
 
 func _on_LoadSaveDialog_file_selected(path):

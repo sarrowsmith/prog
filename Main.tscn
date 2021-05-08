@@ -559,6 +559,7 @@ shortcut = SubResource( 26 )
 text = "Fullscreen"
 
 [node name="SoundfontDialog" type="FileDialog" parent="."]
+pause_mode = 2
 margin_right = 640.0
 margin_bottom = 320.0
 theme = ExtResource( 5 )
@@ -575,6 +576,7 @@ __meta__ = {
 }
 
 [node name="InstrumentationDialog" type="FileDialog" parent="."]
+pause_mode = 2
 margin_right = 640.0
 margin_bottom = 320.0
 theme = ExtResource( 5 )
@@ -587,6 +589,7 @@ __meta__ = {
 }
 
 [node name="LoadSaveDialog" type="FileDialog" parent="."]
+pause_mode = 2
 margin_right = 640.0
 margin_bottom = 320.0
 theme = ExtResource( 5 )
@@ -599,6 +602,7 @@ __meta__ = {
 }
 
 [node name="ExportDialog" type="FileDialog" parent="."]
+pause_mode = 2
 margin_right = 640.0
 margin_bottom = 320.0
 theme = ExtResource( 5 )
@@ -612,6 +616,7 @@ __meta__ = {
 }
 
 [node name="SaveCaptureDialog" type="FileDialog" parent="."]
+pause_mode = 2
 margin_right = 640.0
 margin_bottom = 320.0
 theme = ExtResource( 5 )
@@ -625,6 +630,7 @@ __meta__ = {
 }
 
 [node name="AboutDialog" type="AcceptDialog" parent="."]
+pause_mode = 2
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
