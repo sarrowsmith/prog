@@ -428,9 +428,14 @@ func enqueue_random(_parameters):
 				if adjustment.Mode == 0:
 					adjustment.Key = rng.randi_range(0, 11)
 			"Length":
-				adjustment.Length = clamp(rng.randfn(4.0), 2.0, 6.0)
+				adjustment.Length = clamp(rng.randfn(4.0, 0.5), 2.0, 6.0)
 			_:
-				adjustment[parameter] = max(0, rng.randfn(1))
+				var minmax = Randomizable[parameter]
+				var change = rng.randfn(1.0, 0.1)
+				var new = Adjustments[0][parameter] * change
+				if not (minmax[0] < new and new < minmax[1]):
+					change = 2.0 - change
+				adjustment[parameter] = abs(change)
 	Adjustments[-1] = adjustment
 	var entry = create_adjusted()
 	entry.section = 0
