@@ -52,6 +52,10 @@ const Randomizable = { # [min, max] for numeric values
 	Intricacy = [0, 4],
 	Tempo = [60, 210],
 	Length = [1, 512],
+	IntroTracks = [Structure.DRONE, Structure.OTHER],
+	IntroRate = [0, 16],
+	IntroStart = [0, 16],
+	OutroTracks = [Structure.DRONE, Structure.OTHER],
 }
 var Adjustments = [ # mostly const, but [0] is set for reference and [-1] for random
 	{},
@@ -113,6 +117,8 @@ func random_parameters(parameters: Dictionary):
 	var rng_state = rng.state
 	rng.randomize()
 	for parameter in Randomizable:
+		if parameter.begins_with("Intro"):
+			continue
 		var minmax = Randomizable[parameter]
 		match parameter:
 			"Style":
@@ -358,11 +364,11 @@ func create_track(track: int, structure: Array) -> Dictionary:
 	}
 
 
-func create_smf(parameters: Dictionary, endless: bool, final: bool) -> Dictionary:
+func create_smf(parameters: Dictionary, section_type: int) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
 	var rng_state = rng.state
-	var structure = Structure.create_structure(programs, parameters.Length, 0.01 * parameters.Density, parameters.Intricacy, endless, final, rng)
+	var structure = Structure.create_structure(programs, parameters, section_type, rng)
 	# Put rng in same initial state for note creation no matter how many loops have been structured
 	rng.state = rng_state
 	var endtime = 0
@@ -392,7 +398,13 @@ func create_adjusted() -> Dictionary:
 				parameters.Length = int((4 * parameters.Length) / (max(movements, 1) * adjustment.Length))
 			_:
 				parameters[parameter] = clamp(parameters[parameter] * adjustment[parameter], minmax[0], minmax[1])
-	var entry = create_smf(parameters, section < 0, section == movements)
+	var section_type = section + 1
+	match section:
+		-1:
+			section_type = 0
+		movements:
+			section_type = -1
+	var entry = create_smf(parameters, section_type)
 	entry.tempo = parameters.Tempo
 	entry.section = section
 	entry.parameters = parameters
@@ -416,6 +428,8 @@ func enqueue_adjusted():
 func enqueue_random(_parameters):
 	var adjustment = {}
 	for parameter in Randomizable:
+		if parameter.begins_with("Intro"):
+			continue
 		match parameter:
 			"Seed", "Style":
 				pass
@@ -478,8 +492,7 @@ func create(rng_seed: int, parameters: Dictionary, sections: int):
 			else:
 				continue
 		_:
-			var endless = section < 0
-			var entry = create_smf(parameters, endless, not endless)
+			var entry = create_smf(parameters, section + 1)
 			entry.tempo = parameters.Tempo
 			entry.section = section + 1
 			enqueue(entry)

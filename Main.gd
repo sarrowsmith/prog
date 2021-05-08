@@ -1,8 +1,7 @@
 extends Control
 
 
-var modes
-var parameters = {
+const DefaultParameters = {
 	Tracks = 16,
 	Seed = "",
 	Style = "Random",
@@ -12,7 +11,13 @@ var parameters = {
 	Intricacy = 2,
 	Tempo = 130,
 	Length = 128,
+	IntroTracks = Structure.HARMONY,
+	IntroRate = 2.0,
+	IntroStart = 2,
+	OutroTracks = Structure.PERCUSSION
 }
+var parameters = DefaultParameters.duplicate()
+var modes
 var capture
 
 onready var pick_mode = $Configure.find_node("Mode")
@@ -25,6 +30,12 @@ onready var visualiser = $ViewportContainer/Viewport/Visualiser
 func _ready():
 	pick_mode.set_mode(parameters.Mode)
 	for parameter in parameters:
+		if parameter.begins_with("Intro"):
+			var control = $Configure.find_node(parameter)
+			control.min_value = RandomPlayer.Randomizable[parameter][0]
+			control.max_value = RandomPlayer.Randomizable[parameter][1]
+			control.value = parameters[parameter]
+			continue
 		var control = $Configure.find_node(parameter + "2")
 		if control:
 			control.share($Configure.find_node(parameter))
@@ -126,7 +137,9 @@ func load_parameters(path: String):
 
 
 func set_parameters():
-	for parameter in parameters:
+	for parameter in DefaultParameters:
+		if not parameters.has(parameter):
+			parameters[parameter] = DefaultParameters[parameter]
 		set_value(parameter)
 
 

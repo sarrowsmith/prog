@@ -39,10 +39,22 @@ static func get_octave(style: String, track: int) -> int:
 # it is defined by a program, a number of repeats, the bar it starts on,
 # a density and the chords
 # the repeated loops *do not need to be generated identical*
-static func create_structure(programs: Array, length: int, base_density: float, base_intricacy: int, endless: bool, final: bool, rng: RandomNumberGenerator) -> Array:
+static func create_structure(programs: Array, parameters: Dictionary, section: int, rng: RandomNumberGenerator) -> Array:
+	var length = parameters.Length
+	var base_density = 0.01 * parameters.Density
+	var base_intricacy = parameters.Intricacy
+	var outro_tracks = parameters.OutroTracks
+	var final = section == 1 or section == -1
+	var endless = section == 0
+	var intro_tracks = parameters.IntroTracks
+	# section = 1 => SINGLE, section = 2 => AUTO 1st
+	if not (0 < section and section < 3):
+		intro_tracks = outro_tracks
+	var intro_rate = parameters.IntroRate
+	var intro_start = parameters.IntroStart
 	var chunks = []
 	var bars = 1
-	var top = HARMONY
+	var top = intro_tracks
 	var program = null
 	while bars < length:
 # warning-ignore:integer_division
@@ -51,15 +63,19 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		var next = bars + repeats * len(chords)
 		program = programs.duplicate()
 		var chunk = len(chunks)
-		top = (int(max(0, 2 * (chunk - 1))) if (final or next < length) else 0) + HARMONY
+		if bars == 1:
+			top = intro_tracks
+		elif final or next < length:
+			top = intro_tracks + int(max(0, intro_rate * (1 + chunk - intro_start)))
+		else:
+			top = outro_tracks
 		if top < 16:
 			for p in range(top, 16):
 				program[p] = 0
 		elif next < length:
-			for p in range(HARMONY, 16):
+			for p in range(intro_tracks + outro_tracks, 16):
 				if rng.randf() > sqrt(base_density):
 					program[p] = 0
-
 		var density = base_density + (1 - base_density) / (2 + chunk)
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars = next
@@ -72,7 +88,7 @@ static func create_structure(programs: Array, length: int, base_density: float, 
 		bars += 1
 	if final:
 		program = programs.duplicate()
-		for p in range(HARMONY, 16):
+		for p in range(outro_tracks, 16):
 			program[p] = 0
 		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
 		program = program.duplicate()
