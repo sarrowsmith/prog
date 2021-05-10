@@ -19,7 +19,9 @@ export(int) var signature = 4
 export(int) var tempo = 130
 export(int) var movement = 30 # minimum length in bars
 
-enum {SINGLE, AUTO, ENDLESS}
+# How to join sections/structures together
+enum {SINGLE, AUTO, ENDLESS, LOOP}
+# Indexes into a note structure
 enum {PITCH, DURATION, VOLUME}
 
 const Intervals = {
@@ -364,11 +366,11 @@ func create_track(track: int, structure: Array) -> Dictionary:
 	}
 
 
-func create_smf(parameters: Dictionary, section_type: int) -> Dictionary:
+func create_smf(parameters: Dictionary, intro: int, outro: int) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
 	var rng_state = rng.state
-	var structure = Structure.create_structure(programs, parameters, section_type, rng)
+	var structure = Structure.create_structure(programs, parameters, intro, outro, rng)
 	# Put rng in same initial state for note creation no matter how many loops have been structured
 	rng.state = rng_state
 	var endtime = 0
@@ -387,26 +389,32 @@ func create_smf(parameters: Dictionary, section_type: int) -> Dictionary:
 func create_adjusted() -> Dictionary:
 	var parameters = Adjustments[0].duplicate()
 	var adjustment = Adjustments[section]
+	var no_intro = false
+	var outro = Structure.SECTION
 	for parameter in adjustment:
 		var minmax = Randomizable[parameter]
 		match parameter:
+			"Key", "IntroOutro":
+				parameters[parameter] = adjustment[parameter]
 			"Mode", "Intricacy":
 				parameters[parameter] = int(clamp(parameters[parameter] + adjustment[parameter], minmax[0], minmax[1]))
-			"Key":
-				parameters.Key = adjustment.Key
 			"Length":
 				parameters.Length = int((4 * parameters.Length) / (max(movements, 1) * adjustment.Length))
 			_:
 				parameters[parameter] = clamp(parameters[parameter] * adjustment[parameter], minmax[0], minmax[1])
-	var section_type = section + 1
-	match section:
-		-1:
-			section_type = 0
-		movements:
-			section_type = -1
-	var entry = create_smf(parameters, section_type)
+	if  movements == section:
+		if section > 0:
+			outro = Structure.FINAL
+		else:
+			no_intro = true
+			outro = Structure.NONE
+	var entry = create_smf(parameters, no_intro, outro)
+	if  section < 0:
+		adjustment.IntroOutro = parameters.IntroOutro
+		entry.section = 0
+	else:
+		entry.section = section
 	entry.tempo = parameters.Tempo
-	entry.section = section
 	entry.parameters = parameters
 	return entry
 
@@ -452,7 +460,6 @@ func enqueue_random(_parameters):
 				adjustment[parameter] = abs(change)
 	Adjustments[-1] = adjustment
 	var entry = create_adjusted()
-	entry.section = 0
 	Adjustments[0] = entry.parameters
 	call_deferred("enqueue", entry)
 
@@ -477,11 +484,20 @@ func create(rng_seed: int, parameters: Dictionary, sections: int):
 		parameters.Tempo = tempo
 	movements = 1
 	section = 0
+	var outro = Structure.FINAL
 	match sections:
+		LOOP:
+			Adjustments[0] = parameters.duplicate()
+			Adjustments[-1] = {}
+			section = -1
+			movements = -1
+			outro = Structure.NONE
+			continue
 		ENDLESS:
 			Adjustments[0] = parameters.duplicate()
 			section = -1
 			movements = 0
+			outro = Structure.SECTION
 			continue
 		AUTO:
 			movements = min(int(parameters.Length / movement), 4)
@@ -492,7 +508,7 @@ func create(rng_seed: int, parameters: Dictionary, sections: int):
 			else:
 				continue
 		_:
-			var entry = create_smf(parameters, section + 1)
+			var entry = create_smf(parameters, false, outro)
 			entry.tempo = parameters.Tempo
 			entry.section = section + 1
 			enqueue(entry)
@@ -510,7 +526,7 @@ func play_next() -> bool:
 		section += 1
 		worker.start(self, "enqueue_on_thread")
 	elif section < 0:
-		worker.start(self, "enqueue_random")
+		worker.start(self, "enqueue_on_thread" if movements < 0 else "enqueue_random")
 	var entry = queue.pop_front()
 	if not entry:
 		return false

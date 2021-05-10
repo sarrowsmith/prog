@@ -296,7 +296,7 @@ func _on_SaveCaptureDialog_file_selected(path):
 
 
 func _on_Sections_item_selected(index):
-	$Configure.find_node("Capture").disabled = index == RandomPlayer.ENDLESS
+	$Configure.find_node("Capture").disabled = index > RandomPlayer.AUTO
 	$Configure.find_node("OpenExport").disabled = index != RandomPlayer.SINGLE
 
 

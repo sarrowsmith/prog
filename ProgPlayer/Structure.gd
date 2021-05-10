@@ -1,6 +1,8 @@
 class_name Structure
 
 
+# ending/outro style
+enum {NONE, SECTION, FINAL}
 # track to octave, using tracks for:
 enum {CHORDS, DRONE, BASS, MELODY, HARMONY, RHYTHM, PERCUSSION, COUNTER, DESCANT, DRUMS, OTHER}
 const Tracks = ["Chords", "Drone", "Bass", "Melody", "Harmony", "Rhythm", "Percussion", "Alto", "Descant", "Drums"]
@@ -39,23 +41,20 @@ static func get_octave(style: String, track: int) -> int:
 # it is defined by a program, a number of repeats, the bar it starts on,
 # a density and the chords
 # the repeated loops *do not need to be generated identical*
-static func create_structure(programs: Array, parameters: Dictionary, section: int, rng: RandomNumberGenerator) -> Array:
+static func create_structure(programs: Array, parameters: Dictionary, no_intro: bool, outro: int, rng: RandomNumberGenerator) -> Array:
 	var length = parameters.Length
 	var base_density = 0.01 * parameters.Density
 	var base_intricacy = parameters.Intricacy
 	var outro_tracks = parameters.IntroOutro
-	var final = section == 1 or section == -1
-	var endless = section == 0
 	var intro_tracks = parameters.IntroTracks
-	# section = 1 => SINGLE, section = 2 => AUTO 1st
-	if not (0 < section and section < 3):
-		intro_tracks = outro_tracks
 	var intro_rate = parameters.IntroRate
 	var intro_start = parameters.IntroStart
 	var chunks = []
 	var bars = 1
 	var top = intro_tracks
 	var program = null
+	if no_intro:
+		intro_tracks = outro_tracks
 	while bars < length:
 # warning-ignore:integer_division
 		var repeats = 1 + rng.randi_range(1, 1 + base_intricacy / 2)
@@ -65,7 +64,7 @@ static func create_structure(programs: Array, parameters: Dictionary, section: i
 		var chunk = len(chunks)
 		if bars == 1:
 			top = intro_tracks
-		elif final or next < length:
+		elif outro != SECTION or next < length:
 			top = intro_tracks + int(max(0, intro_rate * (1 + chunk - intro_start)))
 		else:
 			top = outro_tracks
@@ -73,20 +72,22 @@ static func create_structure(programs: Array, parameters: Dictionary, section: i
 			for p in range(top, 16):
 				program[p] = 0
 		elif next < length:
-			for p in range(intro_tracks + outro_tracks, 16):
+			for p in range(max(parameters.IntroTracks, parameters.IntroOutro), 16):
 				if rng.randf() > sqrt(base_density):
 					program[p] = 0
 		var density = base_density + (1 - base_density) / (2 + chunk)
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars = next
+	# Feed back
+	parameters.IntroOutro = top
 	if not program:
 		program = programs.duplicate()
 		for p in range(top, 16):
 			program[p] = 0
-	if final or not endless:
+	if outro != NONE:
 		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
 		bars += 1
-	if final:
+	if outro == FINAL:
 		program = programs.duplicate()
 		for p in range(outro_tracks, 16):
 			program[p] = 0
