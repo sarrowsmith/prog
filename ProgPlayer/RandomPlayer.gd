@@ -402,12 +402,12 @@ func create_adjusted() -> Dictionary:
 				parameters.Length = int((4 * parameters.Length) / (max(movements, 1) * adjustment.Length))
 			_:
 				parameters[parameter] = clamp(parameters[parameter] * adjustment[parameter], minmax[0], minmax[1])
-	if  movements == section:
-		if section > 0:
-			outro = Structure.FINAL
-		else:
-			no_intro = true
+	if section < 0:
+		no_intro = true
+		if movements < 0:
 			outro = Structure.NONE
+	elif  movements == section:
+		outro = Structure.FINAL
 	var entry = create_smf(parameters, no_intro, outro)
 	if  section < 0:
 		adjustment.IntroOutro = parameters.IntroOutro
