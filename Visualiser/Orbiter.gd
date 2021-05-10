@@ -2,7 +2,7 @@ class_name Orbiter
 extends Responder
 
 
-const Forms = ["Rough", "Metal", "Mirror", "Glass"]
+const Forms = ["Rough", "Smooth", "Metal", "Mirror", "Glass"]
 
 export(float) var epispeed = 1.0
 
