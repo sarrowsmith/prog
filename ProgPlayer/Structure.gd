@@ -64,14 +64,14 @@ static func create_structure(programs: Array, parameters: Dictionary, no_intro: 
 		var chunk = len(chunks)
 		if bars == 1:
 			top = intro_tracks
-		elif outro != SECTION or next < length:
+		elif outro == FINAL or next < length:
 			top = intro_tracks + int(max(0, intro_rate * (1 + chunk - intro_start)))
 		else:
 			top = outro_tracks
-		if top < 16:
+		if top < 16 or next > length:
 			for p in range(top, 16):
 				program[p] = 0
-		elif next < length:
+		else:
 			for p in range(max(parameters.IntroTracks, parameters.IntroOutro), 16):
 				if rng.randf() > sqrt(base_density):
 					program[p] = 0
