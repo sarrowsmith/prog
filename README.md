@@ -22,7 +22,11 @@ The `BackroundPicker` expects to be given a directory which contains the sky ass
  2. Clone or download this repo in whatever way works best for you
  3. You need the `ProgPlayer` directory in your project
  4. Instance a `RandomPlayer` node and give it a soundfont
- 5. Use `Main.gd` as a guide for how to drive it. Basically, call `create(rng_seed: int, parameters: Dictionary)` to create a track, then `play_next()` to play and `stop()` to stop.
+ 5. Use `Main.gd` as a guide for how to drive it. Basically, call `create(rng_seed: int, parameters: Dictionary, sections: enum)` to create a track, then `play_next()` to play and `stop()` to stop.
+
+### Sections
+
+The `sections` parameter to `RandomPlayer.create()` can be `RandomPlayer.SINGLE`, `RandomPlayer.AUTO`, `RandomPlayer.ENDLESS` or `RandomPlayer.LOOP`:
 
 ### Signals
 
