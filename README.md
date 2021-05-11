@@ -28,6 +28,16 @@ The `BackroundPicker` expects to be given a directory which contains the sky ass
 
 The `sections` parameter to `RandomPlayer.create()` can be `RandomPlayer.SINGLE`, `RandomPlayer.AUTO`, `RandomPlayer.ENDLESS` or `RandomPlayer.LOOP`:
 
+`SINGLE`: One section of at least `parameters.Length` bars
+
+`AUTO`: Up to four sections, totalling at least `parameters.Length` bars, with parameters automatically adjusted between sections
+
+`ENDLESS`: An endless stream of sections, each one at least `parameters.Length` bars long, with parameters *including `Length`* randomly adjusted between sections
+
+`LOOP`: An endless stream of sections, each one at least `parameters.Length` bars long, all using the given parameters
+
+An `ENDLESS` or `LOOP` stream can be switched to a new set of parameters by calling `create()` again. The new values will be automatically switched in at the end of the current section. (At least, that's the intended opeation. I've not tested it yet.)
+
 ### Signals
 
 `RandomPlayer` emits `finished` when it's finished playing. It sets up its `midi_player` to emit `appeared_instrument` for each instrument it uses and to signal key changes, and `appeared_cue_point` on each note. Both of these signals from `midi_player` send a string which consists of four `:`-separated integers, the first of which is the track number (0--15) and the rest are:
