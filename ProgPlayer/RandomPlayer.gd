@@ -212,6 +212,9 @@ func create_bar(track: int, chunk: Dictionary, iteration: int, root: int, time: 
 	var notes = create_drums(chunk, iteration) if track == Structure.DRUMS else []
 	var down_beat = true
 	var skip = 0
+	# bar marker on track 0
+	if not track:
+		notes.append([0, null])
 	for beat in signature if chunk.repeats > 1 else 1:
 		if skip:
 			skip -= 1
@@ -250,6 +253,8 @@ func create_insertion(notes: Array, n: int, iteration: int, chunk: Dictionary, t
 	var before = notes[n]
 	n += 1
 	var after = notes[n]
+	if not after[1]:
+		after = notes[n+1]
 	if after[0] - before[0] != 2 * note_length or rng.randf() < chunk.density / iteration:
 		return []
 	var note = [before[0] + note_length, before[1].duplicate()]
@@ -331,22 +336,28 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 			var iteration = max(1, i + 1 - triplet)
 			var n = 0
 			while n < len(notes) - 1:
-				var note = create_insertion(notes, n, iteration, chunk, triplet)
-				if note:
-					notes = notes.slice(0, n) + note + notes.slice(n + 1, len(notes) - 1)
-				n += len(note) + 1
+				if notes[n][1]:
+					var note = create_insertion(notes, n, iteration, chunk, triplet)
+					if note:
+						notes = notes.slice(0, n) + note + notes.slice(n + 1, len(notes) - 1)
+					n += len(note)
+				n += 1
 	var octave = Structure.get_octave(style, track)
 	var scale = Scales[Modes[mode]]
 	for event in notes:
 		var note = event[1]
-		var note_number = get_note_number(scale, octave, note[PITCH])
-		# note (or rest if note[VOLUME] == 0) on
-		events.append(SMF.MIDIEventChunk.new(time + event[0], track, SMF.MIDIEventNoteOn.new(note_number, note[VOLUME])))
-		var note_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.cue_point, "text": "%d:%d:%d:%d" % ([track]+note)})
-		events.append(SMF.MIDIEventChunk.new(time + event[0], track, note_event))
-		# note off ("note on with velocity 0 as note off" not supported in Godot MIDI Player.)
-		# cut short to allow eot at exact end
-		events.append(SMF.MIDIEventChunk.new(time + event[0] + note[DURATION] - 1, track, SMF.MIDIEventNoteOff.new(note_number, 0)))
+		if note:
+			var note_number = get_note_number(scale, octave, note[PITCH])
+			# note (or rest if note[VOLUME] == 0) on
+			events.append(SMF.MIDIEventChunk.new(time + event[0], track, SMF.MIDIEventNoteOn.new(note_number, note[VOLUME])))
+			var note_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.cue_point, "text": "%d:%d:%d:%d" % ([track]+note)})
+			events.append(SMF.MIDIEventChunk.new(time + event[0], track, note_event))
+			# note off ("note on with velocity 0 as note off" not supported in Godot MIDI Player.)
+			# cut short to allow eot at exact end
+			events.append(SMF.MIDIEventChunk.new(time + event[0] + note[DURATION] - 1, track, SMF.MIDIEventNoteOff.new(note_number, 0)))
+		elif not track:
+			var note_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.cue_point, "text": "-1"})
+			events.append(SMF.MIDIEventChunk.new(time + event[0], 0, note_event))
 	events.sort_custom(self, "order_events")
 	return events
 
