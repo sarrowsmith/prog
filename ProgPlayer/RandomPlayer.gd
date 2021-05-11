@@ -354,7 +354,7 @@ func create_chunk(track: int, chunk: Dictionary) -> Array:
 			events.append(SMF.MIDIEventChunk.new(time + event[0], track, note_event))
 			# note off ("note on with velocity 0 as note off" not supported in Godot MIDI Player.)
 			# cut short to allow eot at exact end
-			events.append(SMF.MIDIEventChunk.new(time + event[0] + note[DURATION] - 1, track, SMF.MIDIEventNoteOff.new(note_number, 0)))
+			events.append(SMF.MIDIEventChunk.new(time + event[0] + max(1, note[DURATION] - 6), track, SMF.MIDIEventNoteOff.new(note_number, 0)))
 		elif not track:
 			var note_event = SMF.MIDIEventSystemEvent.new({"type": SMF.MIDISystemEventType.cue_point, "text": "-1"})
 			events.append(SMF.MIDIEventChunk.new(time + event[0], 0, note_event))
