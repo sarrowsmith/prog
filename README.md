@@ -30,9 +30,16 @@ The `BackroundPicker` expects to be given a directory which contains the sky ass
 
 `appeared_instrument`: instrument (0--128, 0 = track silenced), mode (0--6, an index into `RandomPlayer.Modes`), key (0--11 = C--B)
 
-`appeard_cue_point`: pitch, duration, volume (MIDI values)
+`appeared_cue_point`: pitch, duration, volume (MIDI values)
+
+`appeared_cue_point` is also sent with a track of -1 to signal the downbeat of each bar.
 
 ### Parameters
 
-TODO: let me know if you get this far
-
+Basically,
+```
+var parameters = RandomPlayer.Randomizable.duplicate()
+for parameter in parameters:
+    var limits = RandomPlayer.Randomizable[paramater]
+    parameters[parameter] = # a value between limits[0] and limits[1] inclusive
+```
