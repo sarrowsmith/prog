@@ -64,7 +64,7 @@ static func create_structure(programs: Array, parameters: Dictionary, no_intro: 
 		var chunk = len(chunks)
 		if bars == 1:
 			top = intro_tracks
-		elif outro == FINAL or next < length:
+		elif outro != SECTION or next < length:
 			top = intro_tracks + int(max(0, intro_rate * (1 + chunk - intro_start)))
 		else:
 			top = outro_tracks
@@ -78,15 +78,18 @@ static func create_structure(programs: Array, parameters: Dictionary, no_intro: 
 		var density = base_density + (1 - base_density) / (2 + chunk)
 		chunks.append({program = program, repeats = repeats, bar = bars, density = density, intricacy = base_intricacy, chords = chords})
 		bars = next
-	# Feed back
-	parameters.IntroOutro = top
-	if not program:
+	if outro == NONE or not program:
 		program = programs.duplicate()
+		top = outro_tracks
 		for p in range(top, 16):
 			program[p] = 0
-	if outro != NONE:
+		chunks.append({program = program, repeats = 2, bar = bars, density = base_density, intricacy = 0, chords = [1]})
+		bars += 2
+	else:
 		chunks.append({program = program, repeats = 1, bar = bars, density = base_density, chords = [1]})
 		bars += 1
+	# Feed back
+	parameters.IntroOutro = top
 	if outro == FINAL:
 		program = programs.duplicate()
 		for p in range(outro_tracks, 16):
