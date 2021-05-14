@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=45 format=2]
 
 [ext_resource path="res://resources/default_theme.tres" type="Theme" id=1]
 [ext_resource path="res://Main.gd" type="Script" id=2]
@@ -110,6 +110,12 @@ scancode = 78
 
 [sub_resource type="ShortCut" id=28]
 shortcut = SubResource( 27 )
+
+[sub_resource type="InputEventKey" id=29]
+scancode = 76
+
+[sub_resource type="ShortCut" id=30]
+shortcut = SubResource( 29 )
 
 [sub_resource type="InputEventKey" id=25]
 scancode = 16777254
@@ -608,6 +614,7 @@ script = ExtResource( 7 )
 margin_left = 899.0
 margin_right = 1077.0
 margin_bottom = 31.0
+hint_tooltip = "Instruments currently playing in track"
 text = "Current instruments"
 script = ExtResource( 14 )
 
@@ -619,9 +626,19 @@ margin_bottom = 31.0
 hint_tooltip = "Queue a new section"
 size_flags_vertical = 4
 disabled = true
-toggle_mode = true
 shortcut = SubResource( 28 )
 text = "Next"
+
+[node name="Last" type="Button" parent="Controls/Menu"]
+visible = false
+margin_left = 1054.0
+margin_right = 1104.0
+margin_bottom = 31.0
+hint_tooltip = "Queue a final, half-length section"
+size_flags_vertical = 4
+disabled = true
+shortcut = SubResource( 30 )
+text = "Last"
 
 [node name="Queue" type="Label" parent="Controls/Menu"]
 margin_left = 1081.0
@@ -795,7 +812,8 @@ bus = "MIDI"
 [connection signal="toggled" from="Controls/Menu/Pause" to="." method="_on_Pause_toggled"]
 [connection signal="mouse_exited" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="release_focus"]
 [connection signal="value_changed" from="Controls/Menu/Volume" to="Controls/Menu/Volume" method="_on_Volume_value_changed"]
-[connection signal="toggled" from="Controls/Menu/Next" to="." method="_on_Next_toggled"]
+[connection signal="pressed" from="Controls/Menu/Next" to="." method="_on_Next_pressed"]
+[connection signal="pressed" from="Controls/Menu/Last" to="." method="_on_Last_pressed"]
 [connection signal="toggled" from="Controls/Menu/Fullscreen" to="." method="_on_Fullscreen_toggled"]
 [connection signal="file_selected" from="SoundfontDialog" to="." method="_on_SoundfontDialog_file_selected"]
 [connection signal="file_selected" from="InstrumentationDialog" to="Configure/Menu/GridContainer2/Style" method="_on_InstrumentationDialog_file_selected"]

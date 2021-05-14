@@ -443,8 +443,15 @@ func enqueue(entry: Dictionary, replace=false):
 		worker.wait_to_finish()
 
 
-func enqueue_adjusted():
-	enqueue(create_adjusted())
+func enqueue_final(length_adjustment: float):
+	var parameters = Adjustments[0].duplicate()
+	section = 0
+	parameters.Length *= length_adjustment
+	var entry = create_smf(parameters, true, Structure.FINAL)
+	entry.section = section
+	entry.tempo = parameters.Tempo
+	entry.parameters = parameters
+	call_deferred("enqueue", entry, true)
 
 
 func enqueue_random(replace: bool):
@@ -518,7 +525,7 @@ func create(rng_seed: int, parameters: Dictionary, sections: int):
 			if movements > 1:
 				Adjustments[0] = parameters.duplicate()
 				section = 1
-				enqueue_adjusted()
+				enqueue(create_adjusted())
 			else:
 				continue
 		_:
@@ -537,6 +544,10 @@ func write() -> PoolByteArray:
 
 func random_next():
 	worker.start(self, "enqueue_random", true)
+
+
+func end_next():
+	worker.start(self, "enqueue_final", 0.5)
 
 
 func play_next() -> bool:

@@ -181,9 +181,14 @@ func _on_Play_toggled(button_pressed):
 			$SaveCaptureDialog.popup_centered()
 		fade(0.0, 1.0, 0.5 * bar_length)
 		$Controls.find_node("Queue").text = "-/-"
+		$Progress.stop_all()
 	enable_Configure(not button_pressed)
 	$Controls.find_node("Play").text = "Stop" if button_pressed else "Play!"
 	$Controls.find_node("Pause").disabled = not button_pressed
+	var last = $Controls.find_node("Last")
+	if last.visible:
+		last.disabled = not button_pressed
+		$Controls.find_node("Next").disabled = last.disabled
 
 
 func _on_OpenSoundfont_pressed():
@@ -233,7 +238,7 @@ func _on_RandomPlayer_new_movement(length, movement, total):
 		set_parameters()
 	var next = $Controls.find_node("Next")
 	if next.visible:
-		next.disabled = false
+		next.disabled = $Controls.find_node("Last").disabled
 
 
 func _on_About_pressed():
@@ -303,10 +308,11 @@ func _on_Sections_item_selected(index):
 	$Configure.find_node("Capture").disabled = index > RandomPlayer.AUTO
 	$Configure.find_node("OpenExport").disabled = index != RandomPlayer.SINGLE
 	var loop = index == RandomPlayer.LOOP
-	var next = $Controls.find_node("Next")
 	$Controls.find_node("Queue").visible = not loop
+	var next = $Controls.find_node("Next")
 	next.visible = loop
-	next.disabled = not loop
+	var last = $Controls.find_node("Last")
+	last.visible = index >= RandomPlayer.ENDLESS
 
 
 func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
@@ -314,6 +320,12 @@ func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 	instrument_list.add_instrument(int(parts[0]), int(parts[1] - 1))
 
 
-func _on_Next_toggled(button_pressed):
+func _on_Next_pressed():
 	$RandomPlayer.random_next()
+	$Controls.find_node("Next").disabled = true
+
+
+func _on_Last_pressed():
+	$RandomPlayer.end_next()
+	$Controls.find_node("Last").disabled = true
 	$Controls.find_node("Next").disabled = true
