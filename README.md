@@ -38,6 +38,8 @@ The `sections` parameter to `RandomPlayer.create()` can be `RandomPlayer.SINGLE`
 
 An `ENDLESS` or `LOOP` stream can be switched to a new set of parameters by calling `create()` again. The new values will be automatically switched in at the end of the current section. (At least, that's the intended opeation. I've not tested it yet.) Or you can call `random_next()` on a `LOOP` stream which will do an `ENDLESS`-style random adjustment at the end of the current section. (This is what "Next" in the app does.)
 
+Calling `end_next()` while playing an `ENDLESS` or `LOOP` stream will queue a final, half-length, section after which the stream will stop. (This is what "Last" in the app does.)
+
 ### Signals
 
 `RandomPlayer` emits `finished` when it's finished playing. It sets up its `midi_player` to emit `appeared_instrument` for each instrument it uses and to signal key changes, and `appeared_cue_point` on each note. Both of these signals from `midi_player` send a string which consists of four `:`-separated integers, the first of which is the track number (0--15) and the rest are:
