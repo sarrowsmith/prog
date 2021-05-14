@@ -36,7 +36,7 @@ The `sections` parameter to `RandomPlayer.create()` can be `RandomPlayer.SINGLE`
 
 `LOOP`: An endless stream of sections, each one at least `parameters.Length` bars long, all using the given parameters
 
-An `ENDLESS` or `LOOP` stream can be switched to a new set of parameters by calling `create()` again. The new values will be automatically switched in at the end of the current section. (At least, that's the intended opeation. I've not tested it yet.)
+An `ENDLESS` or `LOOP` stream can be switched to a new set of parameters by calling `create()` again. The new values will be automatically switched in at the end of the current section. (At least, that's the intended opeation. I've not tested it yet.) Or you can call `random_next()` on a `LOOP` stream which will do an `ENDLESS`-style random adjustment at the end of the current section. (This is what "Next" in the app does.)
 
 ### Signals
 
