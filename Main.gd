@@ -209,6 +209,7 @@ func _on_Pause_toggled(button_pressed):
 		fade(0.0, 1.0, 0.2)
 	else:
 		fade(1.0, 0.0, 0.6)
+	$Progress.set_active(not button_pressed)
 	get_tree().paused = button_pressed
 
 
@@ -225,11 +226,14 @@ func _on_RandomPlayer_new_movement(length, movement, total):
 	$Progress.interpolate_property(progress, "value", progress.min_value, progress.max_value, length)
 	$Progress.start()
 	$Controls.find_node("Queue").text = "%d/%d" % [movement, total]
-	if not total: # endless
+	if not total: # endless or loop
 		var new = $RandomPlayer.get_current_parameters()
 		for parameter in new:
 			parameters[parameter] = new[parameter]
 		set_parameters()
+	var next = $Controls.find_node("Next")
+	if next.visible:
+		next.disabled = false
 
 
 func _on_About_pressed():
@@ -298,8 +302,18 @@ func _on_SaveCaptureDialog_file_selected(path):
 func _on_Sections_item_selected(index):
 	$Configure.find_node("Capture").disabled = index > RandomPlayer.AUTO
 	$Configure.find_node("OpenExport").disabled = index != RandomPlayer.SINGLE
+	var loop = index == RandomPlayer.LOOP
+	var next = $Controls.find_node("Next")
+	$Controls.find_node("Queue").visible = not loop
+	next.visible = loop
+	next.disabled = not loop
 
 
 func _on_MidiPlayer_appeared_instrument_name(_channel_number, name):
 	var parts = name.split_floats(":")
 	instrument_list.add_instrument(int(parts[0]), int(parts[1] - 1))
+
+
+func _on_Next_toggled(button_pressed):
+	$RandomPlayer.random_next()
+	$Controls.find_node("Next").disabled = true

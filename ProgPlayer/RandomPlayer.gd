@@ -434,8 +434,11 @@ func enqueue_on_thread(_parameters):
 	call_deferred("enqueue", create_adjusted())
 
 
-func enqueue(entry: Dictionary):
-	queue.push_back(entry)
+func enqueue(entry: Dictionary, replace=false):
+	if replace:
+		queue = [entry]
+	else:
+		queue.push_back(entry)
 	if worker.is_active():
 		worker.wait_to_finish()
 
@@ -444,7 +447,7 @@ func enqueue_adjusted():
 	enqueue(create_adjusted())
 
 
-func enqueue_random(_parameters):
+func enqueue_random(replace: bool):
 	var adjustment = {}
 	for parameter in Randomizable:
 		if parameter.begins_with("Intro"):
@@ -472,7 +475,7 @@ func enqueue_random(_parameters):
 	Adjustments[-1] = adjustment
 	var entry = create_adjusted()
 	Adjustments[0] = entry.parameters
-	call_deferred("enqueue", entry)
+	call_deferred("enqueue", entry, replace)
 
 
 func create(rng_seed: int, parameters: Dictionary, sections: int):
@@ -532,12 +535,16 @@ func write() -> PoolByteArray:
 	return PoolByteArray()
 
 
+func random_next():
+	worker.start(self, "enqueue_random", true)
+
+
 func play_next() -> bool:
 	if 0 < section and section < movements:
 		section += 1
 		worker.start(self, "enqueue_on_thread")
 	elif section < 0:
-		worker.start(self, "enqueue_on_thread" if movements < 0 else "enqueue_random")
+		worker.start(self, "enqueue_on_thread" if movements < 0 else "enqueue_random", false)
 	var entry = queue.pop_front()
 	if not entry:
 		return false
@@ -551,6 +558,7 @@ func play_next() -> bool:
 
 func stop():
 	midi_player.stop()
+	queue.clear()
 
 
 func pause(pause: bool):
