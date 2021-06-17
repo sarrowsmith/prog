@@ -17,14 +17,17 @@ func _ready():
 	dir.list_dir_begin(true, true)
 	var file_name = dir.get_next()
 	while file_name != "":
-		if not dir.current_is_dir() and file_name.get_extension() == "png":
-			var title = file_name.get_basename()
+		if not dir.current_is_dir() and file_name.get_extension() == "import":
+			var image_file = file_name.get_basename()
+			if image_file.get_extension() != "png":
+				continue
+			var title = image_file.get_basename()
 			var options = title.split("_", false, 1)
 			if len(options) > 1:
-				name_to_file[options[0]] = [file_name, Vector3(0, 0, 0)]
-				name_to_file[options[1]] = [file_name, Vector3(0, 0, 180)]
+				name_to_file[options[0]] = [image_file, Vector3(0, 0, 0)]
+				name_to_file[options[1]] = [image_file, Vector3(0, 0, 180)]
 			else:
-				name_to_file[title] = [file_name, Vector3(0, 0, 180)]
+				name_to_file[title] = [image_file, Vector3(0, 0, 180)]
 		file_name = dir.get_next()
 	dir.list_dir_end()
 	for title in name_to_file:

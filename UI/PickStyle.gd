@@ -79,7 +79,7 @@ func set_custom(id):
 
 
 func get_custom() -> Array:
-	var value = Banks.BLANK.duplicate()
+	var value = Banks.Blank.duplicate()
 	for child in sub_menu.get_children():
 		if child is BankPicker:
 			var programs = child.get_programs()
