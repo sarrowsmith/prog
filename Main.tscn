@@ -105,23 +105,23 @@ scancode = 16777217
 [sub_resource type="ShortCut" id=24]
 shortcut = SubResource( 23 )
 
-[sub_resource type="InputEventKey" id=27]
+[sub_resource type="InputEventKey" id=25]
 scancode = 78
+
+[sub_resource type="ShortCut" id=26]
+shortcut = SubResource( 25 )
+
+[sub_resource type="InputEventKey" id=27]
+scancode = 76
 
 [sub_resource type="ShortCut" id=28]
 shortcut = SubResource( 27 )
 
 [sub_resource type="InputEventKey" id=29]
-scancode = 76
+scancode = 16777254
 
 [sub_resource type="ShortCut" id=30]
 shortcut = SubResource( 29 )
-
-[sub_resource type="InputEventKey" id=25]
-scancode = 16777254
-
-[sub_resource type="ShortCut" id=26]
-shortcut = SubResource( 25 )
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -626,7 +626,7 @@ margin_bottom = 31.0
 hint_tooltip = "Queue a new section"
 size_flags_vertical = 4
 disabled = true
-shortcut = SubResource( 28 )
+shortcut = SubResource( 26 )
 text = "Next"
 
 [node name="Last" type="Button" parent="Controls/Menu"]
@@ -637,7 +637,7 @@ margin_bottom = 31.0
 hint_tooltip = "Queue a final, half-length section"
 size_flags_vertical = 4
 disabled = true
-shortcut = SubResource( 30 )
+shortcut = SubResource( 28 )
 text = "Last"
 
 [node name="Queue" type="Label" parent="Controls/Menu"]
@@ -662,7 +662,7 @@ margin_bottom = 31.0
 hint_tooltip = "Toggle fullscreen mode"
 size_flags_vertical = 4
 toggle_mode = true
-shortcut = SubResource( 26 )
+shortcut = SubResource( 30 )
 text = "Fullscreen"
 
 [node name="SoundfontDialog" type="FileDialog" parent="."]
