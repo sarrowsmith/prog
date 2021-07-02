@@ -435,7 +435,7 @@ func create_on_thread(parameters: Dictionary):
 	var entry = create_smf(parameters, false, parameters.outro)
 	entry.tempo = parameters.Tempo
 	entry.section = section + 1
-	call_deferred("enqueue", create_adjusted())
+	call_deferred("enqueue", entry)
 
 
 func enqueue_on_thread(_parameters):
