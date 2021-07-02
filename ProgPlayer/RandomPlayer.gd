@@ -4,6 +4,7 @@ extends Node
 
 signal finished()
 signal new_movement(length, section, total)
+signal movement_queued()
 
 const MidiPlayer = preload("res://addons/midi/MidiPlayer.tscn")
 
@@ -377,11 +378,11 @@ func create_track(track: int, structure: Array) -> Dictionary:
 	}
 
 
-func create_smf(parameters: Dictionary, intro: int, outro: int) -> Dictionary:
+func create_smf(parameters: Dictionary, no_intro: bool, outro: int) -> Dictionary:
 	var tracks = []
 	var track = len(tracks)
 	var rng_state = rng.state
-	var structure = Structure.create_structure(programs, parameters, intro, outro, rng)
+	var structure = Structure.create_structure(programs, parameters, no_intro, outro, rng)
 	# Put rng in same initial state for note creation no matter how many loops have been structured
 	rng.state = rng_state
 	var endtime = 0
@@ -430,6 +431,13 @@ func create_adjusted() -> Dictionary:
 	return entry
 
 
+func create_on_thread(parameters: Dictionary):
+	var entry = create_smf(parameters, false, parameters.outro)
+	entry.tempo = parameters.Tempo
+	entry.section = section + 1
+	call_deferred("enqueue", create_adjusted())
+
+
 func enqueue_on_thread(_parameters):
 	call_deferred("enqueue", create_adjusted())
 
@@ -439,6 +447,7 @@ func enqueue(entry: Dictionary, replace=false):
 		queue = [entry]
 	else:
 		queue.push_back(entry)
+	emit_signal("movement_queued")
 	if worker.is_active():
 		worker.wait_to_finish()
 
@@ -485,7 +494,7 @@ func enqueue_random(replace: bool):
 	call_deferred("enqueue", entry, replace)
 
 
-func create(rng_seed: int, parameters: Dictionary, sections: int):
+func create(rng_seed: int, parameters: Dictionary, sections: int, threaded = false):
 	rng.seed = rng_seed
 	var rng_state = rng.state
 	programs = Banks.create_programs(parameters, rng)
@@ -525,10 +534,16 @@ func create(rng_seed: int, parameters: Dictionary, sections: int):
 			if movements > 1:
 				Adjustments[0] = parameters.duplicate()
 				section = 1
-				enqueue(create_adjusted())
+				if threaded:
+					worker.start(self, "enqueue_on_thread")
+				else:
+					enqueue(create_adjusted())
 			else:
 				continue
 		_:
+			if threaded:
+				parameters.outro = outro
+				worker.start(self, "create_on_thread", parameters)
 			var entry = create_smf(parameters, false, outro)
 			entry.tempo = parameters.Tempo
 			entry.section = section + 1
