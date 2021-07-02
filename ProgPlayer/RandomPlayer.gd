@@ -543,7 +543,7 @@ func create(rng_seed: int, parameters: Dictionary, sections: int, threaded = fal
 		_:
 			if threaded:
 				parameters.outro = outro
-				worker.start("create_on_thread", parameters)
+				worker.start(self, "create_on_thread", parameters)
 			var entry = create_smf(parameters, false, outro)
 			entry.tempo = parameters.Tempo
 			entry.section = section + 1
