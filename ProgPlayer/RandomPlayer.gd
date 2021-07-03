@@ -544,10 +544,11 @@ func create(rng_seed: int, parameters: Dictionary, sections: int, threaded = fal
 			if threaded:
 				parameters.outro = outro
 				worker.start(self, "create_on_thread", parameters)
-			var entry = create_smf(parameters, false, outro)
-			entry.tempo = parameters.Tempo
-			entry.section = section + 1
-			enqueue(entry)
+			else:
+				var entry = create_smf(parameters, false, outro)
+				entry.tempo = parameters.Tempo
+				entry.section = section + 1
+				enqueue(entry)
 
 
 func write() -> PoolByteArray:
