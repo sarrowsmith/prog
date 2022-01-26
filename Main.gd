@@ -163,7 +163,10 @@ func create() -> int:
 func _on_Play_toggled(button_pressed):
 	if button_pressed:
 		var rng_seed = create();
-		visualiser.start(rng_seed)
+		var visualise = $Configure.find_node("Visualise").pressed
+		visualiser.visible = visualise
+		if visualise:
+			visualiser.start(rng_seed)
 		if recorder.is_recording_active():
 			recorder.set_recording_active(false)
 		recorder.set_recording_active(capture)
