@@ -44,25 +44,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/midi/MidiPlayer.gd"
 }, {
-"base": "Responder",
-"class": "Orbiter",
-"language": "GDScript",
-"path": "res://Visualiser/Orbiter.gd"
-}, {
-"base": "Responder",
-"class": "ParticleLight",
-"language": "GDScript",
-"path": "res://Visualiser/ParticleLight.gd"
-}, {
 "base": "Node",
 "class": "RandomPlayer",
 "language": "GDScript",
 "path": "res://ProgPlayer/RandomPlayer.gd"
-}, {
-"base": "Spatial",
-"class": "Responder",
-"language": "GDScript",
-"path": "res://Visualiser/Responder.gd"
 }, {
 "base": "Reference",
 "class": "SMF",
@@ -74,20 +59,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/midi/SoundFont.gd"
 }, {
-"base": "Responder",
-"class": "Stellation",
-"language": "GDScript",
-"path": "res://Visualiser/Stellation.gd"
-}, {
 "base": "Reference",
 "class": "Structure",
 "language": "GDScript",
 "path": "res://ProgPlayer/Structure.gd"
-}, {
-"base": "Spatial",
-"class": "Visualiser",
-"language": "GDScript",
-"path": "res://Visualiser/Visualiser.gd"
 } ]
 _global_script_class_icons={
 "AudioStreamPlayerADSR": "",
@@ -97,15 +72,10 @@ _global_script_class_icons={
 "CurrentInstruments": "",
 "InstrumentPicker": "",
 "MidiPlayer": "",
-"Orbiter": "",
-"ParticleLight": "",
 "RandomPlayer": "",
-"Responder": "",
 "SMF": "",
 "SoundFont": "",
-"Stellation": "",
-"Structure": "",
-"Visualiser": ""
+"Structure": ""
 }
 
 [application]
@@ -139,6 +109,10 @@ convert_text_resources_to_binary_on_export=true
 [editor_plugins]
 
 enabled=PoolStringArray( "res://addons/midi/plugin.cfg" )
+
+[gdnative]
+
+singletons=[  ]
 
 [input]
 
@@ -249,6 +223,7 @@ weapon_select_down={
 
 [rendering]
 
+quality/driver/driver_name="GLES2"
 quality/intended_usage/framebuffer_allocation.mobile=2
 2d/snapping/use_gpu_pixel_snap=true
 vram_compression/import_etc=true

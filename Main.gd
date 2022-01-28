@@ -1,8 +1,6 @@
 extends Control
 
 
-const Visualiser = preload("res://Visualiser/Visualiser.tscn")
-
 const DefaultParameters = {
 	Tracks = 16,
 	Seed = "",
@@ -28,7 +26,6 @@ onready var pick_mode = $Configure.find_node("Mode")
 onready var pick_key = $Configure.find_node("Key")
 onready var pick_style = $Configure.find_node("Style")
 onready var recorder = AudioServer.get_bus_effect(AudioServer.get_bus_index("Recorder"), 0)
-onready var camera = $ViewportContainer/Viewport/Camera
 onready var instrument_list = $Controls.find_node("CurrentInstruments")
 
 
@@ -153,35 +150,15 @@ func get_parameters():
 			parameters[parameter] = value
 
 
-func create() -> int:
+func create():
 	get_parameters()
 	var rng_seed = get_seed()
 	$RandomPlayer.create(rng_seed, parameters, $Configure.find_node("Sections").selected)
-	return rng_seed
-
-
-func start_visualiser(rng_seed):
-	var visualise = $Configure.find_node("Visualise").pressed
-	if visualise:
-		visualiser = Visualiser.instance()
-		$ViewportContainer/Viewport.add_child(visualiser)
-		$RandomPlayer.midi_player.connect("appeared_cue_point", visualiser, "_on_MidiPlayer_appeared_cue_point")
-		$RandomPlayer.midi_player.connect("appeared_instrument_name", visualiser, "_on_MidiPlayer_appeared_instrument_name")
-		visualiser.timescale = $RandomPlayer.timescale()
-		visualiser.start(rng_seed)
-
-
-func stop_visualiser():
-	if visualiser != null:
-		visualiser.stop()
-		visualiser.queue_free()
-		visualiser = null
 
 
 func _on_Play_toggled(button_pressed):
 	if button_pressed:
-		var rng_seed = create();
-		start_visualiser(rng_seed)
+		create();
 		if recorder.is_recording_active():
 			recorder.set_recording_active(false)
 		recorder.set_recording_active(capture)
@@ -190,7 +167,6 @@ func _on_Play_toggled(button_pressed):
 	else:
 		var bar_length = $RandomPlayer.bar_time()
 		$RandomPlayer.stop()
-		stop_visualiser()
 		yield(get_tree().create_timer(0.5 * bar_length), "timeout")
 		if capture:
 			recorder.set_recording_active(false)
