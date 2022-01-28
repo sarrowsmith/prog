@@ -233,9 +233,3 @@ material/0 = ExtResource( 11 )
 transform = Transform( 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 15 )
 material/0 = ExtResource( 11 )
-
-[node name="Boom" type="Spatial" parent="."]
-
-[node name="Camera" type="Camera" parent="Boom"]
-transform = Transform( -1, 1.89218e-08, -8.53505e-08, 0, 0.976296, 0.21644, 8.74228e-08, 0.21644, -0.976296, 0, 3.8, -30 )
-fov = 42.5

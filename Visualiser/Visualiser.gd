@@ -14,7 +14,7 @@ var timescale = 1.0
 var rng = RandomNumberGenerator.new()
 
 enum {THINGS, CAMERA}
-onready var objects = [$Objects, $Boom]
+onready var objects = [$Objects, get_parent().get_node("Camera")]
 onready var responders = {
 	Structure.CHORDS: $Lights,
 	Structure.DRONE: $Orbiter,

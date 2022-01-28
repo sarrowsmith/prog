@@ -7,7 +7,7 @@
 [ext_resource path="res://resources/dialog_theme.tres" type="Theme" id=5]
 [ext_resource path="res://resources/prog.png" type="Texture" id=6]
 [ext_resource path="res://UI/Volume.gd" type="Script" id=7]
-[ext_resource path="res://Visualiser/Visualiser.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Visualiser/Camera.tscn" type="PackedScene" id=8]
 [ext_resource path="res://resources/visualiser_world.tres" type="World" id=9]
 [ext_resource path="res://UI/PickMode.gd" type="Script" id=10]
 [ext_resource path="res://UI/PickKey.gd" type="Script" id=11]
@@ -157,7 +157,7 @@ world = ExtResource( 9 )
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="Visualiser" parent="ViewportContainer/Viewport" instance=ExtResource( 8 )]
+[node name="Camera" parent="ViewportContainer/Viewport" instance=ExtResource( 8 )]
 
 [node name="HappyKettle" type="CenterContainer" parent="."]
 margin_right = 1280.0
